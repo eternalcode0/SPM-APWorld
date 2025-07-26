@@ -1,7 +1,8 @@
 """Utility file for managing the save file"""
-from .flags import GSWF
+from .flags import GSW, GSWF
 
 NEW_SAVE = frozenset([
+    GSW(0, 11),  # Skips Merlon giving red heart, Tippi taking you to 1st Pillar and inserting heart, entering 1-1 door
     GSWF(2),  # Save block tutorial text seen
     GSWF(386),  # 3D tutorial text seen
     GSWF(387),  # "Defeat enemies to earn points" text seen, 1-1

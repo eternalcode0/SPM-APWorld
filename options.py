@@ -166,6 +166,26 @@ class FlopsidePitLogic(PitLogic):
     default = PitLogic.option_minimum
 
 
+class Traps(Choice):
+    """Adds the various cursya traps to the item pool
+
+    *None*: No cursya traps are added to the pool.
+
+    *Some*: Adds the Slow, Heavy, Reverse, and Tech Cursya traps to the pool.
+
+    *All*: Adds all the above traps as well as the Back Cursya trap to the pool.
+    """
+    display_name = "Cursya Traps"
+    rich_text_doc = True
+
+    option_none = 0
+    option_some = 1
+    option_all = 2
+    alias_false = option_none
+    alias_true = option_some
+    default = option_none
+
+
 class EntranceRando(Toggle):
     """Do you want entrances to be randomized?
     Doesn't randomize small buildings / entrances that use the spinning black square transition.
@@ -219,5 +239,6 @@ class SuperPaperMarioOptions(PerGameCommonOptions):
     flipside_pit_logic: FlipsidePitLogic
     flopside_pit_access: FlopsidePitAccess
     flopside_pit_logic: FlopsidePitLogic
+    traps: Traps
     # randomize_entrances: EntranceRando
     # randomize_enemies: EnemyRando

@@ -9,7 +9,7 @@ from worlds.AutoWorld import World, WebWorld
 from .items import create_items, item_groups, item_table, CHARACTERS, PIXLS
 from .constants import GAME, SuperPaperMarioItem, SPMEvent, SPMItem, SPMLocation, SPMRegion
 from .locations import BASE_LOCATION_ID, location_groups, location_table
-from .options import SuperPaperMarioOptions
+from .options import PitAccess, SuperPaperMarioOptions, Traps
 from .regions import create_regions
 from .rules import set_rules, SPMRuleBuilder
 
@@ -48,7 +48,9 @@ class SuperPaperMarioWorld(World):
     item_name_groups = item_groups
 
     slot_data = {}
+    disabled_locations: set[str] = set()
     rule_builder: SPMRuleBuilder
+    filler_options: list[str] = []
 
     # region APWorld Generation
     # sorted in execution order
@@ -70,10 +72,26 @@ class SuperPaperMarioWorld(World):
         self.slot_data.setdefault("starting_character", self.item_name_to_id[character])
         self.slot_data.setdefault("starting_pixl", self.item_name_to_id[pixl])
 
+        if self.options.flipside_pit_access == PitAccess.option_open:
+            self.push_precollected(self.create_event(SPMEvent.SWITCH_FLIPSIDE_PIT_CAGE))
+
+        # Disabled Locations
+        if self.options.flipside_pit_access.value == PitAccess.option_closed:
+            self.disabled_locations.update(location_groups["Flipside Pit"])
+        if self.options.flopside_pit_access.value == PitAccess.option_closed:
+            self.disabled_locations.update(location_groups["Flopside Pit"])
+
+        self.filler_options.extend(item_groups["filler"])
+        if self.options.traps.value != Traps.option_none:
+            self.filler_options.extend([SPMItem.SLOW_CURSYA_TRAP, SPMItem.HEAVY_CURSYA_TRAP,
+                                        SPMItem.REVERSYA_CURSYA_TRAP, SPMItem.TECH_CURSYA_TRAP])
+        if self.options.traps.value == Traps.option_all:
+            self.filler_options.append(SPMItem.BACK_CURSYA_TRAP)
+
     # push start_inventory and start_inventory_from_pool into precollected_items
 
     def create_regions(self):
-        create_regions(self)
+        create_regions(self, self.disabled_locations)
 
     # All non-event locations finalized
 
@@ -157,7 +175,7 @@ class SuperPaperMarioWorld(World):
         return SuperPaperMarioItem(name, ItemClassification.progression, None, self.player)
 
     def get_filler_item_name(self) -> str:
-        return self.random.choice(list(item_groups["filler"]))
+        return self.random.choice(self.filler_options)
 
     def get_pre_fill_items(self) -> list[SuperPaperMarioItem]:
         return []

@@ -52,6 +52,9 @@ LS4 = "Castle Bleck Inner Sanctum"
 class SPMEvent:
     """All Event names"""
     SWITCH_YOLD_RUINS_SQUIG_ROOM = "Hit the Blue Switch in 1-4 Squig Room"
+    SWITCH_FLIPSIDE_PIT_CAGE = "Hit the Blue Switch on the Flipside Pit Cage"  # GSWF(501)
+    SMASH_FLOPSIDE_B1_OUTSKIRTS_BLOCK = "Smashed the block in Flopside B1 Outskirts"  # GSWF(507)
+    SMASH_FLOPSIDE_B2_OUTSKIRTS_BLOCK = "Smashed the block in Flopside B2 Outskirts"  # GSWF(504)
     COMPLETED_FLIPSIDE_PIT = "Completed Flipside Pit"
     COMPLETED_FLOPSIDE_PIT = "Completed Flopside Pit"
     VICTORY = "Victory"
@@ -653,6 +656,10 @@ class SPMItem:
     CATCH_CARD_MS_MOWZ = "Catch Card - Ms. Mowz"
     CATCH_CARD_TOAD = "Catch Card - Toad"
 
+    SLOW_CURSYA_TRAP = "Slow Cursya Trap"
+    HEAVY_CURSYA_TRAP = "Heavy Cursya Trap"
+    REVERSYA_CURSYA_TRAP = "Reversya Cursya Trap"
+    TECH_CURSYA_TRAP = "Tech Cursya Trap"
     BACK_CURSYA_TRAP = "Back Cursya Trap"
 
 
@@ -663,13 +670,15 @@ class SPMLocation:
 
     FLIPSIDE_MERLONS_GIFT = "Flipside Tower - Merlon's Gift"
     FLIPSIDE_3F_CHEST_IN_PICCOLO_BLOCK = "Flipside 3F - Chest in Piccolo block"
-    FLIPSIDE_3F_EAT_A_SPICY_SOUP = "Flipside 3F - Eat a Spicy Soup"
+    FLIPSIDE_3F_EAT_A_SPICY_SOUP = "Flipside 3F - Give Peach Spicy Soup"
     FLIPSIDE_3F_CHEST_AFTER_INVISIBLE_BLOCKS = "Flipside 3F - Chest after invisible blocks"
+    FLIPSIDE_3F_FISHBOWL = "Flipside 3F - Talk to the kid"
     FLIPSIDE_1F_OUTSKIRTS_LEFT_CHEST_IN_HOLE = "Flipside 1F Outskirts - Left chest in hole"
     FLIPSIDE_1F_OUTSKIRTS_RIGHT_CHEST_IN_HOLE = "Flipside 1F Outskirts - Right chest in hole"
+    FLIPSIDE_B1_OUTSKIRTS_CHEST_BEHIND_PILLAR = "Flipside B1 Outskirts - Chest behind pillar"
     FLIPSIDE_B2_CHEST_AFTER_PIPE = "Flipside B2 - Chest after pipe"
-    FLIPSIDE_3F_FISHBOWL = "Flipside 3F - Talk to the kid"
     FLIPSIDE_B1_FREE_FISH = "Flipside B1 - Free Captain Gills"
+    FLIPSIDE_B1_3D_CHEST = "Flipside B1 - 3D Chest near left side water"
     FLOPSIDE_B2_CHEST_AFTER_PIPE = "Flopside B2 - Chest after pipe"
     FLOPSIDE_3F_CHEST_IN_PICCOLO_BLOCK = "Flopside 3F - Chest in Piccolo block"
     FLOPSIDE_3F_CHEST_AFTER_INVISIBLE_BLOCKS = "Flopside 3F - Chest after invisible blocks"
@@ -1120,6 +1129,7 @@ class SPMRegion:
     MAC09_LAYER1 = "Flipside 1F - Layer 1"
     MAC09_LAYER2 = "Flipside 1F - Layer 2"
     MAC09_LAYER3 = "Flipside 1F - Layer 3"
+    L_FLIPSIDE_PIT_ENTRANCE = "Flipside B2 - Cage top"
     L_FLIPSIDE_PIT = "Flipside Pit of 100 Trials"
 
     # Flopside
@@ -1726,13 +1736,15 @@ class SPMEntrance:
     MAC04_ELV2 = "Flipside B1 - Elevator Down"  # MAC05_ELV1
     MAC04_L_SHRINK = "Flipside B1 - Shrink to Itty Bits"
 
-    # MAC05_DEFAULT  # Flipside B2 Outskirts
-    MAC05_DOKAN_1 = "Flipside B2 Outskirts - Layer 1 - Sealed Pipe"  # Flipside Pit of 100 Trials
+    # MAC05_DEFAULT  # Flipside B2 & Flipside B2 Outskirts
+    MAC05_DOKAN_1 = "Flipside B2 - Layer 1 - Sealed Pipe"  # Flipside Pit of 100 Trials
     MAC05_DOKAN_2 = "Flipside B2 Outskirts - Layer 2 - Pipe"  # MAC07_DOKAN_1
-    MAC05_AODOKAN_1 = "Flipside B2 Outskirts - Layer 1 - Blue Pipe"  # MAC02_AODOKAN_1
-    MAC05_ELV1 = "Flipside B2 Outskirts - Layer 1 - Elevator Up"  # MAC04_ELV2
-    MAC05_L_3D_2_1 = "Flipside B2 Outskirts - Layer 2 -> 1"
-    MAC05_L_3D_1_2 = "Flipside B2 Outskirts - Layer 1 -> 2"
+    MAC05_AODOKAN_1 = "Flipside B2 - Layer 1 - Blue Pipe"  # MAC02_AODOKAN_1
+    MAC05_ELV1 = "Flipside B2 - Layer 1 - Elevator Up"  # MAC04_ELV2
+    MAC05_L_CAGE_JUMP = "Flipside B2 - Layer 1 -> Cage"
+    MAC05_L_CAGE_DOWN = "Flipside B2 - Layer 1 Cage -> 1"
+    MAC05_L_3D_2_1 = "Flipside B2 Outskirts - Layer 2 -> 1 Cage"
+    MAC05_L_3D_1_2 = "Flipside B2 - Layer 1 Cage -> 2"
 
     # MAC06_DEFAULT  # Flipside 1F Outskirts
     MAC06_DOKAN_1 = "Flipside 1F Outskirts - Layer 1 - Right Pipe"  # MAC02_DOKAN_2
@@ -1746,7 +1758,6 @@ class SPMEntrance:
     MAC07_DOKAN_1 = "Flipside B1 Outskirts - Layer 1 - Right Pipe"  # MAC05_DOKAN_2
     MAC07_DOKAN_2 = "Flipside B1 Outskirts - Layer 1 - Left Pipe"  # MAC06_DOKAN_2
     MAC07_L_3D_2_1 = "Flipside B1 Outskirts - Layer 2 -> 1"
-    MAC07_L_3D_1_2 = "Flipside B1 Outskirts - Layer 1 -> 2"
 
     MAC08_DEFAULT = "Flipside 1F - Jump Out"  # MAC06_JUMP
 
@@ -1815,6 +1826,7 @@ class SPMEntrance:
     # MAC17_DEFAULT  # Flopside B1 Outskirts
     MAC17_DOKAN1 = "Flopside B1 Outskirts - Left Pipe"
     MAC17_DOKAN2 = "Flopside B1 Outskirts - Right Pipe"
+    MAC17_L_3D_2_1 = "Flopside B1 Outskirts - Layer 2 -> 1"
 
     MAC18_DEFAULT = "Flopside B2 - Jump Out"  # MAC15_JUMP
 

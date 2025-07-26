@@ -282,7 +282,10 @@ def flipside_rules(r: SPMRuleBuilder):
     # Flipside 3F
     r.connect(SPMEntrance.MAC01_ELV1, SPMRegion.MAC01_LAYER1, SPMRegion.MAC02_LAYER1,
               randomization_group=EGroup.ELEVATOR_DOWN | EGroup.HUB)
-    r.location(SPMLocation.FLIPSIDE_HEART_PILLAR_RED, r.has(SPMItem.RED_PURE_HEART))
+    r.location(SPMLocation.FLIPSIDE_HEART_PILLAR_RED,
+               r.has(SPMItem.RED_PURE_HEART))
+    # r.location(SPMLocation.FLIPSIDE_3F_EAT_A_SPICY_SOUP)  # will this require spicy soup in the itempool?
+    # r.location(SPMLocation.FLIPSIDE_3F_FISHBOWL)
 
     r.connect(SPMEntrance.MAC01_DOKAN_1, SPMRegion.MAC01_LAYER2, SPMRegion.MAC02_LAYER2,
               randomization_group=EGroup.PIPE | EGroup.HUB)
@@ -291,9 +294,10 @@ def flipside_rules(r: SPMRuleBuilder):
     r.location(SPMLocation.FLIPSIDE_3F_CHEST_IN_PICCOLO_BLOCK,
                r.has(SPMItem.PIXL_PICCOLO))
 
-    # Flipside 2F / Tower
+    # Flipside 2F
     r.connect(SPMEntrance.MAC02_L_TOWER_ELV2, SPMRegion.MAC02_LAYER1, SPMRegion.MAC02_L_TOWER)
     r.connect(SPMEntrance.MAC02_ELV1, SPMRegion.MAC02_LAYER1, SPMRegion.MAC09_LAYER3,
+              r.always(),  # This elevator doesn't work until GSW(0, 53), after chapter 1-4 cleared, before intermission
               randomization_group=EGroup.ELEVATOR_DOWN | EGroup.HUB)
     r.connect(SPMEntrance.MAC02_ELV2, SPMRegion.MAC02_LAYER1, SPMRegion.MAC01_LAYER1,
               randomization_group=EGroup.ELEVATOR_UP | EGroup.HUB)
@@ -301,14 +305,14 @@ def flipside_rules(r: SPMRuleBuilder):
               r.can_flip())
     r.connect(SPMEntrance.MAC02_AODOKAN_2, SPMRegion.MAC02_LAYER1, SPMRegion.MAC12_LAYER1)
     r.connect(SPMEntrance.MAC02_L_3D_1_2, SPMRegion.MAC02_LAYER1, SPMRegion.MAC02_LAYER2,
-              r.can_flip())
-    r.location(SPMLocation.PICCOLO_FETCH_MERLUVLEE, r.has(SPMItem.TRAINING_MACHINE))
+              r.if_all(r.can_flip(), r.has(SPMItem.OLD_KEY)))
+    r.location(SPMLocation.PICCOLO_FETCH_MERLUVLEE,
+               r.has(SPMItem.TRAINING_MACHINE))
 
     r.connect(SPMEntrance.MAC02_DOKAN_1, SPMRegion.MAC02_LAYER2, SPMRegion.MAC01_LAYER2,
               r.can_break_hard_blocks(),
               EGroup.PIPE | EGroup.HUB)
-    r.connect(SPMEntrance.MAC02_L_3D_2_1, SPMRegion.MAC02_LAYER2, SPMRegion.MAC02_LAYER1,
-              r.can_flip())
+    # MAC02_L_3D_2_1: you can't go from layer 2 to layer 1 if you haven't opened the door with the Old Key
     r.connect(SPMEntrance.MAC02_L_3D_2_3, SPMRegion.MAC02_LAYER2, SPMRegion.MAC02_LAYER3,
               r.can_flip())
 
@@ -316,7 +320,8 @@ def flipside_rules(r: SPMRuleBuilder):
               randomization_group=EGroup.PIPE | EGroup.HUB)
     r.connect(SPMEntrance.MAC02_L_3D_3_2, SPMRegion.MAC02_LAYER3, SPMRegion.MAC02_LAYER2,
               r.can_flip())
-    r.location(SPMLocation.FLIPSIDE_HEART_PILLAR_GREEN, r.has_all(SPMItem.PIXL_THUDLEY, SPMItem.GREEN_PURE_HEART))
+    r.location(SPMLocation.FLIPSIDE_HEART_PILLAR_GREEN,
+               r.has_all(SPMItem.PIXL_THUDLEY, SPMItem.GREEN_PURE_HEART))
 
     # Flipside/Flopside Mirror Hall
     r.connect(SPMEntrance.MAC03_DOA6_R, SPMRegion.MAC03_LAYER1, SPMRegion.MAC09_LAYER1,
@@ -331,41 +336,47 @@ def flipside_rules(r: SPMRuleBuilder):
               randomization_group=EGroup.ELEVATOR_DOWN | EGroup.HUB)
     r.connect(SPMEntrance.MAC04_L_SHRINK, SPMRegion.MAC04_LAYER1, SPMRegion.MAC04_ITTY_BITS,
               r.has(SPMItem.PIXL_DOTTIE))
+    r.location(SPMLocation.FLIPSIDE_B1_3D_CHEST,
+               r.can_flip())
     # SPMRegion.MAC04_ITTY_BITS,  # Technically this connects back thru MAC04_L_SHRINK but dead-end two-way entrances
-    # don't have to be reconnected... I thin
+    # don't have to be reconnected... I think
     # SPMRegion.MAC04_ARCADE_PIPE,
 
     # Flipside B2
     r.connect(SPMEntrance.MAC05_ELV1, SPMRegion.MAC05_LAYER1, SPMRegion.MAC04_LAYER1)
     r.connect(SPMEntrance.MAC05_AODOKAN_1, SPMRegion.MAC05_LAYER1, SPMRegion.MAC02_LAYER1,
               r.can_flip())
-    # SPMEntrance.MAC05_L_3D_1_2 doesn't connect because it requires hitting a switch from the other side
-
-    r.connect(SPMEntrance.MAC05_L_3D_2_1, SPMRegion.MAC05_LAYER2, SPMRegion.MAC05_LAYER1,
-              r.has_all(SPMItem.CHARACTER_MARIO, SPMItem.PIXL_TIPPI))
-    r.connect(SPMEntrance.MAC05_DOKAN_1, SPMRegion.MAC05_LAYER2, SPMRegion.L_FLIPSIDE_PIT,
+    r.connect(SPMEntrance.MAC05_DOKAN_1, SPMRegion.MAC05_LAYER1, SPMRegion.L_FLIPSIDE_PIT,
               r.if_all(
-                  r.if_opt(r.options.flipside_pit_access == FlipsidePitAccess.option_closed,
-                           r.never(),
-                           r.if_opt(r.options.flipside_pit_access == FlipsidePitAccess.option_open,
-                                    r.always(),
-                                    r.if_all(r.can_flip(), r.has(SPMItem.PIXL_TIPPI)))),  # option_normal
+                  # Is pit accessible at all?
+                  r.if_opt(r.options.flipside_pit_access != FlipsidePitAccess.option_closed,
+                           r.has(SPMEvent.SWITCH_FLIPSIDE_PIT_CAGE)),
+                  # Have the settings deferred pit in-logic until they have enough chapters?
                   r.if_opt(r.options.flipside_pit_logic.requires_chapters,
                            r.always(),  # TODO chapter 1-7 access logic
                            r.always()),
+                  # Have the settings deferred pit in-logic until they have all characters and pixls?
                   r.if_opt(r.options.flipside_pit_logic.requires_characters,
                            r.has_all(*CHARACTERS, *PIXLS),
                            r.always())))
+    r.connect(SPMEntrance.MAC05_L_CAGE_JUMP, SPMRegion.MAC05_LAYER1, SPMRegion.L_FLIPSIDE_PIT_ENTRANCE,
+              r.if_any(r.can_super_jump(), r.has(SPMEvent.SWITCH_FLIPSIDE_PIT_CAGE)))
+    r.connect(SPMEntrance.MAC05_L_3D_1_2, SPMRegion.L_FLIPSIDE_PIT_ENTRANCE, SPMRegion.MAC05_LAYER2,
+              r.can_flip())
+    r.event(SPMRegion.L_FLIPSIDE_PIT_ENTRANCE, SPMEvent.SWITCH_FLIPSIDE_PIT_CAGE)
+
+    r.connect(SPMEntrance.MAC05_L_3D_2_1, SPMRegion.MAC05_LAYER2, SPMRegion.L_FLIPSIDE_PIT_ENTRANCE,
+              r.has_all(SPMItem.CHARACTER_MARIO, SPMItem.PIXL_TIPPI))
     r.connect(SPMEntrance.MAC05_DOKAN_2, SPMRegion.MAC05_LAYER2, SPMRegion.MAC07_LAYER1,
               randomization_group=EGroup.PIPE | EGroup.HUB)
-    # r.location(SPMLocation.FLIPSIDE_B2_CHEST_AFTER_PIPE)
+    r.location(SPMLocation.FLIPSIDE_B2_CHEST_AFTER_PIPE,
+               r.has(SPMEvent.SMASH_FLOPSIDE_B2_OUTSKIRTS_BLOCK))
 
     # Flipside 1F Outskirts
     r.connect(SPMEntrance.MAC06_DOKAN_1, SPMRegion.MAC06_LAYER1, SPMRegion.MAC02_LAYER3,
               randomization_group=EGroup.PIPE | EGroup.HUB)
     r.connect(SPMEntrance.MAC06_DOKAN_2, SPMRegion.MAC06_LAYER1, SPMRegion.MAC07_LAYER1,
-              r.has_any(SPMItem.PIXL_BOOMER, SPMItem.PIXL_THUDLEY, SPMItem.PIXL_CUDGE,
-                        SPMItem.CHARACTER_BOWSER),
+              r.can_break_hard_blocks(),  # Bowser *barely* has enough room to stand to break the blocks
               EGroup.PIPE | EGroup.HUB)
     r.connect(SPMEntrance.MAC06_JUMP, SPMRegion.MAC06_LAYER1, SPMRegion.MAC08)
     r.connect(SPMEntrance.MAC06_L_3D_1_2, SPMRegion.MAC06_LAYER1, SPMRegion.MAC06_LAYER2,
@@ -373,26 +384,33 @@ def flipside_rules(r: SPMRuleBuilder):
 
     r.connect(SPMEntrance.MAC06_L_3D_2_1, SPMRegion.MAC06_LAYER2, SPMRegion.MAC06_LAYER1,
               r.can_flip())
-    r.location(SPMLocation.FLIPSIDE_HEART_PILLAR_ORANGE, r.has(SPMItem.ORANGE_PURE_HEART))
+    r.location(SPMLocation.FLIPSIDE_HEART_PILLAR_ORANGE,
+               r.if_all(
+                   # Thoreau place a squig below the pillar to jump off of
+                   r.if_any(r.can_float(), r.has(SPMItem.PIXL_THOREAU)),
+                   r.has(SPMItem.ORANGE_PURE_HEART)))
 
     # Flipside B1 Outskirts
     r.connect(SPMEntrance.MAC07_DOKAN_1, SPMRegion.MAC07_LAYER1, SPMRegion.MAC05_LAYER2,
               randomization_group=EGroup.PIPE | EGroup.HUB)
     r.connect(SPMEntrance.MAC07_DOKAN_2, SPMRegion.MAC07_LAYER1, SPMRegion.MAC06_LAYER1,
               randomization_group=EGroup.PIPE | EGroup.HUB)
-    r.connect(SPMEntrance.MAC07_L_3D_1_2, SPMRegion.MAC07_LAYER1, SPMRegion.MAC07_LAYER2)
+    # SPMLocation.FLIPSIDE_B1_OUTSKIRTS_CHEST_BEHIND_PILLAR
 
-    r.connect(SPMEntrance.MAC07_L_3D_2_1, SPMRegion.MAC07_LAYER2, SPMRegion.MAC07_LAYER1)
-    r.location(SPMLocation.FLIPSIDE_HEART_PILLAR_YELLOW, r.has(SPMItem.YELLOW_PURE_HEART))
+    r.connect(SPMEntrance.MAC07_L_3D_2_1, SPMRegion.MAC07_LAYER2, SPMRegion.MAC07_LAYER1,
+              r.if_all(r.can_flip(), r.has(SPMEvent.SMASH_FLOPSIDE_B1_OUTSKIRTS_BLOCK)))
+    r.location(SPMLocation.FLIPSIDE_HEART_PILLAR_YELLOW,
+               r.if_all(r.can_flip(), r.has_all(SPMItem.YELLOW_PURE_HEART, SPMItem.PIXL_SLIM)))
 
     # Flipside 1F Outskirts - Chasm
     r.connect(SPMEntrance.MAC08_DEFAULT, SPMRegion.MAC08, SPMRegion.MAC06_LAYER1)
-    r.location(SPMLocation.FLIPSIDE_1F_OUTSKIRTS_LEFT_CHEST_IN_HOLE)
-    r.location(SPMLocation.FLIPSIDE_1F_OUTSKIRTS_RIGHT_CHEST_IN_HOLE)
+    # SPMLocation.FLIPSIDE_1F_OUTSKIRTS_LEFT_CHEST_IN_HOLE
+    # SPMLocation.FLIPSIDE_1F_OUTSKIRTS_RIGHT_CHEST_IN_HOLE
 
     # Flipside 1F
     r.connect(SPMEntrance.MAC09_DOA6_I, SPMRegion.MAC09_LAYER1, SPMRegion.MAC03_LAYER1)
-    r.connect(SPMEntrance.MAC09_L_3D_1_2, SPMRegion.MAC09_LAYER1, SPMRegion.MAC09_LAYER2)
+    r.connect(SPMEntrance.MAC09_L_3D_1_2, SPMRegion.MAC09_LAYER1, SPMRegion.MAC09_LAYER2,
+              r.can_flip())  # Standing outside Mirror Hall, you don't need Fleep. You just walk thru the wall
 
     r.connect(SPMEntrance.MAC09_L_3D_2_1, SPMRegion.MAC09_LAYER2, SPMRegion.MAC09_LAYER1,
               r.if_all(r.has(SPMItem.PIXL_FLEEP), r.can_flip()))
@@ -402,6 +420,7 @@ def flipside_rules(r: SPMRuleBuilder):
     r.connect(SPMEntrance.MAC09_ELV1, SPMRegion.MAC09_LAYER3, SPMRegion.MAC02_LAYER1,
               randomization_group=EGroup.ELEVATOR_UP | EGroup.HUB)
     r.connect(SPMEntrance.MAC09_ELV2, SPMRegion.MAC09_LAYER3, SPMRegion.MAC04_LAYER1,
+              r.always(),  # This elevator only works starting at GSW(0, 73), getting boomer
               randomization_group=EGroup.ELEVATOR_DOWN | EGroup.HUB)
     r.connect(SPMEntrance.MAC09_L_3D_3_2, SPMRegion.MAC09_LAYER3, SPMRegion.MAC09_LAYER2,
               r.if_all(r.has(SPMItem.PIXL_BOOMER), r.can_flip()))
@@ -493,7 +512,10 @@ def flopside_rules(r: SPMRuleBuilder):
 
     r.connect(SPMEntrance.MAC15_JUMP, SPMRegion.MAC15_LAYER2, SPMRegion.MAC18)
     r.connect(SPMEntrance.MAC15_DOKAN_2, SPMRegion.MAC15_LAYER2, SPMRegion.MAC17_LAYER2)
-    r.location(SPMLocation.FLOPSIDE_B2_CHEST_AFTER_PIPE, r.has(SPMItem.PIXL_CUDGE))
+    r.event(SPMRegion.MAC15_LAYER2, SPMEvent.SMASH_FLOPSIDE_B2_OUTSKIRTS_BLOCK, None,
+            r.if_all(r.has(SPMItem.PIXL_CUDGE), r.can_flip()))
+    r.location(SPMLocation.FLOPSIDE_B2_CHEST_AFTER_PIPE,
+               r.has(SPMEvent.SMASH_FLOPSIDE_B2_OUTSKIRTS_BLOCK))
 
     # Flopside 1st Floor Outskirts
     r.connect(SPMEntrance.MAC16_DOKAN_1, SPMRegion.MAC16_LAYER1, SPMRegion.MAC12_LAYER3)
@@ -506,8 +528,14 @@ def flopside_rules(r: SPMRuleBuilder):
     # Flopside B1 Outskirts
     r.connect(SPMEntrance.MAC17_DOKAN1, SPMRegion.MAC17_LAYER1, SPMRegion.MAC15_LAYER2)
     r.connect(SPMEntrance.MAC17_DOKAN2, SPMRegion.MAC17_LAYER1, SPMRegion.MAC16_LAYER1)
+    # SPMLocation.FLOPSIDE_B1_OUTSKIRT_CHEST_BEHIND_PILLAR
 
-    r.location(SPMLocation.FLOPSIDE_HEART_PILLAR_PURPLE, r.if_all(r.can_flip(), r.has(SPMItem.PURPLE_PURE_HEART)))
+    r.connect(SPMEntrance.MAC17_L_3D_2_1, SPMRegion.MAC17_LAYER2, SPMRegion.MAC17_LAYER1,
+              r.if_all(r.has(SPMItem.CHARACTER_LUIGI), r.can_flip()))
+    r.location(SPMLocation.FLOPSIDE_HEART_PILLAR_PURPLE,
+               r.has_all(SPMItem.PURPLE_PURE_HEART, SPMItem.CHARACTER_LUIGI))  # Luigi can make the jump w/o super jump
+    r.event(SPMRegion.MAC17_LAYER2, SPMEvent.SMASH_FLOPSIDE_B1_OUTSKIRTS_BLOCK, None,
+            r.has(SPMItem.PIXL_CUDGE))
 
     r.connect(SPMEntrance.MAC18_DEFAULT, SPMRegion.MAC18, SPMRegion.MAC15_LAYER1)
 

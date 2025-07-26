@@ -8,7 +8,7 @@ if typing.TYPE_CHECKING:
     from . import SuperPaperMarioWorld
 
 
-def create_regions(world: "SuperPaperMarioWorld"):
+def create_regions(world: "SuperPaperMarioWorld", disabled_locations: set[str]):
     """Create each region needed for the world and add it to the multiworld"""
     player = world.player
     multiworld = world.multiworld
@@ -19,7 +19,9 @@ def create_regions(world: "SuperPaperMarioWorld"):
         if region_name in region_locations:
             r.add_locations({loc: location_table[loc].code + BASE_LOCATION_ID
                              for loc in region_locations[region_name]
-                             if location_table[loc].code is not None and location_table[loc].code != 0},
+                             if location_table[loc].code is not None
+                             and location_table[loc].code != 0
+                             and loc not in disabled_locations},
                             SuperPaperMarioLocation)
         multiworld.regions.append(r)
 
@@ -29,7 +31,9 @@ def get_locations(world: "SuperPaperMarioWorld") -> dict[str, list[str]]:
     """Get the list of location names per each region name"""
     return {
         # region Flipside
-        SPMRegion.MAC01_LAYER1: [SPMLocation.FLIPSIDE_HEART_PILLAR_RED],
+        SPMRegion.MAC01_LAYER1: [
+            SPMLocation.FLIPSIDE_HEART_PILLAR_RED, SPMLocation.FLIPSIDE_3F_EAT_A_SPICY_SOUP,
+            SPMLocation.FLIPSIDE_3F_FISHBOWL],
         SPMRegion.MAC01_LAYER2: [
             SPMLocation.FLIPSIDE_3F_CHEST_IN_PICCOLO_BLOCK, SPMLocation.FLIPSIDE_3F_CHEST_AFTER_INVISIBLE_BLOCKS],
 
@@ -46,7 +50,7 @@ def get_locations(world: "SuperPaperMarioWorld") -> dict[str, list[str]]:
         # SPMRegion.MAC03_LAYER1: [],
         # SPMRegion.MAC03_LAYER2: [],
 
-        # SPMRegion.MAC04_LAYER1: [],
+        SPMRegion.MAC04_LAYER1: [SPMLocation.FLIPSIDE_B1_3D_CHEST],
         SPMRegion.MAC04_ITTY_BITS: [
             SPMLocation.FLIPSIDE_ITTY_BITS_1, SPMLocation.FLIPSIDE_ITTY_BITS_2, SPMLocation.FLIPSIDE_ITTY_BITS_3],
         # SPMRegion.MAC04_ARCADE_PIPE: [],
@@ -57,7 +61,7 @@ def get_locations(world: "SuperPaperMarioWorld") -> dict[str, list[str]]:
         # SPMRegion.MAC06_LAYER1: [],
         SPMRegion.MAC06_LAYER2: [SPMLocation.FLIPSIDE_HEART_PILLAR_ORANGE],
 
-        # SPMRegion.MAC07_LAYER1: [],
+        SPMRegion.MAC07_LAYER1: [SPMLocation.FLIPSIDE_B1_OUTSKIRTS_CHEST_BEHIND_PILLAR],
         SPMRegion.MAC07_LAYER2: [SPMLocation.FLIPSIDE_HEART_PILLAR_YELLOW],
 
         SPMRegion.MAC08: [
@@ -93,7 +97,7 @@ def get_locations(world: "SuperPaperMarioWorld") -> dict[str, list[str]]:
         # SPMRegion.MAC16_LAYER1: [],
         SPMRegion.MAC16_LAYER2: [SPMLocation.FLOPSIDE_HEART_PILLAR_BLUE],
 
-        # SPMRegion.MAC17_LAYER1: [],
+        SPMRegion.MAC17_LAYER1: [SPMLocation.FLOPSIDE_B1_OUTSKIRT_CHEST_BEHIND_PILLAR],
         SPMRegion.MAC17_LAYER2: [SPMLocation.FLOPSIDE_HEART_PILLAR_PURPLE],
 
         SPMRegion.MAC18: [SPMLocation.FLOPSIDE_B2_CHASM_CHEST],
@@ -186,7 +190,7 @@ def get_locations(world: "SuperPaperMarioWorld") -> dict[str, list[str]]:
         SPMRegion.WA401: [SPMLocation.C64_SAMMER_KING_REWARD_1, SPMLocation.C64_SAMMER_KING_REWARD_2, SPMLocation.C64_SAMMER_KING_REWARD_3, SPMLocation.C64_SAMMER_KING_REWARD_4, SPMLocation.C64_SAMMER_KING_REWARD_5, SPMLocation.C64_SAMMER_KING_REWARD_6, SPMLocation.C64_SAMMER_KING_REWARD_7, SPMLocation.C64_STAR_BLOCK],
         SPMRegion.AN101: [SPMLocation.C71_CHEST_AFTER_GIGABYTE, SPMLocation.C71_OPEN_ITEM_ABOVE_PIPE, SPMLocation.C71_GIVE_THE_PETRIFIED_PURE_HEART_TO_JAYDES, SPMLocation.C71_LUIGI, SPMLocation.C71_HIDDEN_OPEN_ITEM_NEAR_LUIGI, SPMLocation.C71_HIDDEN_CHEST_IN_LUIGI_S_ROOM, SPMLocation.C71_STAR_BLOCK],
         SPMRegion.AN201: [SPMLocation.C72_CHEST_IN_FIRST_DARK_ROOM, SPMLocation.C72_DEFEAT_BOWSER, SPMLocation.C72_TALK_TO_HAGRA_AND_GET_THE_BOOK_FROM_THE_D_MAN, SPMLocation.C72_BRING_THE_DIET_BOOK_TO_HAGRA, SPMLocation.C72_STAR_BLOCK],
-        SPMRegion.AN301: [SPMLocation.C73_CHEST_RIGHT_OF_25, SPMLocation.C73_CHEST_AT_34, SPMLocation.C73_CHEST_LEFT_OF_47, SPMLocation.C73_WAKE_PEACH_UP, SPMLocation.C73_CHEST_AT_68, SPMLocation.C73_CHEST_RIGHT_OF_69, SPMLocation.C73_CHEST_RIGHT_OF_CYRRUS, SPMLocation.C73_CHEST_ATOP_BUILDING_AT_80, SPMLocation.C73_CHEST_BEHIND_STAR_BLOCK, SPMLocation.C73_STAR_BLOCK],
+        SPMRegion.AN301: [SPMLocation.C73_CHEST_RIGHT_OF_25, SPMLocation.C73_CHEST_AT_34, SPMLocation.C73_CHEST_LEFT_OF_47, SPMLocation.C73_CHEST_AT_68, SPMLocation.C73_CHEST_RIGHT_OF_69, SPMLocation.C73_CHEST_RIGHT_OF_CYRRUS, SPMLocation.C73_CHEST_ATOP_BUILDING_AT_80, SPMLocation.C73_CHEST_BEHIND_STAR_BLOCK, SPMLocation.C73_STAR_BLOCK],
         SPMRegion.AN401: [SPMLocation.C74_SAVE_SUNBI, SPMLocation.C74_CHEST_AFTER_GIGABYTE, SPMLocation.C74_FREE_WHIBBI, SPMLocation.C74_TALK_TO_YEBBI, SPMLocation.C74_OPEN_ITEM_ABOVE_TWO_DOORS, SPMLocation.C74_TALK_TO_REBBI, SPMLocation.C74_BIG_CHEST_BELOW_REBBI, SPMLocation.C74_TALK_TO_BLUBI_AFTER_WHIBBI, SPMLocation.C74_CHEST_BEHIND_STAIRS, SPMLocation.C74_CHEST_FAR_RIGHT_OF_MELEE, SPMLocation.C74_WHITE_PURE_HEART],
         SPMRegion.LS101: [SPMLocation.C81_RIGHT_CHEST_ABOVE_PEACH_CUTSCENE_START, SPMLocation.C81_LEFT_CHEST_ABOVE_PEACH_CUTSCENE_START, SPMLocation.C81_CHEST_IN_SOOPA_STRIKER_HALLWAY],
         SPMRegion.LS201: [SPMLocation.C82_LEFT_CHEST_ABOVE_MERLON_ROOM, SPMLocation.C82_MIDDLE_CHEST_ABOVE_MERLON_ROOM, SPMLocation.C82_RIGHT_CHEST_ABOVE_MERLON_ROOM, SPMLocation.C82_OPEN_ITEM_BEHIND_5TH_PIPE, SPMLocation.C82_CHEST_IN_CURSYA_ROOM, SPMLocation.C82_FIRST_HUNG_ITEM, SPMLocation.C82_SECOND_HUNG_ITEM, SPMLocation.C82_THIRD_HUNG_ITEM, SPMLocation.C82_DEFEAT_THE_CHROMEBA, SPMLocation.C82_MERLEES_THUNDER_RAGE],
