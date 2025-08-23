@@ -194,19 +194,19 @@ location_table: dict[str, LocData] = {
 
     # region Chapter 2
     # TODO: verify all script variables & items
-    SPMLocation.C21_CHEST_AFTER_SQUIGS: LocData(143, None, None, None),
-    SPMLocation.C21_BOOMER_CHEST: LocData(144, None, None, None),
-    SPMLocation.C21_CHEST_BEHIND_BOOMER_CHEST: LocData(145, None, None, None),
-    SPMLocation.C21_LEFT_CHEST_BEFORE_STAR_BLOCK: LocData(146, None, None, None),
-    SPMLocation.C21_RIGHT_CHEST_BEFORE_STAR_BLOCK: LocData(147, None, None, None),
-    SPMLocation.C21_STAR_BLOCK: LocData(148, None, None, None),
+    SPMLocation.C21_CHEST_AFTER_SQUIGS: LocData(143, 0, GSWF(735), SPMItem.DOOR_KEY_21),
+    SPMLocation.C21_BOOMER_CHEST: LocData(144, 0, GSW(0, 73), SPMItem.PIXL_BOOMER),
+    SPMLocation.C21_CHEST_BEHIND_BOOMER_CHEST: LocData(145, 0, GSWF(738), SPMItem.CATCH_CARD_OLD_MAN_WATCHITT),
+    SPMLocation.C21_LEFT_CHEST_BEFORE_STAR_BLOCK: LocData(146, 0, GSWF(732), SPMItem.CATCH_CARD_SHLURP),
+    SPMLocation.C21_RIGHT_CHEST_BEFORE_STAR_BLOCK: LocData(147, 0, GSWF(733), SPMItem.CATCH_CARD_SWOOPER),
+    SPMLocation.C21_STAR_BLOCK: LocData(148, 0, GSW(0, 76), SPMItem.CHAPTER_2_2_KEY),
 
-    SPMLocation.C22_CHEST_ABOVE_ENTRANCE: LocData(149, None, None, None),
-    SPMLocation.C22_CHEST_ON_ROOF: LocData(150, None, None, None),
-    SPMLocation.C22_OPEN_ITEM_DRAGGED_BY_ROPE: LocData(151, None, None, None),
-    SPMLocation.C22_OPEN_ITEM_HUNG_BY_ROPE: LocData(152, None, None, None),
-    SPMLocation.C22_CHEST_ABOVE_SPIKE_ROOF: LocData(153, None, None, None),
-    SPMLocation.C22_STAR_BLOCK: LocData(154, None, None, None),
+    SPMLocation.C22_CHEST_ON_ROOF: LocData(150, 0, GSWF(729), SPMItem.STOP_WATCH),
+    SPMLocation.C22_CHEST_ABOVE_ENTRANCE: LocData(149, 0, GSWF(730), SPMItem.CATCH_CARD_CURSYA),
+    SPMLocation.C22_OPEN_ITEM_DRAGGED_BY_ROPE: LocData(151, None, None, SPMItem.MUSHROOM),
+    SPMLocation.C22_OPEN_ITEM_HUNG_BY_ROPE: LocData(152, None, None, SPMItem.MUSHROOM),
+    SPMLocation.C22_CHEST_ABOVE_SPIKE_ROOF: LocData(153, 0, GSW(0, 79), SPMItem.HOUSE_KEY),
+    SPMLocation.C22_STAR_BLOCK: LocData(154, 0, GSW(0, 82), SPMItem.CHAPTER_2_3_KEY),
 
     SPMLocation.C23_CHEST_BEHIND_BLOCKS: LocData(155, None, None, None),
     SPMLocation.C23_SLIM_CHEST: LocData(156, None, None, None),

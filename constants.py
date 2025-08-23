@@ -53,6 +53,8 @@ class SPMEvent:
     """All Event names"""
     SWITCH_YOLD_RUINS_SQUIG_ROOM = "Hit the Blue Switch in 1-4 Squig Room"
     SWITCH_FLIPSIDE_PIT_CAGE = "Hit the Blue Switch on the Flipside Pit Cage"  # GSWF(501)
+    SWITCH_GLOAM_VALLEY_BACKGROUND = "Hit the Blue Switch in 2-1 Background"  # GSW(0, 70)
+    SWITCH_GLOAM_VALLEY_UNDERGROUND = "Hit the Blue Switch in 2-1 Underground Stacked Rooms 2"  # GSW(0, 74)
     SMASH_FLOPSIDE_B1_OUTSKIRTS_BLOCK = "Smashed the block in Flopside B1 Outskirts"  # GSWF(507)
     SMASH_FLOPSIDE_B2_OUTSKIRTS_BLOCK = "Smashed the block in Flopside B2 Outskirts"  # GSWF(504)
     COMPLETED_FLIPSIDE_PIT = "Completed Flipside Pit"
@@ -1106,6 +1108,7 @@ class SPMRegion:
     Some levels/screens may have been divided into more regions such as
     AAABB_LAYER0. This is necessary because some screens might change the
     access rules for items inside depending on which entrance you use.
+    Layers are counted furthest from the camera to the closest.
     """
     # Flipside
     MAC01_LAYER1 = "Flipside 3F - Layer 1"
@@ -1202,29 +1205,29 @@ class SPMRegion:
 
     # 2-1: Bogging to Merlee's
     MI101 = f"{MI1} - Entrance"
-    # MI102 = f"{MI1} - "
-    # MI103 = f"{MI1} - "
-    # MI104 = f"{MI1} - "
-    # MI105 = f"{MI1} - "
-    # MI106 = f"{MI1} - "
-    # MI107 = f"{MI1} - "
-    # MI108 = f"{MI1} - "
-    # MI109 = f"{MI1} - "
-    # MI110 = f"{MI1} - "
-    # MI111 = f"{MI1} - "
+    MI102 = f"{MI1} - Underground Stacked Rooms 1"
+    MI103 = f"{MI1} - Underground Stacked Rooms 2"
+    MI104 = f"{MI1} - Before Mansion"
+    MI105 = f"{MI1} - Underground Squigs"
+    MI106 = f"{MI1} - Underground Invisible Switch"
+    MI107 = f"{MI1} - Underground Boomer"
+    MI108 = f"{MI1} - Spinning Device"
+    MI109 = f"{MI1} - Prisoner"
+    MI110 = f"{MI1} - Multiple Doors"
+    MI111 = f"{MI1} - Large Field"
 
     # 2-2: Tricks, Treats, Traps
-    MI201 = f"{MI2} - Entrance"
-    # MI202 = f"{MI2} - "
-    # MI203 = f"{MI2} - "
-    # MI204 = f"{MI2} - "
-    # MI205 = f"{MI2} - "
-    # MI206 = f"{MI2} - "
-    # MI207 = f"{MI2} - "
-    # MI208 = f"{MI2} - "
-    # MI209 = f"{MI2} - "
-    # MI210 = f"{MI2} - "
-    # MI211 = f"{MI2} - "
+    MI201 = f"{MI2} - Outside the Mansion"
+    MI202 = f"{MI2} - Mansion Foyer"
+    MI203 = f"{MI2} - Mimi Room"
+    MI204 = f"{MI2} - Hanging Mushroom Trap"
+    MI205 = f"{MI2} - Coin Path Trap"
+    MI206 = f"{MI2} - Spike Ceiling Trap"
+    MI207 = f"{MI2} - Mushroom Lead Trap"
+    MI208 = f"{MI2} - Star Block"
+    MI209 = f"{MI2} - Shlurp Pit"
+    MI210 = f"{MI2} - Swooper Pit"
+    MI211 = f"{MI2} - Boo Pit"
 
     # 2-3: Breaking the Bank
     MI301 = f"{MI3} - Entrance"
@@ -2001,7 +2004,87 @@ class SPMEntrance:
     HE412_DOA2_I = f"{SPMRegion.HE412} - Right Door"  # HE407_DOA1_I
     # endregion
 
-    # region Chapter 2
+    # region Chapter 2 Entrances
+    # MI101_DEFAULT
+    MI101_DOKAN_1 = f"{SPMRegion.MI101} - Pipe"  # MI105_DOKAN_1
+    MI101_DOA1_I = f"{SPMRegion.MI101} - Locked Door"  # MI108_DOA1_I
+    MI101_DOA2_I = f"{SPMRegion.MI101} - Chapter Door"
+
+    # MI102_DEFAULT
+    MI102_DOA1_I = f"{SPMRegion.MI102} - Bottom Door"  # MI110_DOA6_I
+    MI102_DOA2_I = f"{SPMRegion.MI102} - Top Door"  # MI110_DOA3_I
+
+    # MI103_DEFAULT
+    MI103_DOA1_I = f"{SPMRegion.MI103} - Bottom Door"  # MI110_DOA5_I
+    MI103_DOA2_I = f"{SPMRegion.MI103} - Top Door"  # MI110_DOA4_I
+
+    # MI104_DEFAULT
+    MI104_DOA1_I = f"{SPMRegion.MI104} - Door"  # MI110_DOA2_I
+
+    # MI105_DEFAULT
+    MI105_DOKAN_1 = f"{SPMRegion.MI105} - Pipe"  # MI101_DOKAN_1
+
+    # MI106_DEFAULT
+    MI106_DOKAN_1 = f"{SPMRegion.MI106} - Right Pipe"  # MI110_DOKAN_1
+    MI106_DOKAN_2 = f"{SPMRegion.MI106} - Left Pipe"  # MI107_DOKAN_1
+
+    # MI107_DEFAULT
+    MI107_DOKAN_1 = f"{SPMRegion.MI107} - Pipe"  # MI106_DOKAN_2
+
+    # MI108_DEFAULT
+    MI108_DOKAN_1 = f"{SPMRegion.MI108} - Pipe"  # MI108_HAI_DOKAN
+    MI108_HAI_DOKAN = f"{SPMRegion.MI108} - Background Pipe"  # MI108_DOKAN_1
+    MI108_DOA1_I = f"{SPMRegion.MI108} - Left Door"  # MI101_DOA1_I
+    MI108_DOA2_I = f"{SPMRegion.MI108} - Middle Door"  # MI109_DOA1_I
+    MI108_DOA3_I = f"{SPMRegion.MI108} - Right Door"  # MI111_DOA1_I
+
+    # MI109_DEFAULT
+    MI109_DOA1_I = f"{SPMRegion.MI109} - Door"  # MI108_DOA2_I
+
+    # MI110_DEFAULT
+    MI110_DOKAN_1 = f"{SPMRegion.MI110} - Pipe"  # MI106_DOKAN_1
+    MI110_DOA1_I = f"{SPMRegion.MI110} - Ground Door"  # MI111_DOA2_I
+    MI110_DOA2_I = f"{SPMRegion.MI110} - Left Elevated Door (Switch)"  # MI104_DOA1_I
+    MI110_DOA3_I = f"{SPMRegion.MI110} - Middle Left Elevated Door"  # MI102_DOA2_I
+    MI110_DOA4_I = f"{SPMRegion.MI110} - Middle Elevated Door"  # MI103_DOA2_I
+    MI110_DOA5_I = f"{SPMRegion.MI110} - Middle Right Elevated Door"  # MI103_DOA1_I
+    MI110_DOA6_I = f"{SPMRegion.MI110} - Right Elevated Door"  # MI102_DOA1_I
+
+    # MI111_DEFAULT
+    MI111_DOA1_I = f"{SPMRegion.MI111} - Left Door"  # MI108_DOA3_I
+    MI111_DOA2_I = f"{SPMRegion.MI111} - Right Door"  # MI110_DOA1_I
+    # endregion
+
+    # region 2-2 Entrances
+    # MI201_DEFAULT
+    MI201_DOA_L = f"{SPMRegion.MI201} - Mansion Front Door"
+    # MI201_BANKEN = f"{SPMRegion.MI201} - Kicked out of Mansion"  # Mimi kicks you out with the dogs
+    # MI201_EVENT  # In the middle of the Merlee cutscene before she gives you the star
+
+    # MI202_DEFAULT
+    MI202_DOA_L = f"{SPMRegion.MI202} - Mansion Front Door"
+    MI202_DOA_02_L = f"{SPMRegion.MI202} - Door Behind Curtains"
+
+    # MI203_DEFAULT
+    MI203_DOA1_L = f"{SPMRegion.MI203} - Far Left Door"
+    MI203_DOA2_L = f"{SPMRegion.MI203} - Bottom Right, Left Door"
+    MI203_DOA3_L = f"{SPMRegion.MI203} - Top Right, Left Door"
+    MI203_DOA4_L = f"{SPMRegion.MI203} - Top Right, Middle Door"
+    MI203_DOA5_L = f"{SPMRegion.MI203} - Top Right, Right Door"
+    MI203_DOA6_L = f"{SPMRegion.MI203} - Bottom Right, Right Door"
+
+    MI204_DOA2_L = f"{SPMRegion.MI204} - Door"
+    MI205_DOA2_L = f"{SPMRegion.MI205} - Door"
+    MI206_DOA2_L = f"{SPMRegion.MI206} - Door"
+    MI207_DOA2_L = f"{SPMRegion.MI207} - Door"
+    MI208_DOA2_L = f"{SPMRegion.MI208} - Door"
+
+    MI204_FALL = f"{SPMRegion.MI204} - Pit Trap"
+    MI205_FALL = f"{SPMRegion.MI205} - Pit Trap"
+    MI207_FALL = f"{SPMRegion.MI207} - Pit Trap"
+    MI209_DOKAN_1 = f"{SPMRegion.MI209} - Pipe"
+    MI210_DOKAN_1 = f"{SPMRegion.MI210} - Pipe"
+    MI211_DOKAN_1 = f"{SPMRegion.MI211} - Pipe"
 
     # endregion
 

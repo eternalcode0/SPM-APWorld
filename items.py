@@ -85,8 +85,8 @@ item_table = {
     # # Important Things
     # There are 3 Ruins Keys but unlike other keys, only one item id, instead these are use the sequence value
     SPMItem.RUINS_KEY: ItemData(ItemClassification.progression, 16),
-    # SPMItem.DOOR_KEY_21: ItemData(ItemClassification.progression, 17),
-    # SPMItem.HOUSE_KEY: ItemData(ItemClassification.progression, 18),
+    SPMItem.DOOR_KEY_21: ItemData(ItemClassification.progression, 17),
+    SPMItem.HOUSE_KEY: ItemData(ItemClassification.progression, 18),
     # There are 3 Fort Keys all with the same name/description but diff ids. Can these be combined?
     SPMItem.FORT_KEY: ItemData(ItemClassification.progression, 19),
     # SPMItem.FORT_KEY: ItemData(ItemClassification.progression, 20),
@@ -384,6 +384,8 @@ def create_items(world: "SuperPaperMarioWorld") -> list[SuperPaperMarioItem]:
         SPMItem.FORT_KEY: 3,
         SPMItem.DIMENSION_KEY: 3,
         SPMItem.OLD_KEY: 1,
+        SPMItem.DOOR_KEY_21: 1,
+        SPMItem.HOUSE_KEY: 1,  # 2-2 Key
     }
     items.extend(world.create_item(item_name)
                  for item_name, quantity in item_quantity.items()

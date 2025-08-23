@@ -367,7 +367,7 @@ def flipside_rules(r: SPMRuleBuilder):
 
     r.connect(SPMEntrance.MAC05_L_3D_2_1, SPMRegion.MAC05_LAYER2, SPMRegion.L_FLIPSIDE_PIT_ENTRANCE,
               r.has_all(SPMItem.CHARACTER_MARIO, SPMItem.PIXL_TIPPI))
-    r.connect(SPMEntrance.MAC05_DOKAN_2, SPMRegion.MAC05_LAYER2, SPMRegion.MAC07_LAYER1,
+    r.connect(SPMEntrance.MAC05_DOKAN_2, SPMRegion.MAC05_LAYER2, SPMRegion.MAC07_LAYER2,
               randomization_group=EGroup.PIPE | EGroup.HUB)
     r.location(SPMLocation.FLIPSIDE_B2_CHEST_AFTER_PIPE,
                r.has(SPMEvent.SMASH_FLOPSIDE_B2_OUTSKIRTS_BLOCK))
@@ -375,7 +375,7 @@ def flipside_rules(r: SPMRuleBuilder):
     # Flipside 1F Outskirts
     r.connect(SPMEntrance.MAC06_DOKAN_1, SPMRegion.MAC06_LAYER1, SPMRegion.MAC02_LAYER3,
               randomization_group=EGroup.PIPE | EGroup.HUB)
-    r.connect(SPMEntrance.MAC06_DOKAN_2, SPMRegion.MAC06_LAYER1, SPMRegion.MAC07_LAYER1,
+    r.connect(SPMEntrance.MAC06_DOKAN_2, SPMRegion.MAC06_LAYER1, SPMRegion.MAC07_LAYER2,
               r.can_break_hard_blocks(),  # Bowser *barely* has enough room to stand to break the blocks
               EGroup.PIPE | EGroup.HUB)
     r.connect(SPMEntrance.MAC06_JUMP, SPMRegion.MAC06_LAYER1, SPMRegion.MAC08)
@@ -391,12 +391,12 @@ def flipside_rules(r: SPMRuleBuilder):
                    r.has(SPMItem.ORANGE_PURE_HEART)))
 
     # Flipside B1 Outskirts
-    r.connect(SPMEntrance.MAC07_DOKAN_1, SPMRegion.MAC07_LAYER1, SPMRegion.MAC05_LAYER2,
-              randomization_group=EGroup.PIPE | EGroup.HUB)
-    r.connect(SPMEntrance.MAC07_DOKAN_2, SPMRegion.MAC07_LAYER1, SPMRegion.MAC06_LAYER1,
-              randomization_group=EGroup.PIPE | EGroup.HUB)
     # SPMLocation.FLIPSIDE_B1_OUTSKIRTS_CHEST_BEHIND_PILLAR
 
+    r.connect(SPMEntrance.MAC07_DOKAN_1, SPMRegion.MAC07_LAYER2, SPMRegion.MAC05_LAYER2,
+              randomization_group=EGroup.PIPE | EGroup.HUB)
+    r.connect(SPMEntrance.MAC07_DOKAN_2, SPMRegion.MAC07_LAYER2, SPMRegion.MAC06_LAYER1,
+              randomization_group=EGroup.PIPE | EGroup.HUB)
     r.connect(SPMEntrance.MAC07_L_3D_2_1, SPMRegion.MAC07_LAYER2, SPMRegion.MAC07_LAYER1,
               r.if_all(r.can_flip(), r.has(SPMEvent.SMASH_FLOPSIDE_B1_OUTSKIRTS_BLOCK)))
     r.location(SPMLocation.FLIPSIDE_HEART_PILLAR_YELLOW,
@@ -736,7 +736,127 @@ def chapter1_rules(r: SPMRuleBuilder):
 
 
 def chapter2_rules(r: SPMRuleBuilder):
-    pass
+    # Gloam Valley (2-1)
+    mi110_doors = r.if_any(
+        r.if_all(
+            r.can_super_jump(),
+            r.has_any(SPMItem.PIXL_BOOMER, SPMItem.PIXL_CUDGE),
+            r.can_fire(), r.has_any(SPMItem.CHARACTER_MARIO, SPMItem.CHARACTER_PEACH)))
+
+    # Gloam Valley (2-1)
+    r.connect(SPMEntrance.MI101_DOKAN_1, SPMRegion.MI101, SPMRegion.MI105,
+              r.if_all(
+                  r.can_flip(),
+                  r.if_any(r.can_float(), r.has(SPMItem.PIXL_DASHELL))))
+    r.connect(SPMEntrance.MI101_DOA1_I, SPMRegion.MI101, SPMRegion.MI108,
+              r.if_all(
+                  r.has(SPMItem.DOOR_KEY_21),
+                  r.if_any(r.can_float(), r.has(SPMItem.PIXL_DASHELL))))
+
+    r.connect(SPMEntrance.MI102_DOA1_I, SPMRegion.MI102, SPMRegion.MI110)
+    # r.connect(SPMEntrance.MI102_DOA2_I, SPMRegion.MI102, SPMRegion.MI110) Unnecessary until ER
+    r.event(SPMRegion.MI102, SPMEvent.SWITCH_GLOAM_VALLEY_UNDERGROUND, None,
+            r.if_all(r.can_flip(), r.has(SPMItem.PIXL_BOOMER)))
+
+    r.connect(SPMEntrance.MI103_DOA1_I, SPMRegion.MI103, SPMRegion.MI110)
+    # r.connect(SPMEntrance.MI103_DOA2_I, SPMRegion.MI103, SPMRegion.MI110) Unnecessary until ER
+
+    r.connect(SPMEntrance.MI104_DOA1_I, SPMRegion.MI104, SPMRegion.MI110)
+    r.location(SPMLocation.C21_LEFT_CHEST_BEFORE_STAR_BLOCK,
+               r.can_flip())
+    r.location(SPMLocation.C21_RIGHT_CHEST_BEFORE_STAR_BLOCK,
+               r.can_flip())
+
+    r.connect(SPMEntrance.MI105_DOKAN_1, SPMRegion.MI105, SPMRegion.MI101)
+
+    r.connect(SPMEntrance.MI106_DOKAN_1, SPMRegion.MI106, SPMRegion.MI110)
+    r.connect(SPMEntrance.MI106_DOKAN_2, SPMRegion.MI106, SPMRegion.MI107)
+
+    r.connect(SPMEntrance.MI107_DOKAN_1, SPMRegion.MI107, SPMRegion.MI106)
+    # r.location(SPMLocation.C21_BOOMER_CHEST)
+    r.location(SPMLocation.C21_CHEST_BEHIND_BOOMER_CHEST,
+               r.if_all(r.can_flip(), r.has(SPMItem.PIXL_BOOMER)))
+
+    r.connect(SPMEntrance.MI108_DOA1_I, SPMRegion.MI108, SPMRegion.MI101)
+    r.connect(SPMEntrance.MI108_DOA2_I, SPMRegion.MI108, SPMRegion.MI109)
+    r.connect(SPMEntrance.MI108_DOA3_I, SPMRegion.MI108, SPMRegion.MI111,
+              r.has(SPMEvent.SWITCH_GLOAM_VALLEY_BACKGROUND))
+    r.event(SPMRegion.MI108, SPMEvent.SWITCH_GLOAM_VALLEY_BACKGROUND, None,
+            r.if_any(r.can_float(), r.has(SPMItem.PIXL_DASHELL)))
+
+    r.connect(SPMEntrance.MI109_DOA1_I, SPMRegion.MI109, SPMRegion.MI108)
+
+    r.connect(SPMEntrance.MI110_DOKAN_1, SPMRegion.MI110, SPMRegion.MI106,
+              mi110_doors)
+    r.connect(SPMEntrance.MI110_DOA1_I, SPMRegion.MI110, SPMRegion.MI111,
+              mi110_doors)
+    r.connect(SPMEntrance.MI110_DOA2_I, SPMRegion.MI110, SPMRegion.MI104,
+              r.if_all(mi110_doors, r.has(SPMEvent.SWITCH_GLOAM_VALLEY_UNDERGROUND)))
+    r.connect(SPMEntrance.MI110_DOA3_I, SPMRegion.MI110, SPMRegion.MI102,
+              mi110_doors)
+    r.connect(SPMEntrance.MI110_DOA4_I, SPMRegion.MI110, SPMRegion.MI103,
+              mi110_doors)
+    # r.connect(SPMEntrance.MI110_DOA5_I, SPMRegion.MI110, SPMRegion.MI103)
+    # r.connect(SPMEntrance.MI110_DOA6_I, SPMRegion.MI110, SPMRegion.MI102)
+
+    r.connect(SPMEntrance.MI111_DOA1_I, SPMRegion.MI111, SPMRegion.MI108)
+    r.connect(SPMEntrance.MI111_DOA2_I, SPMRegion.MI111, SPMRegion.MI110)
+
+    # Merlee's Mansion (2-2)
+    r.connect(SPMEntrance.MI201_DOA_L, SPMRegion.MI201, SPMRegion.MI202)
+    r.location(SPMLocation.C22_CHEST_ON_ROOF, r.can_flip())
+    # r.location(SPMLocation.C22_CHEST_ABOVE_ENTRANCE)
+
+    r.connect(SPMEntrance.MI202_DOA_L, SPMRegion.MI202, SPMRegion.MI201)
+    r.connect(SPMEntrance.MI202_DOA_02_L, SPMRegion.MI202, SPMRegion.MI203,
+              r.can_flip())
+
+    r.connect(SPMEntrance.MI203_DOA1_L, SPMRegion.MI203, SPMRegion.MI202)
+    r.connect(SPMEntrance.MI203_DOA2_L, SPMRegion.MI203, SPMRegion.MI207)
+    r.connect(SPMEntrance.MI203_DOA3_L, SPMRegion.MI203, SPMRegion.MI204)
+    r.connect(SPMEntrance.MI203_DOA4_L, SPMRegion.MI203, SPMRegion.MI205)
+    r.connect(SPMEntrance.MI203_DOA5_L, SPMRegion.MI203, SPMRegion.MI206)
+    r.connect(SPMEntrance.MI203_DOA6_L, SPMRegion.MI203, SPMRegion.MI208,
+              r.has(SPMItem.HOUSE_KEY))
+
+    r.connect(SPMEntrance.MI204_DOA2_L, SPMRegion.MI204, SPMRegion.MI203)
+    r.connect(SPMEntrance.MI204_FALL, SPMRegion.MI204, SPMRegion.MI209)
+
+    r.connect(SPMEntrance.MI205_DOA2_L, SPMRegion.MI205, SPMRegion.MI203)
+    r.connect(SPMEntrance.MI205_FALL, SPMRegion.MI205, SPMRegion.MI210)
+
+    r.connect(SPMEntrance.MI206_DOA2_L, SPMRegion.MI206, SPMRegion.MI203)
+    r.location(SPMLocation.C22_CHEST_ABOVE_SPIKE_ROOF,
+               r.if_all(
+                   r.can_flip(),
+                   r.has_any(SPMItem.PIXL_BOOMER, SPMItem.PIXL_CUDGE, SPMItem.CHARACTER_BOWSER)))
+
+    r.connect(SPMEntrance.MI207_DOA2_L, SPMRegion.MI207, SPMRegion.MI203)
+    r.connect(SPMEntrance.MI207_FALL, SPMRegion.MI207, SPMRegion.MI211)
+
+    r.connect(SPMEntrance.MI208_DOA2_L, SPMRegion.MI208, SPMRegion.MI203)
+    # r.location(SPMLocation.C22_STAR_BLOCK)
+
+    r.connect(SPMEntrance.MI209_DOKAN_1, SPMRegion.MI209, SPMRegion.MI204,
+              r.has(SPMItem.PIXL_BOOMER))  # Need boomer to defeat the shlurp
+
+    r.connect(SPMEntrance.MI210_DOKAN_1, SPMRegion.MI210, SPMRegion.MI205,
+              r.if_any(
+                  # Just barely enough to fire breath the switch and ride carrie out
+                  r.if_all(r.can_fire(), r.has(SPMItem.PIXL_CARRIE)),
+                  # Dashell can be used to speed into the pipe faster than it disappears
+                  r.has_any(SPMItem.PIXL_BOOMER, SPMItem.PIXL_DASHELL)))
+
+    r.connect(SPMEntrance.MI211_DOKAN_1, SPMRegion.MI211, SPMRegion.MI207,
+              r.if_any(
+                  # Just barely enough to fire breath the switch and ride carrie out
+                  r.if_all(r.can_fire(), r.has(SPMItem.PIXL_CARRIE)),
+                  # Dashell can be used to speed into the pipe faster than it disappears
+                  r.has_any(SPMItem.PIXL_BOOMER, SPMItem.PIXL_DASHELL)))
+
+    # Merlee's Mansion (2-3)
+
+    # Merlee's Basement (2-4)
 
 
 def chapter3_rules(r: SPMRuleBuilder):
