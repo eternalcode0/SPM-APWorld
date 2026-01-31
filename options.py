@@ -1,7 +1,7 @@
 """All types related to the yaml options and presets"""
 
 from dataclasses import dataclass
-from Options import Choice, PerGameCommonOptions, Range, Toggle
+from Options import Choice, PerGameCommonOptions, Range, Toggle, Visibility
 
 
 class Goal(Choice):
@@ -227,6 +227,16 @@ class EnemyRando(Choice):
     default = option_vanilla
 
 
+class MusicRando(Toggle):
+    """Do you want the music and sound effects to be randomized?"""
+    display_name = "Music Randomization"
+
+
+class PracticeCodes(Toggle):
+    """Do you want to enable Seeky's SPM Practice Codes?"""
+    visibility = Visibility.none
+
+
 @dataclass
 class SuperPaperMarioOptions(PerGameCommonOptions):
     goal: Goal
@@ -240,5 +250,7 @@ class SuperPaperMarioOptions(PerGameCommonOptions):
     flopside_pit_access: FlopsidePitAccess
     flopside_pit_logic: FlopsidePitLogic
     traps: Traps
-    # randomize_entrances: EntranceRando
-    # randomize_enemies: EnemyRando
+    randomize_entrances: EntranceRando
+    randomize_enemies: EnemyRando
+    randomize_music: MusicRando
+    practice_codes: PracticeCodes

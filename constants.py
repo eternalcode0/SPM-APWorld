@@ -1,4 +1,5 @@
 """Lists all constants (mostly strings) used by AP"""
+
 from BaseClasses import Location, Item
 
 
@@ -7,11 +8,13 @@ GAME = "Super Paper Mario"
 
 class SuperPaperMarioLocation(Location):
     """A Location belonging to an instance of Super Paper Mario"""
+
     game: str = GAME
 
 
 class SuperPaperMarioItem(Item):
     """An Item belonging to an instance of Super Paper Mario"""
+
     game: str = GAME
 
 
@@ -51,12 +54,20 @@ LS4 = "Castle Bleck Inner Sanctum"
 
 class SPMEvent:
     """All Event names"""
+
     SWITCH_YOLD_RUINS_SQUIG_ROOM = "Hit the Blue Switch in 1-4 Squig Room"
-    SWITCH_FLIPSIDE_PIT_CAGE = "Hit the Blue Switch on the Flipside Pit Cage"  # GSWF(501)
-    SWITCH_GLOAM_VALLEY_BACKGROUND = "Hit the Blue Switch in 2-1 Background"  # GSW(0, 70)
-    SWITCH_GLOAM_VALLEY_UNDERGROUND = "Hit the Blue Switch in 2-1 Underground Stacked Rooms 2"  # GSW(0, 74)
-    SMASH_FLOPSIDE_B1_OUTSKIRTS_BLOCK = "Smashed the block in Flopside B1 Outskirts"  # GSWF(507)
-    SMASH_FLOPSIDE_B2_OUTSKIRTS_BLOCK = "Smashed the block in Flopside B2 Outskirts"  # GSWF(504)
+    # GSWF(501)
+    SWITCH_FLIPSIDE_PIT_CAGE = "Hit the Blue Switch on the Flipside Pit Cage"
+    # GSW(0, 70)
+    SWITCH_GLOAM_VALLEY_BACKGROUND = "Hit the Blue Switch in 2-1 Background"
+    # GSW(0, 74)
+    SWITCH_GLOAM_VALLEY_UNDERGROUND = (
+        "Hit the Blue Switch in 2-1 Underground Stacked Rooms 2"
+    )
+    # GSWF(507)
+    SMASH_FLOPSIDE_B1_OUTSKIRTS_BLOCK = "Smashed the block in Flopside B1 Outskirts"
+    # GSWF(504)
+    SMASH_FLOPSIDE_B2_OUTSKIRTS_BLOCK = "Smashed the block in Flopside B2 Outskirts"
     COMPLETED_FLIPSIDE_PIT = "Completed Flipside Pit"
     COMPLETED_FLOPSIDE_PIT = "Completed Flopside Pit"
     VICTORY = "Victory"
@@ -64,6 +75,7 @@ class SPMEvent:
 
 class SPMItem:
     """All Item names"""
+
     CHARACTER_MARIO = "Mario"
     CHARACTER_PEACH = "Peach"
     CHARACTER_BOWSER = "Bowser"
@@ -72,9 +84,9 @@ class SPMItem:
     ABILITY_FLIP = "Mario's Flip"
     # It'd be cool to randomize more abilities
     # Should be possible by leveraging the "No Skills" debuff from Tech Cursyas.
-    # ABILITY_UMBRELLA = "Peach's Umbrella"
-    # ABILITY_FIRE = "Bowser's Fire Breath"
-    # ABILITY_SUPER_JUMP = "Luigi's Super Jump"
+    ABILITY_UMBRELLA = "Peach's Umbrella"
+    ABILITY_FIRE = "Bowser's Fire Breath"
+    ABILITY_SUPER_JUMP = "Luigi's Super Jump"
 
     PIXL_TIPPI = "Tippi"
     PIXL_THOREAU = "Thoreau"
@@ -667,27 +679,40 @@ class SPMItem:
 
 class SPMLocation:
     """All Location names"""
+
     STARTING_CHARACTER = "Starting Character"
     STARTING_PIXL = "Starting Pixl"
 
     FLIPSIDE_MERLONS_GIFT = "Flipside Tower - Merlon's Gift"
     FLIPSIDE_3F_CHEST_IN_PICCOLO_BLOCK = "Flipside 3F - Chest in Piccolo block"
     FLIPSIDE_3F_EAT_A_SPICY_SOUP = "Flipside 3F - Give Peach Spicy Soup"
-    FLIPSIDE_3F_CHEST_AFTER_INVISIBLE_BLOCKS = "Flipside 3F - Chest after invisible blocks"
+    FLIPSIDE_3F_CHEST_AFTER_INVISIBLE_BLOCKS = (
+        "Flipside 3F - Chest after invisible blocks"
+    )
     FLIPSIDE_3F_FISHBOWL = "Flipside 3F - Talk to the kid"
-    FLIPSIDE_1F_OUTSKIRTS_LEFT_CHEST_IN_HOLE = "Flipside 1F Outskirts - Left chest in hole"
-    FLIPSIDE_1F_OUTSKIRTS_RIGHT_CHEST_IN_HOLE = "Flipside 1F Outskirts - Right chest in hole"
-    FLIPSIDE_B1_OUTSKIRTS_CHEST_BEHIND_PILLAR = "Flipside B1 Outskirts - Chest behind pillar"
+    FLIPSIDE_1F_OUTSKIRTS_LEFT_CHEST_IN_HOLE = (
+        "Flipside 1F Outskirts - Left chest in hole"
+    )
+    FLIPSIDE_1F_OUTSKIRTS_RIGHT_CHEST_IN_HOLE = (
+        "Flipside 1F Outskirts - Right chest in hole"
+    )
+    FLIPSIDE_B1_OUTSKIRTS_CHEST_BEHIND_PILLAR = (
+        "Flipside B1 Outskirts - Chest behind pillar"
+    )
     FLIPSIDE_B2_CHEST_AFTER_PIPE = "Flipside B2 - Chest after pipe"
     FLIPSIDE_B1_FREE_FISH = "Flipside B1 - Free Captain Gills"
     FLIPSIDE_B1_3D_CHEST = "Flipside B1 - 3D Chest near left side water"
     FLOPSIDE_B2_CHEST_AFTER_PIPE = "Flopside B2 - Chest after pipe"
     FLOPSIDE_3F_CHEST_IN_PICCOLO_BLOCK = "Flopside 3F - Chest in Piccolo block"
-    FLOPSIDE_3F_CHEST_AFTER_INVISIBLE_BLOCKS = "Flopside 3F - Chest after invisible blocks"
+    FLOPSIDE_3F_CHEST_AFTER_INVISIBLE_BLOCKS = (
+        "Flopside 3F - Chest after invisible blocks"
+    )
     FLOPSIDE_B2_CHASM_CHEST = "Flopside B2 Chasm - Chest"
     FLOPSIDE_B1_BEVERAGARIUM_CHEST1 = "Flopside B1 Beveragarium - Chest 1"
     FLOPSIDE_B1_BEVERAGARIUM_CHEST2 = "Flopside B1 Beveragarium - Chest 2"
-    FLOPSIDE_B1_OUTSKIRT_CHEST_BEHIND_PILLAR = "Flopside B1 Outskirt - Chest Behind Pillar"
+    FLOPSIDE_B1_OUTSKIRT_CHEST_BEHIND_PILLAR = (
+        "Flopside B1 Outskirt - Chest Behind Pillar"
+    )
 
     # Heart Pillars
     FLIPSIDE_HEART_PILLAR_RED = "Flipside 3F - Red Heart Pillar"
@@ -800,9 +825,15 @@ class SPMLocation:
 
     # region Chapter 1
     C11_OPEN_ITEM_ABOVE_BESTOVIUS_HOUSE = "1-1 - Open item above Bestovius' House"
-    C11_OPEN_ITEM_INSIDE_BESTOVIUS_HOUSE_HALLWAY = "1-1 - Open item inside Bestovius' House hallway"
-    C11_FIRST_OPEN_ITEM_INSIDE_BESTOVIUS_ROOM = "1-1 - First open item inside Bestovius' Room"
-    C11_SECOND_OPEN_ITEM_INSIDE_BESTOVIUS_ROOM = "1-1 - Second open item inside Bestovius' Room"
+    C11_OPEN_ITEM_INSIDE_BESTOVIUS_HOUSE_HALLWAY = (
+        "1-1 - Open item inside Bestovius' House hallway"
+    )
+    C11_FIRST_OPEN_ITEM_INSIDE_BESTOVIUS_ROOM = (
+        "1-1 - First open item inside Bestovius' Room"
+    )
+    C11_SECOND_OPEN_ITEM_INSIDE_BESTOVIUS_ROOM = (
+        "1-1 - Second open item inside Bestovius' Room"
+    )
     C11_TALK_TO_BESTOVIUS = "1-1 - Talk to Bestovius"
     C11_CHEST_INSIDE_FIRST_PIPE = "1-1 - Chest inside first pipe"
     C11_OPEN_ITEM_BEHIND_PIPE = "1-1 - Open item behind pipe"
@@ -810,14 +841,22 @@ class SPMLocation:
     C11_STAR_BLOCK = "1-1 - Star Block"
 
     C12_CHEST_IN_SHORTCUT = "1-2 - Chest in shortcut"
-    C12_OPEN_ITEM_ON_TOP_OF_WATCHITTS_HOUSE = "1-2 - Open item on top of Watchitt's house"
+    C12_OPEN_ITEM_ON_TOP_OF_WATCHITTS_HOUSE = (
+        "1-2 - Open item on top of Watchitt's house"
+    )
     C12_OPEN_ITEM_BEHIND_GREENS_BED = "1-2 - Open item behind Green's bed"
     C12_THOREAU_CHEST = "1-2 - Thoreau chest"
     C12_STAR_BLOCK = "1-2 - Star Block"
 
-    C13_OPEN_ITEM_BEHIND_ROCK_IN_FIRST_ROOM = "1-3 - Open item behind rock in red palm tree room"
-    C13_OPEN_ITEM_BEHIND_ROCK_IN_SECOND_ROOM = "1-3 - Open item behind rock in rock arrow room"
-    C13_OPEN_ITEM_BEHIND_ROCK_IN_SIXTH_ROOM = "1-3 - Open item behind rock in yellow platform room"
+    C13_OPEN_ITEM_BEHIND_ROCK_IN_FIRST_ROOM = (
+        "1-3 - Open item behind rock in red palm tree room"
+    )
+    C13_OPEN_ITEM_BEHIND_ROCK_IN_SECOND_ROOM = (
+        "1-3 - Open item behind rock in rock arrow room"
+    )
+    C13_OPEN_ITEM_BEHIND_ROCK_IN_SIXTH_ROOM = (
+        "1-3 - Open item behind rock in yellow platform room"
+    )
     C13_STAR_BLOCK = "1-3 - Star Block"
 
     C14_CHEST_IN_SECOND_ROOM = "1-4 - Chest in second room"
@@ -852,7 +891,9 @@ class SPMLocation:
     # endregion
 
     # region Chapter 3
-    C31_TALK_TO_BARRY_AFTER_DEFEATING_FRANCIS = "3-1 - Talk to Barry after defeating Francis"
+    C31_TALK_TO_BARRY_AFTER_DEFEATING_FRANCIS = (
+        "3-1 - Talk to Barry after defeating Francis"
+    )
     C31_CHEST_IN_WARP_ZONE_RIGHT_PIPE = "3-1 - Chest in warp zone right pipe"
     C31_OPEN_ITEM_IN_BACKGROUND = "3-1 - Open item in background"
     C31_CHEST_IN_BACKGROUND_PIPE = "3-1 - Chest in background pipe"
@@ -883,13 +924,17 @@ class SPMLocation:
 
     C42_FLIP_THE_DIMENSIONAL_RIFT = "4-2 - Flip the dimensional rift"
     C42_OPEN_ITEM_IN_CHASM_3_D = "4-2 - Open item in chasm 3D"
-    C42_OPEN_ITEM_BEHIND_PIPE_NEAR_BLAPPYS_HOUSE = "4-2 - Open item behind pipe near Blappy's house"
+    C42_OPEN_ITEM_BEHIND_PIPE_NEAR_BLAPPYS_HOUSE = (
+        "4-2 - Open item behind pipe near Blappy's house"
+    )
     C42_TALK_TO_BLAPPY = "4-2 - Talk to Blappy"
     C42_FLEEP = "4-2 - Fleep"
     C42_STAR_BLOCK = "4-2 - Star Block"
 
     C43_OPEN_ITEM_BEHIND_FIRST_BLOCKS = "4-3 - Open item behind first blocks"
-    C43_OPEN_ITEM_BEHIND_BLOCKS_IN_MANY_WORMHOLE_ROOM = "4-3 - Open item behind blocks in many wormhole room"
+    C43_OPEN_ITEM_BEHIND_BLOCKS_IN_MANY_WORMHOLE_ROOM = (
+        "4-3 - Open item behind blocks in many wormhole room"
+    )
     C43_VISIBLE_OPEN_ITEM_IN_BLOCKS = "4-3 - Visible open item in blocks"
     C43_STAR_BLOCK = "4-3 - Star Block"
 
@@ -947,7 +992,9 @@ class SPMLocation:
     # region Chapter 7
     C71_CHEST_AFTER_GIGABYTE = "7-1 - Chest after Gigabyte"
     C71_OPEN_ITEM_ABOVE_PIPE = "7-1 - Open item above pipe"
-    C71_GIVE_THE_PETRIFIED_PURE_HEART_TO_JAYDES = "7-1 - Give the Petrified Pure Heart to Jaydes"
+    C71_GIVE_THE_PETRIFIED_PURE_HEART_TO_JAYDES = (
+        "7-1 - Give the Petrified Pure Heart to Jaydes"
+    )
     C71_LUIGI = "7-1 - Luigi"
     C71_HIDDEN_OPEN_ITEM_NEAR_LUIGI = "7-1 - Hidden open item near Luigi"
     C71_HIDDEN_CHEST_IN_LUIGI_S_ROOM = "7-1 - Hidden chest in Luigi's room"
@@ -955,7 +1002,9 @@ class SPMLocation:
 
     C72_CHEST_IN_FIRST_DARK_ROOM = "7-2 - Chest in first dark room"
     C72_DEFEAT_BOWSER = "7-2 - Defeat Bowser"
-    C72_TALK_TO_HAGRA_AND_GET_THE_BOOK_FROM_THE_D_MAN = "7-2 - Talk to Hagra and get the book from the D-Man"
+    C72_TALK_TO_HAGRA_AND_GET_THE_BOOK_FROM_THE_D_MAN = (
+        "7-2 - Talk to Hagra and get the book from the D-Man"
+    )
     C72_BRING_THE_DIET_BOOK_TO_HAGRA = "7-2 - Bring the Diet Book to Hagra"
     C72_STAR_BLOCK = "7-2 - Star Block"
 
@@ -984,8 +1033,12 @@ class SPMLocation:
     # endregion
 
     # region Chapter 8
-    C81_RIGHT_CHEST_ABOVE_PEACH_CUTSCENE_START = "8-1 - Right chest above Peach cutscene start"
-    C81_LEFT_CHEST_ABOVE_PEACH_CUTSCENE_START = "8-1 - Left chest above Peach cutscene start"
+    C81_RIGHT_CHEST_ABOVE_PEACH_CUTSCENE_START = (
+        "8-1 - Right chest above Peach cutscene start"
+    )
+    C81_LEFT_CHEST_ABOVE_PEACH_CUTSCENE_START = (
+        "8-1 - Left chest above Peach cutscene start"
+    )
     C81_CHEST_IN_SOOPA_STRIKER_HALLWAY = "8-1 - Chest in Soopa Striker hallway"
 
     C82_LEFT_CHEST_ABOVE_MERLON_ROOM = "8-2 - Left chest above Merlon room"
@@ -999,11 +1052,19 @@ class SPMLocation:
     C82_DEFEAT_THE_CHROMEBA = "8-2 - Defeat the Chromeba"
     C82_MERLEES_THUNDER_RAGE = "8-2 - Merlee's Thunder Rage"
 
-    C83_RIGHT_CHEST_BEHIND_FIRST_HALL_OF_MIRRORS = "8-3 - Right chest behind first hall of mirrors"
-    C83_LEFT_CHEST_BEHIND_FIRST_HALL_OF_MIRRORS = "8-3 - Left chest behind first hall of mirrors"
+    C83_RIGHT_CHEST_BEHIND_FIRST_HALL_OF_MIRRORS = (
+        "8-3 - Right chest behind first hall of mirrors"
+    )
+    C83_LEFT_CHEST_BEHIND_FIRST_HALL_OF_MIRRORS = (
+        "8-3 - Left chest behind first hall of mirrors"
+    )
     C83_CHEST_AFTER_BLOCK_PUZZLE = "8-3 - Chest after block puzzle"
-    C83_RIGHT_CHEST_BEHIND_SECOND_HALL_OF_MIRRORS = "8-3 - Right chest behind second hall of mirrors"
-    C83_LEFT_CHEST_BEHIND_SECOND_HALL_OF_MIRRORS = "8-3 - Left chest behind second hall of mirrors"
+    C83_RIGHT_CHEST_BEHIND_SECOND_HALL_OF_MIRRORS = (
+        "8-3 - Right chest behind second hall of mirrors"
+    )
+    C83_LEFT_CHEST_BEHIND_SECOND_HALL_OF_MIRRORS = (
+        "8-3 - Left chest behind second hall of mirrors"
+    )
 
     C84_CHEST_AFTER_TINY_PASSAGE = "8-4 - Chest after tiny passage"
     C84_CHEST_IN_FIRST_3_D_HALLWAYS = "8-4 - Chest in first 3D hallways"
@@ -1062,7 +1123,9 @@ class SPMLocation:
     M84_MAP_48 = "8-4 - Map #48"
 
     # Piccolo fetch quest
-    PICCOLO_FETCH_WATCHITT_1 = "1-2 - Talk to Watchitt after talking to Merlee, Merluvlee and Bestovius"
+    PICCOLO_FETCH_WATCHITT_1 = (
+        "1-2 - Talk to Watchitt after talking to Merlee, Merluvlee and Bestovius"
+    )
     PICCOLO_FETCH_MERLUMINA = "1-4 - Ask Merlumina to sign the Paper"
     PICCOLO_FETCH_WATCHITT_2 = "1-2 - Give the Autograph to Watchitt"
     PICCOLO_FETCH_BESTOVIUS = "1-1 - Bring the You-Know-What to Bestovius"
@@ -1110,6 +1173,7 @@ class SPMRegion:
     access rules for items inside depending on which entrance you use.
     Layers are counted furthest from the camera to the closest.
     """
+
     # Flipside
     MAC01_LAYER1 = "Flipside 3F - Layer 1"
     MAC01_LAYER2 = "Flipside 3F - Layer 2"
@@ -1672,6 +1736,7 @@ class SPMEntrance:
     - L_BRIDGE: Cross a bridge, usually by flipping with Mario
     - L_FLEEP: Use Fleep
     """
+
     # region Flipside Entrances
     # MAC01_DEFAULT  # Flipside 3F
     MAC01_DOKAN_1 = "Flipside 3F - Layer 2 - Pipe"  # MAC02_DOKAN_1
@@ -1821,7 +1886,9 @@ class SPMEntrance:
     MAC15_L_3D_2_1 = "Flopside B2 - Layer 2 -> 1"
 
     # MAC16_DEFAULT  # Flopside 1F Outskirts
-    MAC16_DOKAN_1 = "Flopside 1F Outskirts - Layer 1 - Left Blocked Pipe"  # MAC12_DOKAN_2
+    MAC16_DOKAN_1 = (
+        "Flopside 1F Outskirts - Layer 1 - Left Blocked Pipe"  # MAC12_DOKAN_2
+    )
     MAC16_DOKAN_2 = "Flopside 1F Outskirts - Layer 1 - Right Pipe"  # MAC15_DOKAN_2
     MAC16_L_3D_1_2 = "Flopside 1F Outskirts - Layer 1 -> 2"
     MAC16_L_3D_2_1 = "Flopside 1F Outskirts - Layer 2 -> 1"
@@ -1852,9 +1919,15 @@ class SPMEntrance:
 
     # region Chapter 1 Entrances
     # HE101_DEFAULT  # Lineland Road
-    HE101_IE_DOA_02 = f"{SPMRegion.HE101} - Bestovius' House, Hidden Door"  # HE106_IE_DOA
-    HE101_DOKAN_2 = f"{SPMRegion.HE101} - Front Pipe near Bestovius' House"  # HE103_DOKAN_1
-    HE101_DOKAN_3 = f"{SPMRegion.HE101} - Back Pipe near Bestovius' House"  # N/A - Not Enterable
+    HE101_IE_DOA_02 = (
+        f"{SPMRegion.HE101} - Bestovius' House, Hidden Door"  # HE106_IE_DOA
+    )
+    HE101_DOKAN_2 = (
+        f"{SPMRegion.HE101} - Front Pipe near Bestovius' House"  # HE103_DOKAN_1
+    )
+    HE101_DOKAN_3 = (
+        f"{SPMRegion.HE101} - Back Pipe near Bestovius' House"  # N/A - Not Enterable
+    )
     HE101_DOA1_L = f"{SPMRegion.HE101} - Chapter Door"  # N/A - Not Enterable
     HE101_DOA2_L = f"{SPMRegion.HE101} - Sealed Door"  # HE102_DOA1_L
 
@@ -1891,7 +1964,9 @@ class SPMEntrance:
     # HE203_DEFAULT
     HE203_DOKAN_1 = f"{SPMRegion.HE203} - Pipe before Red's bridge"  # HE203_H_DOKAN_1
     HE203_DOKAN_2 = f"{SPMRegion.HE203} - Pipe behind bricks"  # HE208_DOKAN_1
-    HE203_DOKAN_3 = f"{SPMRegion.HE203} - Pipe in house behind partition"  # HE206_DOKAN_1
+    HE203_DOKAN_3 = (
+        f"{SPMRegion.HE203} - Pipe in house behind partition"  # HE206_DOKAN_1
+    )
     HE203_DOKAN_4 = f"{SPMRegion.HE203} - Pipe before Green's bridge"  # HE203_H_DOKAN_4
     HE203_H_DOKAN_1 = f"{SPMRegion.HE203} - Left Background Pipe"  # HE203_DOKAN_1
     HE203_H_DOKAN_4 = f"{SPMRegion.HE203} - Right Background Pipe"  # HE203_DOKAN_4
@@ -2089,8 +2164,18 @@ class SPMEntrance:
     # endregion
 
 
-ALL_ENTRANCES = sorted({value for name, value in SPMEntrance.__dict__.items() if not name.startswith("__")})
-ALL_EVENTS = sorted({value for name, value in SPMEvent.__dict__.items() if not name.startswith("__")})
-ALL_ITEMS = sorted({value for name, value in SPMItem.__dict__.items() if not name.startswith("__")})
-ALL_LOCATIONS = sorted({value for name, value in SPMLocation.__dict__.items() if not name.startswith("__")})
-ALL_REGIONS = sorted({value for name, value in SPMRegion.__dict__.items() if not name.startswith("__")})
+ALL_ENTRANCES = sorted(
+    {value for name, value in SPMEntrance.__dict__.items() if not name.startswith("__")}
+)
+ALL_EVENTS = sorted(
+    {value for name, value in SPMEvent.__dict__.items() if not name.startswith("__")}
+)
+ALL_ITEMS = sorted(
+    {value for name, value in SPMItem.__dict__.items() if not name.startswith("__")}
+)
+ALL_LOCATIONS = sorted(
+    {value for name, value in SPMLocation.__dict__.items() if not name.startswith("__")}
+)
+ALL_REGIONS = sorted(
+    {value for name, value in SPMRegion.__dict__.items() if not name.startswith("__")}
+)

@@ -1,20 +1,61 @@
 """Super Paper Mario APWorld"""
 
 import logging
-from typing import TextIO
+from typing import ClassVar, TextIO
 
 from BaseClasses import Location, Item, ItemClassification, Tutorial
+import settings
 from worlds.AutoWorld import World, WebWorld
+from worlds.LauncherComponents import Component, components, launch_subprocess, Type, SuffixIdentifier
 
 from .items import create_items, item_groups, item_table, CHARACTERS, PIXLS
 from .constants import GAME, SuperPaperMarioItem, SPMEvent, SPMItem, SPMLocation, SPMRegion
 from .locations import BASE_LOCATION_ID, location_groups, location_table
+from .patch import output_patch
 from .options import PitAccess, SuperPaperMarioOptions, Traps
 from .regions import create_regions
 from .rules import set_rules, SPMRuleBuilder
 
 
 logger = logging.getLogger(__name__)
+
+
+def run_client(*args) -> None:
+    """
+    Launch the Super Paper Mario client.
+    """
+    print("Running Super Paper Mario Client")
+    from .client import main
+
+    launch_subprocess(main, name="SuperPaperMarioClient", args=args)
+
+
+components.append(
+    Component(
+        "Super Paper Mario Client",
+        func=run_client,
+        component_type=Type.CLIENT,
+        file_identifier=SuffixIdentifier(".apspm"),
+    )
+)
+
+
+class SuperPaperMarioSettings(settings.Group):
+    """Settings for the launcher"""
+    class DolphinPath(settings.UserFilePath):
+        """The location of the Dolphin you want to auto launch patched ROMs with"""
+        is_exe = True
+        description = "Dolphin Executable"
+
+    class RomFile(settings.UserFilePath):
+        """File name of the Super Paper Mario US0 rom"""
+
+        copy_to = "SuperPaperMario-US0.wbfs"
+        description = "Super Paper Mario US0 ROM File"
+
+    dolphin_path: DolphinPath = DolphinPath(None)
+    rom_file: RomFile = RomFile(RomFile.copy_to)
+    rom_start: bool = True
 
 
 class SuperPaperMarioWebWorld(WebWorld):
@@ -39,6 +80,7 @@ class SuperPaperMarioWorld(World):
     Bleck and his minions from destroying the universe."""
     options_dataclass = SuperPaperMarioOptions
     options: SuperPaperMarioOptions
+    settings: ClassVar[SuperPaperMarioSettings]
     game = GAME
     item_name_to_id = {name: data.code for name, data in item_table.items()}
     location_name_to_id = {name: data.code + BASE_LOCATION_ID for name, data in location_table.items()
@@ -143,7 +185,7 @@ class SuperPaperMarioWorld(World):
     # perform accessibility check
 
     def generate_output(self, output_directory: str):
-        pass
+        output_patch(self, output_directory)
 
     def extend_hint_information(self, hint_data: dict[int, dict[int, str]]):
         pass
