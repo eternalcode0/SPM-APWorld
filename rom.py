@@ -1,9 +1,10 @@
 """rom.py handles all things data conversion and representation to/from the rom.
 It does not handles reading/writing to the rom, that is handled by patch.py"""
-from dataclasses import dataclass
-import struct
 
-LEVEL_SETUP_ENTRY_SIZES = [0, 0x20, 0x60, 0x64, 0x68, 0x6c, 0x70]
+import struct
+from dataclasses import dataclass
+
+LEVEL_SETUP_ENTRY_SIZES = [0, 0x20, 0x60, 0x64, 0x68, 0x6C, 0x70]
 """Each /files/setup/ level's 2nd byte describes what type of in-game struct is
 used for its entry. This is the size of each entry based off the 2nd byte (1-6).
 E.g. he1_01 uses type 6 so each entry is 0x70 bytes. 0 is not a valid 2nd byte,
@@ -17,6 +18,7 @@ class LevelSetupEntry:
     These entries have variable size based off the file's header, see
     LEVEL_SETUP_ENTRY_SIZES. Typically represents an enemy.
     """
+
     header: bytes | None  # 4byte unknown
     x_pos: float
     y_pos: float
@@ -40,14 +42,15 @@ class LevelSetupEntry:
         assert LEVEL_SETUP_ENTRY_SIZES[setup_header[1]] == len(entry)
         start = 4 if setup_header[1] == 1 else 0  # 2nd byte `1` means there's 4 extra bytes at the start to preserve
         header = entry[0:start]
-        data = struct.unpack(">fffI", entry[start:start+16])
-        footer = entry[start+16:]
+        data = struct.unpack(">fffI", entry[start : start + 16])
+        footer = entry[start + 16 :]
         return cls(header if len(header) else None, *data, footer if len(footer) else None)
 
 
 @dataclass
 class LevelSetupFile:
     """Internal class to represent a whole /files/setup/ file."""
+
     header: bytes
     entries: list[LevelSetupEntry]
     footer: bytes
@@ -65,7 +68,7 @@ class LevelSetupFile:
         footer = content[-4:]
         size = LEVEL_SETUP_ENTRY_SIZES[header[1]]
         entries_data = content[4:-4]  # shave off the header/footer
-        entries_list = [entries_data[i:i + size] for i in range(0, len(entries_data), size)]
+        entries_list = [entries_data[i : i + size] for i in range(0, len(entries_data), size)]
         entries = []
         for entry in entries_list:
             entries.append(LevelSetupEntry.unpack(header, entry))

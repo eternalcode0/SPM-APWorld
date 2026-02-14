@@ -1,9 +1,10 @@
-from enum import auto, IntEnum
 from dataclasses import dataclass
+from enum import IntEnum, auto
 
 
 class StorageType(IntEnum):
     """The various types of script variables"""
+
     LSW = auto()
     LSWF = auto()
     GF = auto()
@@ -16,6 +17,7 @@ class StorageType(IntEnum):
 class ScriptVariable:
     """A class intended to be inherited to keep track of specific script
     variables in the game"""
+
     mode: StorageType
     addr: int
     value: int

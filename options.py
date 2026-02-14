@@ -1,6 +1,7 @@
 """All types related to the yaml options and presets"""
 
 from dataclasses import dataclass
+
 from Options import Choice, PerGameCommonOptions, Range, Toggle, Visibility
 
 
@@ -9,6 +10,7 @@ class Goal(Choice):
     **Dimentio:** You goal when you defeat Super Dimentio in Chapter 8-4.
         Set "Pure Hearts Required" to access 8-4 eariler.
     """
+
     display_name = "Goal"
     rich_text_doc = True
 
@@ -21,6 +23,7 @@ class Goal(Choice):
 
 class PureHeartsRequired(Range):
     """How many pure hearts are required to goal and/or enter 8-4?"""
+
     display_name = "Pure Hearts Required"
     rich_text_doc = True
 
@@ -31,6 +34,7 @@ class PureHeartsRequired(Range):
 
 class ShufflePureHearts(Toggle):
     """Should Pure Hearts get placed anywhere in the multiworld?"""
+
     display_name = "Shuffle Pure Hearts"
 
 
@@ -46,6 +50,7 @@ class ChapterKeysLock(Choice):
     **Subchapters Locked:** Chapter Keys unlock a single given subchapter.
         They will be named with their subchapter number, Ex. Chapter 1-1 Key
     """
+
     display_name = "Chapter Keys Lock"
     rich_text_doc = True
 
@@ -58,6 +63,7 @@ class ChapterKeysLock(Choice):
 
 class StartingCharacter(Choice):
     """Which character will you start as?"""
+
     display_name = "Starting Character"
 
     default = "random"
@@ -69,6 +75,7 @@ class StartingCharacter(Choice):
 
 class StartingPixl(Choice):
     """Which pixl will you start with?"""
+
     display_name = "Starting Pixl"
 
     default = "random"
@@ -118,6 +125,7 @@ class FlipsidePitAccess(PitAccess):
     *Normal:* Access to Flipside Pit requires hitting the switch above the cage to open it.
         The first floor may be considered in-logic based off whether minimum, characters, chapters, or goal is set.
     """
+
     default = PitAccess.option_closed
 
 
@@ -133,6 +141,7 @@ class FlipsidePitLogic(PitLogic):
 
     *Maximum:* Every floor is considered out-of-logic until you have all Heroes, Pixls, and access to Chapters 1-7
     """
+
     default = PitLogic.option_minimum
 
 
@@ -147,6 +156,7 @@ class FlopsidePitAccess(PitAccess):
     *No Flipside:* The rift is available before the Flipside Pit is completed.
         Access to Flopside Pit only requires Fleep'ing the rift.
     """
+
     option_no_flipside = 3
     default = PitAccess.option_closed
 
@@ -163,6 +173,7 @@ class FlopsidePitLogic(PitLogic):
 
     *Maximum:* Every floor is considered out-of-logic until you have all Heroes, Pixls, and access to Chapters 1-7
     """
+
     default = PitLogic.option_minimum
 
 
@@ -175,6 +186,7 @@ class Traps(Choice):
 
     *All*: Adds all the above traps as well as the Back Cursya trap to the pool.
     """
+
     display_name = "Cursya Traps"
     rich_text_doc = True
 
@@ -191,6 +203,7 @@ class EntranceRando(Toggle):
     Doesn't randomize small buildings / entrances that use the spinning black square transition.
     Doesn't randomize the Chapter doors.
     """
+
     display_name = "Entrance Randomization"
 
 
@@ -209,7 +222,9 @@ class EnemyRando(Choice):
 
     *Any Difficulty:* Enemies can be replaced by any other enemy regardless of difficulty.
     """
+
     display_name = "Enemy Randomization"
+    visibility = Visibility.none
 
     value_shuffle = 0b0_00
     value_random = 0b1_00
@@ -229,12 +244,41 @@ class EnemyRando(Choice):
 
 class MusicRando(Toggle):
     """Do you want the music and sound effects to be randomized?"""
+
     display_name = "Music Randomization"
 
 
 class PracticeCodes(Toggle):
     """Do you want to enable Seeky's SPM Practice Codes?"""
+
     visibility = Visibility.none
+
+
+class ShuffleAbilities(Toggle):
+    """Should each character's ability be randomized into an obtainable item? Adds the following items to the pool:
+
+    - Mario's Flip
+    - Peach's Umbrella
+    - Bowser's Fire
+    - Luigi's Super Jump
+    """
+    display_name = "Ability Shuffle"
+    visibility = Visibility.none
+
+
+class ObscureTricks(Toggle):
+    """Should logic consider obscure tricks to be required for logic.
+    Some examples:
+
+    - Jumping off of enemies, some require using Thoraeu to move the enemy first
+    """
+
+
+class TradingQuest(Toggle):
+    """
+    Should the Piccolo trading quest items & locations be added to the pool?
+    Piccolo will still be in the pool, only the intermediary items/locations are removed.
+    """
 
 
 @dataclass
@@ -245,10 +289,13 @@ class SuperPaperMarioOptions(PerGameCommonOptions):
     starting_character: StartingCharacter
     starting_pixl: StartingPixl
     shuffle_pure_hearts: ShufflePureHearts
+    shuffle_abilities: ShuffleAbilities
     flipside_pit_access: FlipsidePitAccess
     flipside_pit_logic: FlipsidePitLogic
     flopside_pit_access: FlopsidePitAccess
     flopside_pit_logic: FlopsidePitLogic
+    obscure_tricks: ObscureTricks
+    trading_quest: TradingQuest
     traps: Traps
     randomize_entrances: EntranceRando
     randomize_enemies: EnemyRando

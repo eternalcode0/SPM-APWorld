@@ -1,402 +1,55 @@
-from dataclasses import dataclass
+from typing import TYPE_CHECKING
 
-from .constants import SPMEvent, SPMItem, SPMLocation
-from .flags import ScriptVariable, GSW, GSWF
+from BaseClasses import Location
 
+from . import items, regions
+from .data import GAME, RandomizationType, location_data
+from .names import LocationName
+
+if TYPE_CHECKING:
+    from .world import SuperPaperMarioWorld
 
 BASE_LOCATION_ID = 4_998_000
 
-
-@dataclass
-class LocData:
-    code: int
-    """A unique id among all other SPM locations. Gets added to BASE_LOCATION_ID."""
-    rom: int
-    """Where do we write the randomized item to to change what gets picked up?"""
-    var: ScriptVariable
-    """Which game variable is set when this location is checked?
-    https://github.com/SeekyCt/spm-docs/wiki/GSWF"""
-    vanilla_item: str
-    """What SPMItem is normally at this location"""
-
-
-###
-# WARNING: ALL LOCATION IDS STILL SUBJECT TO CHANGE, DO NOT REFERENCE THESE
-###
-location_table: dict[str, LocData] = {
-    # Heart Pillars
-    SPMLocation.FLIPSIDE_HEART_PILLAR_RED: LocData(1, 0, GSW(0, 8), SPMItem.CHAPTER_1_1_KEY),
-    SPMLocation.FLIPSIDE_HEART_PILLAR_ORANGE: LocData(2, 0, GSW(0, 65), SPMItem.CHAPTER_2_1_KEY),
-    SPMLocation.FLIPSIDE_HEART_PILLAR_YELLOW: LocData(3, 0, GSW(0, 100), SPMItem.CHAPTER_3_1_KEY),
-    SPMLocation.FLIPSIDE_HEART_PILLAR_GREEN: LocData(4, 0, GSW(0, 128), SPMItem.CHAPTER_4_1_KEY),
-    SPMLocation.FLOPSIDE_HEART_PILLAR_CYAN: LocData(5, 0, GSW(0, 177), SPMItem.CHAPTER_5_1_KEY),
-    SPMLocation.FLOPSIDE_HEART_PILLAR_BLUE: LocData(6, 0, GSW(0, 224), SPMItem.CHAPTER_6_1_KEY),
-    SPMLocation.FLOPSIDE_HEART_PILLAR_PURPLE: LocData(7, 0, GSW(0, 303), SPMItem.CHAPTER_7_1_KEY),
-    SPMLocation.FLOPSIDE_HEART_PILLAR_WHITE: LocData(8, 0, GSW(0, 356), SPMItem.CHAPTER_8_1_KEY),
-
-    # Shop locations, I don't know if the vanilla items are listed in the correct order
-    SPMLocation.FLIPSIDE_HOWZITS_1: LocData(9, 0, None, SPMItem.SHROOM_SHAKE),
-    SPMLocation.FLIPSIDE_HOWZITS_2: LocData(10, 0, None, SPMItem.LONG_LAST_SHAKE),
-    SPMLocation.FLIPSIDE_HOWZITS_3: LocData(11, 0, None, SPMItem.LIFE_SHROOM),
-    SPMLocation.FLIPSIDE_HOWZITS_4: LocData(12, 0, None, SPMItem.FIRE_BURST),
-    SPMLocation.FLIPSIDE_HOWZITS_5: LocData(13, 0, None, SPMItem.ICE_STORM),
-    SPMLocation.FLIPSIDE_HOWZITS_6: LocData(14, 0, None, SPMItem.SLEEPY_SHEEP),
-    SPMLocation.FLIPSIDE_HOWZITS_7: LocData(15, 0, None, SPMItem.COURAGE_SHELL),
-    SPMLocation.FLIPSIDE_HOWZITS_8: LocData(16, 0, None, SPMItem.SHELL_SHOCK),
-    SPMLocation.FLIPSIDE_HOWZITS_9: LocData(17, 0, None, SPMItem.STAR_MEDAL),
-    SPMLocation.FLIPSIDE_HOWZITS_10: LocData(18, 0, None, SPMItem.GOLD_BAR),
-    SPMLocation.FLIPSIDE_ITTY_BITS_1: LocData(19, 0, None, SPMItem.HONEY_JAR),
-    SPMLocation.FLIPSIDE_ITTY_BITS_2: LocData(20, 0, None, SPMItem.BIG_EGG),
-    SPMLocation.FLIPSIDE_ITTY_BITS_3: LocData(21, 0, None, SPMItem.CAKE_MIX),
-    SPMLocation.FLOPSIDE_NOTSOS_1: LocData(22, 0, None, SPMItem.VOLT_SHROOM),
-    SPMLocation.FLOPSIDE_NOTSOS_2: LocData(23, 0, None, SPMItem.BLOCK_BLOCK),
-    SPMLocation.FLOPSIDE_NOTSOS_3: LocData(24, 0, None, SPMItem.STOP_WATCH),
-    SPMLocation.FLOPSIDE_NOTSOS_4: LocData(25, 0, None, SPMItem.MIGHTY_TONIC),
-    SPMLocation.FLOPSIDE_NOTSOS_5: LocData(26, 0, None, SPMItem.SUPER_SHROOM_SHAKE),
-    SPMLocation.FLOPSIDE_NOTSOS_6: LocData(27, 0, None, SPMItem.THUNDER_RAGE),
-    SPMLocation.FLOPSIDE_NOTSOS_7: LocData(28, 0, None, SPMItem.GHOST_SHROOM),
-    SPMLocation.FLOPSIDE_NOTSOS_8: LocData(29, 0, None, SPMItem.ULTRA_SHROOM_SHAKE),
-    SPMLocation.FLOPSIDE_NOTSOS_9: LocData(30, 0, None, SPMItem.GOLD_BAR_X3),
-    SPMLocation.FLOPSIDE_NOTSOS_10: LocData(31, 0, None, SPMItem.GOLD_MEDAL),
-    SPMLocation.FLOPSIDE_ITTY_BITS_1: LocData(32, 0, None, SPMItem.FRESH_PASTA_BUNCH),
-    SPMLocation.FLOPSIDE_ITTY_BITS_2: LocData(33, 0, None, SPMItem.POWER_STEAK),
-    SPMLocation.FLOPSIDE_ITTY_BITS_3: LocData(34, 0, None, SPMItem.SMELLY_HERB),
-    SPMLocation.YOLD_TOWN_HOWZITS_1: LocData(35, 0, None, SPMItem.FIRE_BURST),
-    SPMLocation.YOLD_TOWN_HOWZITS_2: LocData(36, 0, None, SPMItem.POW_BLOCK),
-    SPMLocation.YOLD_TOWN_HOWZITS_3: LocData(37, 0, None, SPMItem.SHROOM_SHAKE),
-    SPMLocation.YOLD_TOWN_HOWZITS_4: LocData(38, 0, None, SPMItem.LONG_LAST_SHAKE),
-    SPMLocation.YOLD_TOWN_HOWZITS_5: LocData(39, 0, None, SPMItem.LIFE_SHROOM),
-    SPMLocation.YOLD_TOWN_HOWZITS_6: LocData(40, 0, None, SPMItem.SLEEPY_SHEEP),
-    SPMLocation.YOLD_TOWN_HOWZITS_7: LocData(41, 0, None, SPMItem.SHELL_SHOCK),
-    SPMLocation.YOLD_TOWN_HOWZITS_8: LocData(42, 0, None, SPMItem.MIGHTY_TONIC),
-    SPMLocation.YOLD_TOWN_HOWZITS_9: LocData(43, 0, None, SPMItem.COURAGE_SHELL),
-    SPMLocation.YOLD_TOWN_HOWZITS_10: LocData(44, 0, None, SPMItem.VOLT_SHROOM),
-    SPMLocation.DOTWOOD_TREE_ITTY_BITS_1: LocData(45, 0, None, SPMItem.FRESH_VEGGIE),
-    SPMLocation.DOTWOOD_TREE_ITTY_BITS_2: LocData(46, 0, None, SPMItem.HORSETAIL),
-    SPMLocation.DOTWOOD_TREE_ITTY_BITS_3: LocData(47, 0, None, SPMItem.PEACHY_PEACH),
-    SPMLocation.OUTER_LIMITS_HOWZITS_TWINKLE_MART_1: LocData(48, 0, None, SPMItem.GOLDEN_CHOCO_BAR),
-    SPMLocation.OUTER_LIMITS_HOWZITS_TWINKLE_MART_2: LocData(49, 0, None, SPMItem.SHROOM_CHOCO_BAR),
-    SPMLocation.OUTER_LIMITS_HOWZITS_TWINKLE_MART_3: LocData(50, 0, None, SPMItem.SWEET_CHOCO_BAR),
-    SPMLocation.DOWNTOWN_CRAG_HOWZITS_1: LocData(51, 0, None, SPMItem.COURAGE_SHELL),
-    SPMLocation.DOWNTOWN_CRAG_HOWZITS_2: LocData(52, 0, None, SPMItem.FIRE_BURST),
-    SPMLocation.DOWNTOWN_CRAG_HOWZITS_3: LocData(53, 0, None, SPMItem.ICE_STORM),
-    SPMLocation.DOWNTOWN_CRAG_HOWZITS_4: LocData(54, 0, None, SPMItem.LIFE_SHROOM),
-    SPMLocation.DOWNTOWN_CRAG_HOWZITS_5: LocData(55, 0, None, SPMItem.MYSTERY_BOX),
-    SPMLocation.DOWNTOWN_CRAG_HOWZITS_6: LocData(56, 0, None, SPMItem.POW_BLOCK),
-    SPMLocation.DOWNTOWN_CRAG_HOWZITS_7: LocData(57, 0, None, SPMItem.PRIMORDIAL_FRUIT),
-    SPMLocation.DOWNTOWN_CRAG_HOWZITS_8: LocData(58, 0, None, SPMItem.SHROOM_SHAKE),
-    SPMLocation.DOWNTOWN_CRAG_HOWZITS_9: LocData(59, 0, None, SPMItem.SLEEPY_SHEEP),
-    SPMLocation.DOWNTOWN_CRAG_HOWZITS_10: LocData(60, 0, None, SPMItem.SUPER_SHROOM_SHAKE),
-    SPMLocation.DOWNTOWN_CRAG_ITTY_BITS_1: LocData(61, 0, None, SPMItem.KEEL_MANGO),
-    SPMLocation.DOWNTOWN_CRAG_ITTY_BITS_2: LocData(62, 0, None, SPMItem.MILD_COCOA_BEAN),
-    SPMLocation.THE_OVERTHERE_ITTY_BITS_1: LocData(63, 0, None, SPMItem.HOT_DOG),
-    SPMLocation.THE_OVERTHERE_ITTY_BITS_2: LocData(64, 0, None, SPMItem.HOT_SAUCE),
-
-    # New locations to represent the 3 starting items
-    SPMLocation.FLIPSIDE_MERLONS_GIFT: LocData(65, None, None, SPMItem.RED_PURE_HEART),
-    # SPMLocation.FLIPSIDE_STARTING_CHARACTER: LocData(66, None, None, SPMItem.CHARACTER_MARIO),  # reserved
-    # SPMLocation.FLIPSIDE_STARTING_PIXL: LocData(67, None, None, SPMItem.PIXL_TIPPI),  # reserved
-
-    SPMLocation.FLIPSIDE_3F_CHEST_IN_PICCOLO_BLOCK: LocData(68, 0, GSWF(527), SPMItem.CATCH_CARD_MERLEE),
-    SPMLocation.FLIPSIDE_3F_CHEST_AFTER_INVISIBLE_BLOCKS: LocData(69, 0, GSWF(580), SPMItem.COOKING_DISK_R),
-    SPMLocation.FLIPSIDE_3F_EAT_A_SPICY_SOUP: LocData(70, 0, GSW(0, 63), SPMItem.CHARACTER_PEACH),
-    SPMLocation.FLIPSIDE_3F_FISHBOWL: LocData(71, 0, GSW(0, 133), SPMItem.GOLDFISH_BOWL_FISH),
-    SPMLocation.FLIPSIDE_1F_OUTSKIRTS_LEFT_CHEST_IN_HOLE: LocData(72, 0, GSWF(523), SPMItem.CATCH_CARD_MERLON),
-    SPMLocation.FLIPSIDE_1F_OUTSKIRTS_RIGHT_CHEST_IN_HOLE: LocData(73, 0, GSWF(522), SPMItem.CATCH_CARD_MERLUVLEE),
-    SPMLocation.FLIPSIDE_B1_3D_CHEST: LocData(74, 0, GSWF(520), SPMItem.CATCH_CARD_THE_INTER_NED),
-    SPMLocation.FLIPSIDE_B1_OUTSKIRTS_CHEST_BEHIND_PILLAR: LocData(75, 0, GSWF(521), SPMItem.CATCH_CARD_THE_INTER_CHET),
-    SPMLocation.FLIPSIDE_B1_FREE_FISH: LocData(76, 0, GSW(0, 134), SPMItem.GOLDFISH_BOWL_EMPTY),
-    SPMLocation.FLIPSIDE_B2_CHEST_AFTER_PIPE: LocData(77, 0, GSWF(503), SPMItem.HP_PLUS),
-
-    SPMLocation.FLOPSIDE_3F_CHEST_IN_PICCOLO_BLOCK: LocData(78, 0, GSWF(529), SPMItem.CATCH_CARD_NOLREM),
-    SPMLocation.FLOPSIDE_3F_CHEST_AFTER_INVISIBLE_BLOCKS: LocData(79, 0, GSWF(581), SPMItem.COOKING_DISK_W),
-    SPMLocation.FLOPSIDE_B2_CHEST_AFTER_PIPE: LocData(80, 0, GSWF(506), SPMItem.POWER_PLUS),
-    SPMLocation.FLOPSIDE_B2_CHASM_CHEST: LocData(81, 0, GSWF(525), SPMItem.CATCH_CARD_BARRY),
-    SPMLocation.FLOPSIDE_B1_BEVERAGARIUM_CHEST1: LocData(82, 0, GSWF(537), SPMItem.GOLDEN_CARD),
-    SPMLocation.FLOPSIDE_B1_BEVERAGARIUM_CHEST2: LocData(83, 0, GSWF(583), SPMItem.COOKING_DISK_B),
-    SPMLocation.FLOPSIDE_B1_OUTSKIRT_CHEST_BEHIND_PILLAR: LocData(84, 0, GSWF(524), SPMItem.CATCH_CARD_PICCOLO),
-
-    # Piccolo Fetch Quest
-    SPMLocation.PICCOLO_FETCH_WATCHITT_1: LocData(85, 0, GSWF(413), SPMItem.PAPER),
-    SPMLocation.PICCOLO_FETCH_MERLUMINA: LocData(86, 0, GSWF(414), SPMItem.AUTOGRAPH),
-    SPMLocation.PICCOLO_FETCH_WATCHITT_2: LocData(87, 0, GSWF(415), SPMItem.YOU_KNOW_WHAT),
-    SPMLocation.PICCOLO_FETCH_BESTOVIUS: LocData(88, 0, GSWF(416), SPMItem.TRAINING_MACHINE),
-    SPMLocation.PICCOLO_FETCH_MERLUVLEE: LocData(89, 0, GSWF(417), SPMItem.CRYSTAL_BALL),
-    SPMLocation.PICCOLO_FETCH_MERLEE: LocData(90, 0, GSWF(418), SPMItem.RANDOM_HOUSE_KEY),
-    SPMLocation.PICCOLO_FETCH_END: LocData(91, 0, GSWF(517), SPMItem.PIXL_PICCOLO),
-
-    # Flipside Pit
-    SPMLocation.FLIPSIDE_PIT_10: LocData(92, 0, GSWF(433), SPMItem.CATCH_CARD_TIPPI),
-    SPMLocation.FLIPSIDE_PIT_20: LocData(93, 0, GSWF(434), SPMItem.CATCH_CARD_THOREAU),
-    SPMLocation.FLIPSIDE_PIT_30: LocData(94, 0, GSWF(435), SPMItem.CATCH_CARD_BOOMER),
-    SPMLocation.FLIPSIDE_PIT_40: LocData(95, 0, GSWF(436), SPMItem.CATCH_CARD_SLIM),
-    SPMLocation.FLIPSIDE_PIT_50: LocData(96, 0, GSWF(437), SPMItem.CATCH_CARD_THUDLEY),
-    SPMLocation.FLIPSIDE_PIT_60: LocData(97, 0, GSWF(438), SPMItem.CATCH_CARD_CARRIE),
-    SPMLocation.FLIPSIDE_PIT_70: LocData(98, 0, GSWF(439), SPMItem.CATCH_CARD_FLEEP),
-    SPMLocation.FLIPSIDE_PIT_80: LocData(99, 0, GSWF(440), SPMItem.CATCH_CARD_CUDGE),
-    SPMLocation.FLIPSIDE_PIT_90: LocData(100, 0, GSWF(441), SPMItem.CATCH_CARD_DOTTIE),
-    SPMLocation.FLIPSIDE_PIT_100: LocData(101, 0, GSWF(389), SPMItem.PIXL_DASHELL),  # 2 flags for wracktail? 389/409
-    SPMLocation.FLIPSIDE_PIT_WRACKTAIL: LocData(None, 0, GSWF(408), SPMEvent.COMPLETED_FLIPSIDE_PIT),
-
-    # Flopside Pit
-    SPMLocation.FLOPSIDE_PIT_10: LocData(102, 0, GSWF(442), SPMItem.CATCH_CARD_DASHELL),
-    SPMLocation.FLOPSIDE_PIT_20: LocData(103, 0, GSWF(443), SPMItem.CATCH_CARD_GOOMBARIO),
-    SPMLocation.FLOPSIDE_PIT_30: LocData(104, 0, GSWF(444), SPMItem.CATCH_CARD_KOOPER),
-    SPMLocation.FLOPSIDE_PIT_40: LocData(105, 0, GSWF(445), SPMItem.CATCH_CARD_BOMBETTE),
-    SPMLocation.FLOPSIDE_PIT_50: LocData(106, 0, GSWF(446), SPMItem.CATCH_CARD_PARAKARRY),
-    SPMLocation.FLOPSIDE_PIT_60: LocData(107, 0, GSWF(447), SPMItem.CATCH_CARD_BOW),
-    SPMLocation.FLOPSIDE_PIT_70: LocData(108, 0, GSWF(448), SPMItem.CATCH_CARD_WATT),
-    SPMLocation.FLOPSIDE_PIT_80: LocData(109, 0, GSWF(449), SPMItem.CATCH_CARD_SUSHIE),
-    SPMLocation.FLOPSIDE_PIT_90: LocData(110, 0, GSWF(450), SPMItem.CATCH_CARD_LAKILESTER),
-    SPMLocation.FLOPSIDE_PIT_100_1: LocData(111, 0, None, SPMItem.CATCH_CARD_MARIO),
-    SPMLocation.FLOPSIDE_PIT_100_2: LocData(112, 0, None, SPMItem.CATCH_CARD_DARK_MARIO),
-    SPMLocation.FLOPSIDE_PIT_100_3: LocData(113, 0, None, SPMItem.CATCH_CARD_PEACH_1),
-    SPMLocation.FLOPSIDE_PIT_100_4: LocData(114, 0, None, SPMItem.CATCH_CARD_DARK_PEACH),
-    SPMLocation.FLOPSIDE_PIT_100_5: LocData(115, 0, None, SPMItem.CATCH_CARD_BOWSER_1),
-    SPMLocation.FLOPSIDE_PIT_100_6: LocData(116, 0, None, SPMItem.CATCH_CARD_DARK_BOWSER),
-    SPMLocation.FLOPSIDE_PIT_100_7: LocData(117, 0, None, SPMItem.CATCH_CARD_LUIGI),
-    SPMLocation.FLOPSIDE_PIT_100_8: LocData(118, 0, None, SPMItem.CATCH_CARD_DARK_LUIGI),
-    SPMLocation.FLOPSIDE_PIT_SHADOO: LocData(None, 0, None, SPMEvent.COMPLETED_FLOPSIDE_PIT),
-
-    # region Chapter 1
-    # 1-1
-    SPMLocation.C11_OPEN_ITEM_BEHIND_PIPE: LocData(119, 0, GSWF(603), SPMItem.CATCH_CARD_GOOMBA),
-    SPMLocation.C11_CHEST_AFTER_STAR_BLOCK: LocData(120, 0, GSWF(604), SPMItem.CATCH_CARD_KOOPA_TROOPA),
-    SPMLocation.C11_OPEN_ITEM_ABOVE_BESTOVIUS_HOUSE: LocData(121, 0, GSWF(611), SPMItem.CATCH_CARD_SQUIGLET),
-    SPMLocation.C11_CHEST_INSIDE_FIRST_PIPE: LocData(122, 0, GSWF(612), SPMItem.SHROOM_SHAKE),
-    SPMLocation.C11_FIRST_OPEN_ITEM_INSIDE_BESTOVIUS_ROOM: LocData(123, 0, GSWF(614), SPMItem.SHELL_SHOCK),
-    SPMLocation.C11_OPEN_ITEM_INSIDE_BESTOVIUS_HOUSE_HALLWAY: LocData(124, 0, GSWF(615), SPMItem.FIRE_BURST),
-    SPMLocation.C11_TALK_TO_BESTOVIUS: LocData(125, 0, GSW(0, 16), SPMItem.ABILITY_FLIP),
-    SPMLocation.C11_SECOND_OPEN_ITEM_INSIDE_BESTOVIUS_ROOM: LocData(126, 0, GSWF(616), SPMItem.SHROOM_SHAKE),
-    SPMLocation.C11_STAR_BLOCK: LocData(127, 0, GSW(0, 17), SPMItem.CHAPTER_1_2_KEY),
-
-    # 1-2
-    SPMLocation.C12_THOREAU_CHEST: LocData(128, 0, GSW(0, 25), SPMItem.PIXL_THOREAU),
-    SPMLocation.C12_CHEST_IN_SHORTCUT: LocData(129, 0, GSWF(605), SPMItem.CATCH_CARD_PARATROOPA),
-    SPMLocation.C12_OPEN_ITEM_ON_TOP_OF_WATCHITTS_HOUSE: LocData(130, 0, GSWF(610), SPMItem.CATCH_CARD_BOOMBOXER),
-    SPMLocation.C12_OPEN_ITEM_BEHIND_GREENS_BED: LocData(131, 0, GSWF(618), SPMItem.CATCH_CARD_RED_GREEN),
-    SPMLocation.C12_STAR_BLOCK: LocData(132, 0, GSW(0, 28), SPMItem.CHAPTER_1_3_KEY),
-
-    # 1-3
-    SPMLocation.C13_OPEN_ITEM_BEHIND_ROCK_IN_FIRST_ROOM: LocData(133, 0, GSWF(606), SPMItem.CATCH_CARD_SQUIG),
-    SPMLocation.C13_OPEN_ITEM_BEHIND_ROCK_IN_SECOND_ROOM: LocData(134, 0, GSWF(607), SPMItem.COURAGE_SHELL),
-    SPMLocation.C13_OPEN_ITEM_BEHIND_ROCK_IN_SIXTH_ROOM: LocData(135, 0, GSWF(608), SPMItem.GHOST_SHROOM),
-    SPMLocation.C13_STAR_BLOCK: LocData(136, 0, GSW(0, 38), SPMItem.CHAPTER_1_4_KEY),
-
-    # 1-4
-    SPMLocation.C14_CHEST_IN_SECOND_ROOM: LocData(137, 0, GSWF(609), SPMItem.LIFE_SHROOM),
-    SPMLocation.C14_CHEST_IN_SMALL_SPIKY_TROMP_ROOM: LocData(138, 0, GSW(0, 40), SPMItem.RUINS_KEY),
-    SPMLocation.C14_OPEN_KEY_BEHIND_BLOCKS: LocData(139, 0, GSW(0, 43), SPMItem.RUINS_KEY),
-    SPMLocation.C14_HIDDEN_CHEST_AFTER_3D_PATH: LocData(140, 0, GSWF(613), SPMItem.CATCH_CARD_BUZZY_BEETLE),
-    SPMLocation.C14_OPEN_KEY_BETWEEN_FIRE_BARS: LocData(141, 0, GSW(0, 46), SPMItem.RUINS_KEY),
-    SPMLocation.C14_ORANGE_PURE_HEART: LocData(142, 0, GSW(0, 53), SPMItem.ORANGE_PURE_HEART),
-    # endregion
-
-    # region Chapter 2
-    # TODO: verify all script variables & items
-    SPMLocation.C21_CHEST_AFTER_SQUIGS: LocData(143, 0, GSWF(735), SPMItem.DOOR_KEY_21),
-    SPMLocation.C21_BOOMER_CHEST: LocData(144, 0, GSW(0, 73), SPMItem.PIXL_BOOMER),
-    SPMLocation.C21_CHEST_BEHIND_BOOMER_CHEST: LocData(145, 0, GSWF(738), SPMItem.CATCH_CARD_OLD_MAN_WATCHITT),
-    SPMLocation.C21_LEFT_CHEST_BEFORE_STAR_BLOCK: LocData(146, 0, GSWF(732), SPMItem.CATCH_CARD_SHLURP),
-    SPMLocation.C21_RIGHT_CHEST_BEFORE_STAR_BLOCK: LocData(147, 0, GSWF(733), SPMItem.CATCH_CARD_SWOOPER),
-    SPMLocation.C21_STAR_BLOCK: LocData(148, 0, GSW(0, 76), SPMItem.CHAPTER_2_2_KEY),
-
-    SPMLocation.C22_CHEST_ON_ROOF: LocData(150, 0, GSWF(729), SPMItem.STOP_WATCH),
-    SPMLocation.C22_CHEST_ABOVE_ENTRANCE: LocData(149, 0, GSWF(730), SPMItem.CATCH_CARD_CURSYA),
-    SPMLocation.C22_OPEN_ITEM_DRAGGED_BY_ROPE: LocData(151, None, None, SPMItem.MUSHROOM),
-    SPMLocation.C22_OPEN_ITEM_HUNG_BY_ROPE: LocData(152, None, None, SPMItem.MUSHROOM),
-    SPMLocation.C22_CHEST_ABOVE_SPIKE_ROOF: LocData(153, 0, GSW(0, 79), SPMItem.HOUSE_KEY),
-    SPMLocation.C22_STAR_BLOCK: LocData(154, 0, GSW(0, 82), SPMItem.CHAPTER_2_3_KEY),
-
-    SPMLocation.C23_CHEST_BEHIND_BLOCKS: LocData(155, None, None, None),
-    SPMLocation.C23_SLIM_CHEST: LocData(156, None, None, None),
-    SPMLocation.C23_STAR_BLOCK: LocData(157, None, None, None),
-
-    SPMLocation.C24_OPEN_ITEM_BEHIND_ROOM_08_SIGN: LocData(158, None, None, None),
-    SPMLocation.C24_YELLOW_PURE_HEART: LocData(159, None, None, None),
-    # endregion
-
-    # region Chapter 3
-    SPMLocation.C31_TALK_TO_BARRY_AFTER_DEFEATING_FRANCIS: LocData(160, None, None, None),
-    SPMLocation.C31_CHEST_IN_WARP_ZONE_RIGHT_PIPE: LocData(161, None, None, None),
-    SPMLocation.C31_OPEN_ITEM_IN_BACKGROUND: LocData(162, None, None, None),
-    SPMLocation.C31_CHEST_IN_BACKGROUND_PIPE: LocData(163, None, None, None),
-    SPMLocation.C31_CHEST_ABOVE_COLORFUL_PERSONS: LocData(164, None, None, None),
-    SPMLocation.C31_OPEN_ITEM_IN_BACKGROUND_2: LocData(165, None, None, None),
-    SPMLocation.C31_BOWSER: LocData(166, None, None, None),
-    SPMLocation.C31_STAR_BLOCK: LocData(167, None, None, None),
-
-    SPMLocation.C32_HIDDEN_CHEST_NEAR_PIPE: LocData(168, None, None, None),
-    SPMLocation.C32_THUDLEY_CHEST: LocData(169, None, None, None),
-    SPMLocation.C32_STAR_BLOCK: LocData(170, None, None, None),
-
-    SPMLocation.C33_CHOMPS_CHEST: LocData(171, None, None, None),
-    SPMLocation.C33_STAR_BLOCK: LocData(172, None, None, None),
-
-    SPMLocation.C34_CHEST_IN_PIPE_OUTSIDE_OF_CASTLE: LocData(173, None, None, None),
-    SPMLocation.C34_FREE_CARRIE: LocData(174, None, None, None),
-    SPMLocation.C34_RIGHT_FRANCIS_CHAMBER_CHEST: LocData(175, None, None, None),
-    SPMLocation.C34_LEFT_FRANCIS_CHAMBER_CHEST: LocData(176, None, None, None),
-    SPMLocation.C34_GREEN_PURE_HEART: LocData(177, None, None, None),
-    # endregion
-
-    # region Chapter 4
-    SPMLocation.C41_SQUIRPS: LocData(178, None, None, None),  # randomize squirps maybe?
-    SPMLocation.C41_OPEN_ITEM_BEHIND_ASTEROID_1: LocData(179, None, None, None),
-    SPMLocation.C41_OPEN_ITEM_BEHIND_ASTEROID_2: LocData(180, None, None, None),
-    SPMLocation.C41_STAR_BLOCK: LocData(181, None, None, None),
-
-    SPMLocation.C42_FLIP_THE_DIMENSIONAL_RIFT: LocData(182, None, None, None),
-    SPMLocation.C42_OPEN_ITEM_IN_CHASM_3_D: LocData(183, None, None, None),
-    SPMLocation.C42_OPEN_ITEM_BEHIND_PIPE_NEAR_BLAPPYS_HOUSE: LocData(184, None, None, None),
-    SPMLocation.C42_TALK_TO_BLAPPY: LocData(185, None, None, None),
-    SPMLocation.C42_FLEEP: LocData(186, None, None, None),
-    SPMLocation.C42_STAR_BLOCK: LocData(187, None, None, None),
-
-    SPMLocation.C43_OPEN_ITEM_BEHIND_FIRST_BLOCKS: LocData(188, None, None, None),
-    SPMLocation.C43_OPEN_ITEM_BEHIND_BLOCKS_IN_MANY_WORMHOLE_ROOM: LocData(189, None, None, None),
-    SPMLocation.C43_VISIBLE_OPEN_ITEM_IN_BLOCKS: LocData(190, None, None, None),
-    SPMLocation.C43_STAR_BLOCK: LocData(191, None, None, None),
-
-    SPMLocation.C44_CHEST_NEAR_BARRIBAD: LocData(192, None, None, None),
-    SPMLocation.C44_CHEST_ABOVE_LOCKED_DOOR: LocData(193, None, None, None),
-    SPMLocation.C44_CHEST_IN_3_BLOCK_ROOM: LocData(194, None, None, None),
-    SPMLocation.C44_BLUE_PURE_HEART: LocData(195, None, None, None),
-    # endregion
-
-    # region Chapter 5
-    SPMLocation.C51_CHEST_NEAR_WHACKA: LocData(196, None, None, None),
-    SPMLocation.C51_CHEST_AFTER_SHLORPS: LocData(197, None, None, None),
-    SPMLocation.C51_CHEST_IN_CHASM_3_D: LocData(198, None, None, None),
-    SPMLocation.C51_STAR_BLOCK: LocData(199, None, None, None),
-
-    SPMLocation.C52_FIRE_TABLET: LocData(200, None, None, None),
-    SPMLocation.C52_OPEN_ITEM_IN_BACKGROUND: LocData(201, None, None, None),
-    SPMLocation.C52_OPEN_ITEM_IN_FRONT_OF_PIPE: LocData(202, None, None, None),
-    SPMLocation.C52_STONE_TABLET: LocData(203, None, None, None),
-    SPMLocation.C52_WATER_TABLET: LocData(204, None, None, None),
-    SPMLocation.C52_CUDGE: LocData(205, None, None, None),
-    SPMLocation.C52_CHEST_NEAR_STAR_BLOCK: LocData(206, None, None, None),
-    SPMLocation.C52_STAR_BLOCK: LocData(207, None, None, None),
-
-    SPMLocation.C53_OPEN_ITEM_IN_CAVE: LocData(208, None, None, None),
-    SPMLocation.C53_SAVE_CRAGLEY_S_CREW: LocData(209, None, None, None),
-    SPMLocation.C53_STAR_BLOCK: LocData(210, None, None, None),
-
-    SPMLocation.C54_DOTTIE: LocData(211, None, None, None),
-    SPMLocation.C54_OPEN_ITEM_NEAR_PROCESSING_CENTER: LocData(212, None, None, None),
-    SPMLocation.C54_OPEN_ITEM_BEHIND_PIPE: LocData(213, None, None, None),
-    SPMLocation.C54_FLIP_THE_SKULL: LocData(214, None, None, None),
-    SPMLocation.C54_DEFEAT_FLORO_CHUNKS: LocData(215, None, None, None),
-    SPMLocation.C54_INDIGO_PURE_HEART: LocData(216, None, None, None),
-    # endregion
-
-    # region Chapter 6
-    # TODO: how to randomize chapter 6? There's only a single check before post-game
-    SPMLocation.C61_PETRIFIED_PURE_HEART: LocData(217, None, None, None),
-    SPMLocation.C61_STAR_BLOCK: LocData(218, None, None, None),
-
-    SPMLocation.C62_STAR_BLOCK: LocData(219, None, None, None),
-
-    SPMLocation.C63_STAR_BLOCK: LocData(220, None, None, None),
-
-    SPMLocation.C64_SAMMER_KING_REWARD_1: LocData(221, None, None, None),
-    SPMLocation.C64_SAMMER_KING_REWARD_2: LocData(222, None, None, None),
-    SPMLocation.C64_SAMMER_KING_REWARD_3: LocData(223, None, None, None),
-    SPMLocation.C64_SAMMER_KING_REWARD_4: LocData(224, None, None, None),
-    SPMLocation.C64_SAMMER_KING_REWARD_5: LocData(225, None, None, None),
-    SPMLocation.C64_SAMMER_KING_REWARD_6: LocData(226, None, None, None),
-    SPMLocation.C64_SAMMER_KING_REWARD_7: LocData(227, None, None, None),
-    SPMLocation.C64_STAR_BLOCK: LocData(228, None, None, None),
-    # endregion
-
-    # region Chapter 7
-    SPMLocation.C71_CHEST_AFTER_GIGABYTE: LocData(229, None, None, None),
-    SPMLocation.C71_OPEN_ITEM_ABOVE_PIPE: LocData(230, None, None, None),
-    SPMLocation.C71_GIVE_THE_PETRIFIED_PURE_HEART_TO_JAYDES: LocData(231, None, None, None),
-    SPMLocation.C71_LUIGI: LocData(232, None, None, None),
-    SPMLocation.C71_HIDDEN_OPEN_ITEM_NEAR_LUIGI: LocData(233, None, None, None),
-    SPMLocation.C71_HIDDEN_CHEST_IN_LUIGI_S_ROOM: LocData(234, None, None, None),
-    SPMLocation.C71_STAR_BLOCK: LocData(235, None, None, None),
-
-    SPMLocation.C72_CHEST_IN_FIRST_DARK_ROOM: LocData(236, None, None, None),
-    SPMLocation.C72_DEFEAT_BOWSER: LocData(237, None, None, None),
-    SPMLocation.C72_TALK_TO_HAGRA_AND_GET_THE_BOOK_FROM_THE_D_MAN: LocData(238, None, None, None),
-    SPMLocation.C72_BRING_THE_DIET_BOOK_TO_HAGRA: LocData(239, None, None, None),
-    SPMLocation.C72_STAR_BLOCK: LocData(240, None, None, None),
-
-    SPMLocation.C73_CHEST_RIGHT_OF_25: LocData(241, None, None, None),
-    SPMLocation.C73_CHEST_AT_34: LocData(242, None, None, None),
-    SPMLocation.C73_CHEST_LEFT_OF_47: LocData(243, None, None, None),
-    # SPMLocation.C73_WAKE_PEACH_UP: LocData(244, None, None, None),
-    SPMLocation.C73_CHEST_AT_68: LocData(245, None, None, None),
-    SPMLocation.C73_CHEST_RIGHT_OF_69: LocData(246, None, None, None),
-    SPMLocation.C73_CHEST_RIGHT_OF_CYRRUS: LocData(247, None, None, None),
-    SPMLocation.C73_CHEST_ATOP_BUILDING_AT_80: LocData(248, None, None, None),
-    SPMLocation.C73_CHEST_BEHIND_STAR_BLOCK: LocData(249, None, None, None),
-    SPMLocation.C73_STAR_BLOCK: LocData(250, None, None, None),
-
-    SPMLocation.C74_SAVE_SUNBI: LocData(251, None, None, None),
-    SPMLocation.C74_CHEST_AFTER_GIGABYTE: LocData(252, None, None, None),
-    SPMLocation.C74_FREE_WHIBBI: LocData(253, None, None, None),
-    SPMLocation.C74_TALK_TO_YEBBI: LocData(254, None, None, None),
-    SPMLocation.C74_OPEN_ITEM_ABOVE_TWO_DOORS: LocData(255, None, None, None),
-    SPMLocation.C74_TALK_TO_REBBI: LocData(256, None, None, None),
-    SPMLocation.C74_BIG_CHEST_BELOW_REBBI: LocData(257, None, None, None),
-    SPMLocation.C74_TALK_TO_BLUBI_AFTER_WHIBBI: LocData(258, None, None, None),
-    SPMLocation.C74_CHEST_BEHIND_STAIRS: LocData(259, None, None, None),
-    SPMLocation.C74_CHEST_FAR_RIGHT_OF_MELEE: LocData(260, None, None, None),
-    SPMLocation.C74_WHITE_PURE_HEART: LocData(261, None, None, None),
-    # endregion
-
-    # region Chapter 8
-    SPMLocation.C81_RIGHT_CHEST_ABOVE_PEACH_CUTSCENE_START: LocData(262, None, None, None),
-    SPMLocation.C81_LEFT_CHEST_ABOVE_PEACH_CUTSCENE_START: LocData(263, None, None, None),
-    SPMLocation.C81_CHEST_IN_SOOPA_STRIKER_HALLWAY: LocData(264, None, None, None),
-
-    SPMLocation.C82_LEFT_CHEST_ABOVE_MERLON_ROOM: LocData(265, None, None, None),
-    SPMLocation.C82_MIDDLE_CHEST_ABOVE_MERLON_ROOM: LocData(266, None, None, None),
-    SPMLocation.C82_RIGHT_CHEST_ABOVE_MERLON_ROOM: LocData(267, None, None, None),
-    SPMLocation.C82_OPEN_ITEM_BEHIND_5TH_PIPE: LocData(268, None, None, None),
-    SPMLocation.C82_CHEST_IN_CURSYA_ROOM: LocData(269, None, None, None),
-    SPMLocation.C82_FIRST_HUNG_ITEM: LocData(270, None, None, None),
-    SPMLocation.C82_SECOND_HUNG_ITEM: LocData(271, None, None, None),
-    SPMLocation.C82_THIRD_HUNG_ITEM: LocData(272, None, None, None),
-    SPMLocation.C82_DEFEAT_THE_CHROMEBA: LocData(273, None, None, None),
-    SPMLocation.C82_MERLEES_THUNDER_RAGE: LocData(274, None, None, None),
-
-    SPMLocation.C83_RIGHT_CHEST_BEHIND_FIRST_HALL_OF_MIRRORS: LocData(275, None, None, None),
-    SPMLocation.C83_LEFT_CHEST_BEHIND_FIRST_HALL_OF_MIRRORS: LocData(276, None, None, None),
-    SPMLocation.C83_CHEST_AFTER_BLOCK_PUZZLE: LocData(277, None, None, None),
-    SPMLocation.C83_RIGHT_CHEST_BEHIND_SECOND_HALL_OF_MIRRORS: LocData(278, None, None, None),
-    SPMLocation.C83_LEFT_CHEST_BEHIND_SECOND_HALL_OF_MIRRORS: LocData(279, None, None, None),
-
-    SPMLocation.C84_CHEST_AFTER_TINY_PASSAGE: LocData(280, None, None, None),
-    SPMLocation.C84_CHEST_IN_FIRST_3_D_HALLWAYS: LocData(281, None, None, None),
-    SPMLocation.C84_CHEST_IN_SECOND_3_D_HALLWAYS: LocData(282, None, None, None),
-    SPMLocation.C84_CHEST_IN_THIRD_3_D_HALLWAYS: LocData(283, None, None, None),
-    # endregion
+LOCATION_ENUM_TO_DATA = {
+    data.name: data for data in location_data.LOCATION_DATA if data.code is not None and data.region is not None
+}
+LOCATION_NAME_TO_ID = {name.value: data.code + BASE_LOCATION_ID for name, data in LOCATION_ENUM_TO_DATA.items()}
+LOCATION_GROUPS = {group for loc in location_data.LOCATION_DATA for group in loc.groups}
+LOCATION_GROUP_MAP = {
+    group: {loc.name.value for loc in location_data.LOCATION_DATA if group in loc.groups} for group in LOCATION_GROUPS
 }
 
-location_groups: dict[str, set[str]] = {
-    "Flipside Pit": {SPMLocation.FLIPSIDE_PIT_10, SPMLocation.FLIPSIDE_PIT_20, SPMLocation.FLIPSIDE_PIT_30,
-                     SPMLocation.FLIPSIDE_PIT_40, SPMLocation.FLIPSIDE_PIT_50, SPMLocation.FLIPSIDE_PIT_60,
-                     SPMLocation.FLIPSIDE_PIT_70, SPMLocation.FLIPSIDE_PIT_80, SPMLocation.FLIPSIDE_PIT_90,
-                     SPMLocation.FLIPSIDE_PIT_100},
-    "Flopside Pit": {SPMLocation.FLOPSIDE_PIT_10, SPMLocation.FLOPSIDE_PIT_20, SPMLocation.FLOPSIDE_PIT_30,
-                     SPMLocation.FLOPSIDE_PIT_40, SPMLocation.FLOPSIDE_PIT_50, SPMLocation.FLOPSIDE_PIT_60,
-                     SPMLocation.FLOPSIDE_PIT_70, SPMLocation.FLOPSIDE_PIT_80, SPMLocation.FLOPSIDE_PIT_90,
-                     SPMLocation.FLOPSIDE_PIT_100_1, SPMLocation.FLOPSIDE_PIT_100_2, SPMLocation.FLOPSIDE_PIT_100_3,
-                     SPMLocation.FLOPSIDE_PIT_100_4, SPMLocation.FLOPSIDE_PIT_100_5, SPMLocation.FLOPSIDE_PIT_100_6,
-                     SPMLocation.FLOPSIDE_PIT_100_7, SPMLocation.FLOPSIDE_PIT_100_8},
-    "Pit": {SPMLocation.FLIPSIDE_PIT_10, SPMLocation.FLIPSIDE_PIT_20, SPMLocation.FLIPSIDE_PIT_30,
-            SPMLocation.FLIPSIDE_PIT_40, SPMLocation.FLIPSIDE_PIT_50, SPMLocation.FLIPSIDE_PIT_60,
-            SPMLocation.FLIPSIDE_PIT_70, SPMLocation.FLIPSIDE_PIT_80, SPMLocation.FLIPSIDE_PIT_90,
-            SPMLocation.FLIPSIDE_PIT_100,
-            SPMLocation.FLOPSIDE_PIT_10, SPMLocation.FLOPSIDE_PIT_20, SPMLocation.FLOPSIDE_PIT_30,
-            SPMLocation.FLOPSIDE_PIT_40, SPMLocation.FLOPSIDE_PIT_50, SPMLocation.FLOPSIDE_PIT_60,
-            SPMLocation.FLOPSIDE_PIT_70, SPMLocation.FLOPSIDE_PIT_80, SPMLocation.FLOPSIDE_PIT_90,
-            SPMLocation.FLOPSIDE_PIT_100_1, SPMLocation.FLOPSIDE_PIT_100_2, SPMLocation.FLOPSIDE_PIT_100_3,
-            SPMLocation.FLOPSIDE_PIT_100_4, SPMLocation.FLOPSIDE_PIT_100_5, SPMLocation.FLOPSIDE_PIT_100_6,
-            SPMLocation.FLOPSIDE_PIT_100_7, SPMLocation.FLOPSIDE_PIT_100_8}
-}
+
+class SPMLocation(Location):
+    game = GAME
+
+
+def get_location_names_with_ids(location_names: list[LocationName]) -> dict[str, int]:
+    return {location_name: LOCATION_NAME_TO_ID[location_name] for location_name in location_names}
+
+
+def create_all_locations(world: "SuperPaperMarioWorld"):
+    region_map = regions.get_region_map(world)
+    for location in LOCATION_ENUM_TO_DATA.values():
+        rt = location.setting(world.options) if callable(location.setting) else location.setting
+        if rt == RandomizationType.VANILLA_WORLD:
+            loc = SPMLocation(
+                world.player, location.name.value, LOCATION_NAME_TO_ID[location.name.value], region_map[location.region.value]
+            )
+            loc.place_locked_item(world.create_item(location.item.value))
+            region_map[location.region].locations.append(loc)
+        elif rt == RandomizationType.VANILLA_EVENT:
+            region_map[location.region].add_event(location.name.value, location.item.value, None, SPMLocation, items.SPMItem)
+        elif rt == RandomizationType.RANDOM:
+            region_map[location.region].locations.append(
+                SPMLocation(
+                    world.player, location.name.value, LOCATION_NAME_TO_ID[location.name.value], region_map[location.region.value]
+                )
+            )
+
+
+def get_location_map(world: "SuperPaperMarioWorld", location_names: list[LocationName] | None = None) -> dict[LocationName, SPMLocation]:
+    if location_names is None or len(location_names) == 0:
+        location_names = list(LocationName)
+    return {location.name: location for location in world.get_locations() if location.name in location_names}

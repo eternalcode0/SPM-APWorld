@@ -1,21 +1,19 @@
-import os
-import shutil
-import random
 import json
+import os
+import random
+import shutil
 from typing import TYPE_CHECKING
 
 from settings import get_settings
 from worlds.Files import APPatchExtension, APProcedurePatch, AutoPatchExtensionRegister
 
-from .constants import GAME
+from .data import GAME
 from .wit import WIT
-
 
 if TYPE_CHECKING:
     from . import SuperPaperMarioWorld
 
 TMP_EXTRACT = "temp_spm"
-
 
 class SPMProcedurePatch(APProcedurePatch):
     game = GAME
@@ -32,17 +30,13 @@ class SPMProcedurePatch(APProcedurePatch):
         self.file_path = target
         self.read()
         patch_extender = AutoPatchExtensionRegister.get_handler(self.game)
-        assert not isinstance(self.procedure, str), (
-            f"{type(self)} must define procedures"
-        )
+        assert not isinstance(self.procedure, str), f"{type(self)} must define procedures"
         for step, args in self.procedure:
             if isinstance(patch_extender, list):
                 extension = next(
                     (
                         item
-                        for item in [
-                            getattr(extender, step, None) for extender in patch_extender
-                        ]
+                        for item in [getattr(extender, step, None) for extender in patch_extender]
                         if item is not None
                     ),
                     None,
@@ -59,9 +53,7 @@ class SPMPatchExtension(APPatchExtension):
     @staticmethod
     def patch_iso(spmpp: SPMProcedurePatch):
         options = json.loads(spmpp.get_file("options.json").decode("UTF-8"))
-        if os.path.exists(spmpp.file_path):
-            return
-        WIT.unpack_iso(get_settings().super_paper_mario_options.rom_file, TMP_EXTRACT)
+        WIT.unpack_iso(get_settings()['super_paper_mario.world_options'].rom_file, TMP_EXTRACT)
         if options["randomize_enemies"]:
             SPMPatchExtension.randomize_enemies()
         if options["randomize_music"]:
@@ -81,12 +73,12 @@ class SPMPatchExtension(APPatchExtension):
     @staticmethod
     def randomize_music():
         folder_path = f"{TMP_EXTRACT}/files/sound"
+        # Credit to SacredGhost for the music shuffler
         # Get all .brstm files
         brstms = [
             f
             for f in os.listdir(folder_path)
-            if os.path.isfile(os.path.join(folder_path, f))
-            and f.lower().endswith(".brstm")
+            if os.path.isfile(os.path.join(folder_path, f)) and f.lower().endswith(".brstm")
         ]
 
         if len(brstms) < 2:
@@ -116,7 +108,7 @@ class SPMPatchExtension(APPatchExtension):
     @staticmethod
     def apply_practice_codes():
         os.mkdir(f"{TMP_EXTRACT}/mod")
-        shutil.copyfile("./worlds/super_paper_mario/rel/practice_codes.us0.bin", f"{TMP_EXTRACT}/mod/mod.rel")
+        shutil.copyfile("./worlds/super_paper_mario/rel/spm-practice-codes.us0.rel", f"{TMP_EXTRACT}/mod/mod.rel")
 
 
 def output_patch(world: "SuperPaperMarioWorld", output_directory: str):
@@ -125,9 +117,7 @@ def output_patch(world: "SuperPaperMarioWorld", output_directory: str):
         "randomize_music": world.options.randomize_music.value,
         "practice_codes": world.options.practice_codes.value,
     }
-    patch = SPMProcedurePatch(
-        player=world.player, player_name=world.multiworld.player_name[world.player]
-    )
+    patch = SPMProcedurePatch(player=world.player, player_name=world.multiworld.player_name[world.player])
     path = os.path.join(
         output_directory,
         world.multiworld.get_out_file_name_base(world.player) + patch.patch_file_ending,
