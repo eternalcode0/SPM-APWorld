@@ -1,8 +1,9 @@
 """All types related to the yaml options and presets"""
 
 from dataclasses import dataclass
+from typing import Any
 
-from Options import Choice, PerGameCommonOptions, Range, Toggle, Visibility
+from Options import Choice, ItemDict, OptionGroup, PerGameCommonOptions, Range, Toggle, Visibility
 
 
 class Goal(Choice):
@@ -10,9 +11,8 @@ class Goal(Choice):
     **Dimentio:** You goal when you defeat Super Dimentio in Chapter 8-4.
         Set "Pure Hearts Required" to access 8-4 eariler.
     """
-
     display_name = "Goal"
-    rich_text_doc = True
+    internal_name = "goal"
 
     option_dimentio = 0  # Defeat Super Dimentio after collecting all the Pure Hearts
     # option_cards = 1  # Catch Card Hunt
@@ -23,22 +23,15 @@ class Goal(Choice):
 
 class PureHeartsRequired(Range):
     """How many pure hearts are required to goal and/or enter 8-4?"""
-
     display_name = "Pure Hearts Required"
-    rich_text_doc = True
+    internal_name = "pure_hearts_required"
 
     range_start = 1
     range_end = 8
     default = 8
 
 
-class ShufflePureHearts(Toggle):
-    """Should Pure Hearts get placed anywhere in the multiworld?"""
-
-    display_name = "Shuffle Pure Hearts"
-
-
-class ChapterKeysLock(Choice):
+class ChapterDoorAccess(Choice):
     """
     Do Chapter Keys lock access to specific chapters or subchapters?
 
@@ -50,9 +43,8 @@ class ChapterKeysLock(Choice):
     **Subchapters Locked:** Chapter Keys unlock a single given subchapter.
         They will be named with their subchapter number, Ex. Chapter 1-1 Key
     """
-
-    display_name = "Chapter Keys Lock"
-    rich_text_doc = True
+    display_name = "Chapter Door Access"
+    internal_name = "chapter_door_access"
 
     option_open = 0
     option_chapter_locked = 1
@@ -61,10 +53,16 @@ class ChapterKeysLock(Choice):
     default = option_open
 
 
+class ShufflePureHearts(Toggle):
+    """Should Pure Hearts get placed anywhere in the multiworld?"""
+    display_name = "Shuffle Pure Hearts"
+    internal_name = "shuffle_pure_hearts"
+
+
 class StartingCharacter(Choice):
     """Which character will you start as?"""
-
     display_name = "Starting Character"
+    internal_name = "starting_character"
 
     default = "random"
     option_mario = 0
@@ -75,8 +73,8 @@ class StartingCharacter(Choice):
 
 class StartingPixl(Choice):
     """Which pixl will you start with?"""
-
     display_name = "Starting Pixl"
+    internal_name = "starting_pixl"
 
     default = "random"
     option_tippi = 0
@@ -88,9 +86,9 @@ class StartingPixl(Choice):
     option_fleep = 6
     option_cudge = 7
     option_dottie = 8
-    option_barry = 9
-    option_dashell = 10
-    option_piccolo = 11
+    option_piccolo = 9
+    option_barry = 10
+    option_dashell = 11
 
 
 class PitAccess(Choice):
@@ -125,6 +123,8 @@ class FlipsidePitAccess(PitAccess):
     *Normal:* Access to Flipside Pit requires hitting the switch above the cage to open it.
         The first floor may be considered in-logic based off whether minimum, characters, chapters, or goal is set.
     """
+    display_name = "Flipside Pit Access"
+    internal_name = "flipside_pit_access"
 
     default = PitAccess.option_closed
 
@@ -141,6 +141,8 @@ class FlipsidePitLogic(PitLogic):
 
     *Maximum:* Every floor is considered out-of-logic until you have all Heroes, Pixls, and access to Chapters 1-7
     """
+    display_name = "Flipside Pit Logic"
+    internal_name = "flipside_pit_logic"
 
     default = PitLogic.option_minimum
 
@@ -156,6 +158,8 @@ class FlopsidePitAccess(PitAccess):
     *No Flipside:* The rift is available before the Flipside Pit is completed.
         Access to Flopside Pit only requires Fleep'ing the rift.
     """
+    display_name = "Flopside Pit Access"
+    internal_name = "flopside_pit_access"
 
     option_no_flipside = 3
     default = PitAccess.option_closed
@@ -173,6 +177,8 @@ class FlopsidePitLogic(PitLogic):
 
     *Maximum:* Every floor is considered out-of-logic until you have all Heroes, Pixls, and access to Chapters 1-7
     """
+    display_name = "Flopside Pit Logic"
+    internal_name = "flopside_pit_logic"
 
     default = PitLogic.option_minimum
 
@@ -186,9 +192,8 @@ class Traps(Choice):
 
     *All*: Adds all the above traps as well as the Back Cursya trap to the pool.
     """
-
     display_name = "Cursya Traps"
-    rich_text_doc = True
+    internal_name = "traps"
 
     option_none = 0
     option_some = 1
@@ -205,6 +210,8 @@ class EntranceRando(Toggle):
     """
 
     display_name = "Entrance Randomization"
+    internal_name = "randomize_entrances"
+    visibility = Visibility.none  # hidden until feature complete
 
 
 class EnemyRando(Choice):
@@ -224,13 +231,14 @@ class EnemyRando(Choice):
     """
 
     display_name = "Enemy Randomization"
-    visibility = Visibility.none
+    internal_name = "randomize_enemies"
+    visibility = Visibility.none  # hidden until feature complete
 
     value_shuffle = 0b0_00
     value_random = 0b1_00
-    value_same_difficulty = 1
-    value_similar_difficulty = 2
-    value_any_difficulty = 3
+    value_same_difficulty = 0b0_01
+    value_similar_difficulty = 0b0_10
+    value_any_difficulty = 0b0_11
 
     option_vanilla = 0
     option_shuffle_same_difficulty = value_same_difficulty
@@ -244,13 +252,14 @@ class EnemyRando(Choice):
 
 class MusicRando(Toggle):
     """Do you want the music and sound effects to be randomized?"""
-
     display_name = "Music Randomization"
+    internal_name = "randomize_music"
 
 
 class PracticeCodes(Toggle):
     """Do you want to enable Seeky's SPM Practice Codes?"""
-
+    # No display name, this should always be hidden
+    internal_name = "practice_codes"
     visibility = Visibility.none
 
 
@@ -263,7 +272,7 @@ class ShuffleAbilities(Toggle):
     - Luigi's Super Jump
     """
     display_name = "Ability Shuffle"
-    visibility = Visibility.none
+    internal_name = "ability_shuffle"
 
 
 class ObscureTricks(Toggle):
@@ -272,6 +281,8 @@ class ObscureTricks(Toggle):
 
     - Jumping off of enemies, some require using Thoraeu to move the enemy first
     """
+    display_name = "Obscure Tricks"
+    internal_name = "obscure_tricks"
 
 
 class TradingQuest(Toggle):
@@ -279,25 +290,71 @@ class TradingQuest(Toggle):
     Should the Piccolo trading quest items & locations be added to the pool?
     Piccolo will still be in the pool, only the intermediary items/locations are removed.
     """
+    display_name = "Trading Quest"
+    internal_name = "trading_quest"
 
 
 @dataclass
 class SuperPaperMarioOptions(PerGameCommonOptions):
+    # World Access
     goal: Goal
     pure_hearts_required: PureHeartsRequired
-    chapter_keys_lock: ChapterKeysLock
+    chapter_door_access: ChapterDoorAccess
+    # Location Shuffle
+    shuffle_pure_hearts: ShufflePureHearts
+    # Item/Location Pool
     starting_character: StartingCharacter
     starting_pixl: StartingPixl
-    shuffle_pure_hearts: ShufflePureHearts
-    shuffle_abilities: ShuffleAbilities
+    ability_shuffle: ShuffleAbilities
+    trading_quest: TradingQuest
+    traps: Traps
+    # Pit of 100 Trials
     flipside_pit_access: FlipsidePitAccess
     flipside_pit_logic: FlipsidePitLogic
     flopside_pit_access: FlopsidePitAccess
     flopside_pit_logic: FlopsidePitLogic
-    obscure_tricks: ObscureTricks
-    trading_quest: TradingQuest
-    traps: Traps
+    # Other Randomization
     randomize_entrances: EntranceRando
     randomize_enemies: EnemyRando
     randomize_music: MusicRando
+    # Logic
+    obscure_tricks: ObscureTricks
+    # Hidden
     practice_codes: PracticeCodes
+
+
+# TODO: send help, I suck at coming up with option group names.
+# particularly "Location Shuffle" & "Item/Location Pool"
+OPTION_GROUPS = [
+    OptionGroup(
+        "World Access",
+        [Goal, PureHeartsRequired, ChapterDoorAccess]
+    ),
+    OptionGroup(
+        "Location Shuffle",
+        [ShufflePureHearts]
+    ),
+    OptionGroup(
+        "Item/Location Pool",
+        [StartingCharacter, StartingPixl, ShuffleAbilities, TradingQuest, Traps]
+    ),
+    OptionGroup(
+        "Pit of 100 Trials",
+        [FlipsidePitAccess, FlipsidePitLogic, FlopsidePitAccess, FlopsidePitLogic]
+    ),
+    OptionGroup(
+        "Logic",
+        [ObscureTricks],
+    ),
+    OptionGroup(
+        "Other Randomization",
+        [EntranceRando, EnemyRando, MusicRando]
+    )
+]
+
+OPTION_PRESETS: dict[str, dict[str, Any]] = {
+    "easy": {
+        Goal.internal_name: Goal.option_dimentio,
+        PureHeartsRequired.internal_name: 4
+    }
+}

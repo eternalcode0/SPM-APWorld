@@ -1,12 +1,10 @@
 """Defines the set of game items and item pools"""
 import typing
-from dataclasses import dataclass
 
-from BaseClasses import Item, ItemClassification
+from BaseClasses import Item
 
 from .data import GAME, item_data
 from .names import ItemName
-from .options import ChapterKeysLock
 
 if typing.TYPE_CHECKING:
     from . import SuperPaperMarioWorld
@@ -29,18 +27,18 @@ PIXLS = [pixl.name for pixl in item_data.ITEM_DATA if "Pixl" in pixl.groups]
 CHAPTER_KEYS = list(ITEM_GROUP_MAP["Chapter Key"])
 SUBCHAPTER_KEYS = list(ITEM_GROUP_MAP["Subchapter Key"])
 
-def create_items(world: "SuperPaperMarioWorld") -> tuple[list[SPMItem], list[ItemName]]:
+def create_items(world: "SuperPaperMarioWorld") -> list[SPMItem]:
     items = []
-    filler = []
 
     for idata in item_data.ITEM_DATA:
         amount = idata.amount if not callable(idata.amount) else idata.amount(world)
+        # TODO: remove None as a possible value for amount. It was going to be used to represent filler.
         if amount is None:
-            filler.extend(idata.name)
-        elif amount > 0:
+            continue
+        if amount > 0:
             items.extend(world.create_item(idata.name) for _ in range(0, amount))
 
-    return (items, filler)
+    return items
 
 
 def create_item(world: "SuperPaperMarioWorld", item_name: ItemName) -> SPMItem:

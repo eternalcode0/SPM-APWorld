@@ -1,9 +1,10 @@
 from collections.abc import Sequence
 
-from worlds.AutoWorld import Tutorial, WebWorld
+from BaseClasses import Tutorial
+from worlds.AutoWorld import WebWorld
 
 from .data import GAME
-from .options import option_groups, option_presets
+from .options import OPTION_GROUPS, OPTION_PRESETS
 
 
 class SuperPaperMarioWebWorld(WebWorld):
@@ -15,8 +16,8 @@ class SuperPaperMarioWebWorld(WebWorld):
 
     bug_report_page = "https://github.com/eternalcode0/SPM-APWorld/issues"
 
-    option_groups = option_groups
-    options_presets = option_presets
+    option_groups = OPTION_GROUPS
+    options_presets = OPTION_PRESETS
 
     rich_text_options_doc = True
 

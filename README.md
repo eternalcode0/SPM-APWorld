@@ -2,7 +2,14 @@
 
 ## Development Notes
 
-### APWorld Assumptions
+### TODOs
+
+- Decide how/when pure hearts block access in an open world. Do they block all of chapter 8? Only 8-4? Only the final room of 8-4?
+- Ensure Entrance Rando for flipside/flopside doesn't do stupid things. Mirror Hall in particular can somehow get two entrances each pointed at each door.
+- Chapters 2-8 logic in new RuleBuilder pattern
+
+
+### Mod Assumptions
 
 The following are assumptions I've made about what changes will be modded into
 the game for the sake of randomization. I've kept development of the apworld

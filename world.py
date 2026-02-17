@@ -1,18 +1,19 @@
 import logging
-from typing import ClassVar, TextIO
+from typing import Any, ClassVar, TextIO
 
 from BaseClasses import ItemClassification, Region
+from Options import Option, Visibility
 from settings import Group, UserFilePath
-from worlds.AutoWorld import World
+from worlds.AutoWorld import WebWorld, World
 
-from . import patch
+from . import patch, rules
 from .data import GAME
 from .items import CHARACTERS, ITEM_GROUP_MAP, ITEM_NAME_TO_ID, PIXLS, SPMItem, create_item, create_items
 from .locations import LOCATION_GROUP_MAP, LOCATION_NAME_TO_ID, SPMLocation, create_all_locations, get_location_map
 from .names import EventName, ItemName, LocationName, RegionName
 from .options import PitAccess, SuperPaperMarioOptions, Traps
 from .regions import create_regions, get_region_map
-from .rules import set_rules, connect_regions
+from .web_world import SuperPaperMarioWebWorld
 
 logger = logging.getLogger(__name__)
 
@@ -35,15 +36,19 @@ class SuperPaperMarioSettings(Group):
     rom_start: bool = True
 
 
-
+# TODO: Explore using CachedRuleBuilderWorld.
+# Last test when rules were just flip/flopside & chapter 1, the fuzzer was slower with the following settings:
+# python fuzz.py -g super_paper_mario -j 8 -r 100 -m fuzz.meta.yaml -n 10
 class SuperPaperMarioWorld(World):
     """Super Paper Mario is a 2007 action role-playing game developed by Intelligent Systems and published by Nintendo
     for the Wii. The game follows Mario, Peach, Bowser, and Luigi as they attempt to collect Pure Hearts and stop Count
     Bleck and his minions from destroying the universe."""
 
+    # Generic AP World stuffs
     settings: ClassVar[SuperPaperMarioSettings]
     options_dataclass = SuperPaperMarioOptions
     options: SuperPaperMarioOptions
+    web: ClassVar[WebWorld] = SuperPaperMarioWebWorld()
     game = GAME
     item_name_to_id = ITEM_NAME_TO_ID
     location_name_to_id = LOCATION_NAME_TO_ID
@@ -51,11 +56,22 @@ class SuperPaperMarioWorld(World):
     location_name_groups = LOCATION_GROUP_MAP
     item_name_groups = ITEM_GROUP_MAP
 
+    # SPM specific stuffs
     rm: dict[RegionName, Region]
     lm: dict[LocationName, SPMLocation]
     slot_data = {}
     disabled_locations: set[str] = set()
     filler_options: list[str] = []
+    starting_pair: tuple[ItemName, ItemName]
+
+    # Universal Tracker stuffs
+    ut_can_gen_without_yaml = True
+    is_ut: bool
+    # tracker_world: ClassVar[dict[str, Any]] = {
+    #     "map_page_folder": "tracker",
+    #     "map_page_maps": "maps/maps.json",
+    #     "map_page_locations": "locations/locations.json",
+    # }
 
     # region APWorld Generation
     # sorted in execution order
@@ -63,22 +79,20 @@ class SuperPaperMarioWorld(World):
     def generate_early(self):
         # Override options if necessary
 
+        # UT shenanigans
+        self.is_ut = getattr(self.multiworld, "generation_is_fake", False)
+
         # Populate slot data from options
-        self.slot_data = self.options.as_dict(
-            "goal", "pure_hearts_required", "chapter_keys_lock", "shuffle_pure_hearts", toggles_as_bools=True
-        )
+        visible_option_keys = [key for key in self.options.__dict__.keys()
+                              if getattr(self.options, key).visibility != Visibility.none]
+        self.slot_data["options"] = self.options.as_dict(*visible_option_keys)
 
         # Start Inventory
         character = CHARACTERS[self.options.starting_character.value]
         pixl = PIXLS[self.options.starting_pixl.value]
+        self.starting_pair = (character, pixl)
         self.push_precollected(self.create_item(character))
         self.push_precollected(self.create_item(pixl))
-
-        self.slot_data.setdefault("starting_character", self.item_name_to_id[character])
-        self.slot_data.setdefault("starting_pixl", self.item_name_to_id[pixl])
-
-        if self.options.flipside_pit_access == PitAccess.option_open:
-            self.push_precollected(self.create_event(EventName.SWITCH_FLIPSIDE_PIT_CAGE))
 
         # Disabled Locations
         if self.options.flipside_pit_access.value == PitAccess.option_closed:
@@ -105,28 +119,36 @@ class SuperPaperMarioWorld(World):
     def create_regions(self):
         create_regions(self)
         self.rm = get_region_map(self)
-        create_all_locations(self)
+        # create_all_locations also gives the sum of each individual vanilla item from randomized locations
+        # this lets us maintain a similar amount of filler to vanilla for randomized locations regardless of options
+        self.filler_options = create_all_locations(self)
         self.lm = get_location_map(self)
 
     # All non-event locations finalized
 
     def create_items(self):
-        base_pool, filler_choices = create_items(self)
+        base_pool = create_items(self)
         total_locations = len(self.multiworld.get_unfilled_locations(self.player))
-        excluded_pool = [item for item in base_pool if item not in self.multiworld.precollected_items[self.player]]
-        filler_pool = [self.create_filler() for _ in range(total_locations - len(excluded_pool))]
+        # exclude the starting character & pixl from the item pool
+        excluded_pool = [item for item in base_pool if item not in self.starting_pair]
+        filler_pool = self.random.choices(
+            population=list(self.filler_options.keys()),
+            weights=list(self.filler_options.values()),
+            k=total_locations - len(excluded_pool))
+        filler_pool = [self.create_item(name) for name in filler_pool]
         self.multiworld.itempool.extend(excluded_pool)
         self.multiworld.itempool.extend(filler_pool)
 
     # local_items overrides non_local_items
 
     def set_rules(self):
-        set_rules(self)
+        rules.set_rules(self)
 
     def connect_entrances(self):
-        connect_regions(self)
-        # if self.options.randomize_entrances.value:
-        #     self.rule_builder.randomize_entrances()
+        entrances = rules.connect_regions(self)
+        if self.options.randomize_entrances.value:
+            er_placement = rules.randomize_entrances(self, entrances)
+            self.slot_data["entrances"] = er_placement.pairings
 
     # All rules finalized
     # location progress type assigned, excluded overrides priority
@@ -197,7 +219,7 @@ class SuperPaperMarioWorld(World):
         state.update_reachable_regions(self.player)
         visualize_regions(
             self.get_region(self.origin_region_name),
-            f"spm_{self.player_name}.puml",
+            f"puml/spm_{self.player_name}.puml",
             show_other_regions=True,
             linetype_ortho=False,
             show_entrance_names=True,
@@ -206,3 +228,32 @@ class SuperPaperMarioWorld(World):
         pass
 
     # endregion
+
+    #region Universal Tracker
+
+    def interpret_slot_data(self, slot_data: dict[str, Any]) -> dict[str, Any]:
+        if "entrances" in slot_data:
+            entrances = {
+                entrance.name: entrance
+                for region in self.get_regions()
+                for entrance in region.entrances
+            }
+            for source_exit, target_entrance in slot_data["entrances"]:
+                entrances[source_exit].connected_region = entrances[target_entrance].parent_region
+
+    def prepare_ut(self) -> None:
+        re_gen_passthrough = getattr(self.multiworld, "re_gen_passthrough", {})
+        if not (re_gen_passthrough and self.game in re_gen_passthrough):
+            return
+        # Get the passed through slot data from the real generation
+        slot_data: dict[str, Any] = re_gen_passthrough[self.game]
+
+        slot_options: dict[str, Any] = slot_data.get("options", {})
+        # Set all your options here instead of getting them from the yaml
+        for key, value in slot_options.items():
+            opt: Option | None = getattr(self.options, key, None)
+            if opt is not None:
+                # You can also set .value directly but that won't work if you have OptionSets
+                setattr(self.options, key, opt.from_any(value))
+
+    #endregion

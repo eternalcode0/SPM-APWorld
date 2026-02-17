@@ -5,9 +5,16 @@ from dataclasses import dataclass
 from enum import IntEnum
 
 from BaseClasses import CollectionState
-from entrance_rando import EntranceType
+from entrance_rando import (
+    Entrance,
+    EntranceType,
+    ERPlacementState,
+    bake_target_group_lookup,
+    disconnect_entrance_for_randomization,
+)
+from entrance_rando import randomize_entrances as er_randomize_entrances
 from Options import Toggle
-from rule_builder.rules import Has, HasAll, HasAny, OptionFilter, Rule, True_
+from rule_builder.rules import Has, HasAll, HasAny, HasGroupUnique, OptionFilter, Rule, True_
 
 from .data import GAME
 from .names import EventName as E
@@ -15,7 +22,8 @@ from .names import ItemName as I
 from .names import LocationName as L
 from .names import RegionName as R
 from .options import (
-    ChapterKeysLock,
+    ChapterDoorAccess,
+    EntranceRando,
     FlipsidePitAccess,
     FlopsidePitAccess,
     ObscureTricks,
@@ -105,26 +113,11 @@ class HasChapterKey(Rule["SuperPaperMarioWorld"], game=GAME):
     subchapter_key: I
 
     def _instantiate(self, world: "SuperPaperMarioWorld") -> Rule.Resolved:
-        if world.options.chapter_keys_lock == ChapterKeysLock.option_subchapters_locked:
+        if world.options.chapter_door_access == ChapterDoorAccess.option_subchapters_locked:
             return Has(self.chapter_key.value).resolve(world)
-        if world.options.chapter_keys_lock == ChapterKeysLock.option_chapter_locked:
+        if world.options.chapter_door_access == ChapterDoorAccess.option_chapter_locked:
             return Has(self.subchapter_key.value).resolve(world)
-        return True_().resolve(world)  # == ChapterKeysLock.option_open
-
-
-def create_entrance(world: "SuperPaperMarioWorld",
-    from_region: R,
-    to_region: R,
-    rule: typing.Callable[[CollectionState], bool] | Rule[typing.Any] | None = None,
-    name: str | None = None,
-    group: int = 0,
-    type: EntranceType = EntranceType.TWO_WAY,
-    force_creation: bool = False,
-    ):
-    entrance = world.create_entrance(world.rm[from_region], world.rm[to_region], rule, name, force_creation)
-    if entrance is not None:
-        entrance.randomization_group = group
-        entrance.randomization_type = type
+        return True_().resolve(world)  # == ChapterDoorAccess.option_open
 
 
 class RuleHolder:
@@ -137,19 +130,19 @@ class RuleHolder:
     # Base Rules
     can_flip = (
         Has(I.CHARACTER_MARIO) &
-        (Has(I.ABILITY_FLIP) | shuffle_ability_filter)
+        (Has(I.ABILITY_FLIP, options=[shuffle_ability_filter], filtered_resolution=True))
     )
     can_float = (
         Has(I.CHARACTER_PEACH) &
-        (Has(I.ABILITY_UMBRELLA) | shuffle_ability_filter)
+        (Has(I.ABILITY_UMBRELLA, options=[shuffle_ability_filter], filtered_resolution=True))
     )
     can_fire = (
         Has(I.CHARACTER_BOWSER) &
-        (Has(I.ABILITY_FIRE) | shuffle_ability_filter)
+        (Has(I.ABILITY_FIRE, options=[shuffle_ability_filter], filtered_resolution=True))
     )
     can_super_jump = (
         Has(I.CHARACTER_LUIGI) &
-        (Has(I.ABILITY_SUPER_JUMP) | shuffle_ability_filter)
+        (Has(I.ABILITY_SUPER_JUMP, options=[shuffle_ability_filter], filtered_resolution=True))
     )
     can_break_hard_blocks = (
         HasAny(I.PIXL_BOOMER, I.PIXL_CUDGE, I.PIXL_THUDLEY) |
@@ -157,11 +150,33 @@ class RuleHolder:
     )
 
 
-def connect_regions(world: "SuperPaperMarioWorld") -> None:
+def connect_regions(world: "SuperPaperMarioWorld") -> list[Entrance]:
     """Assign all of the location/event collection rules as well as the completion condition"""
 
-    _ = [create_entrance(world, edata.fr, edata.to, edata.rule, edata.name, edata.group, edata.etype)
-        for edata in ENTRANCE_DATA]
+    def create_entrance(world: "SuperPaperMarioWorld",
+        from_region: R,
+        to_region: R,
+        rule: typing.Callable[[CollectionState], bool] | Rule[typing.Any] | None = None,
+        name: str | None = None,
+        group: int = 0,
+        type: EntranceType = EntranceType.TWO_WAY,
+        force_creation: bool = False,
+        ) -> Entrance:
+        entrance = world.create_entrance(world.rm[from_region], world.rm[to_region], rule, name, force_creation)
+        if entrance is not None:
+            entrance.randomization_group = group
+            entrance.randomization_type = type
+        return entrance
+
+    all_entrances = [create_entrance(world, edata.fr, edata.to, edata.rule, edata.name, edata.group, edata.etype)
+            for edata in ENTRANCE_DATA]
+    return [entrance for entrance in all_entrances if entrance is not None and entrance.randomization_group > 0 and entrance.randomization_type == EntranceType.TWO_WAY]
+
+
+def randomize_entrances(world: "SuperPaperMarioWorld", entrances: list[Entrance]) -> ERPlacementState:
+    _ = [disconnect_entrance_for_randomization(entrance) for entrance in entrances]
+    target_group_lookup = bake_target_group_lookup(world, get_target_groups)
+    return er_randomize_entrances(world, True, target_group_lookup, True)
 
 
 def set_rules(world: "SuperPaperMarioWorld") -> None:
@@ -349,25 +364,27 @@ ENTRANCE_RULES = [
     },
     { fr: R.MAC12_L_TOWER
     , to: R.LS101
-    , rule: HasChapterKey(I.CHAPTER_8_KEY, I.CHAPTER_8_1_KEY)
+    # TODO: use the new attribute field resolvers once they're merged
+    # otherwise grabbing the pure_hearts_required setting from here is a pain
+    , rule: HasChapterKey(I.CHAPTER_8_KEY, I.CHAPTER_8_1_KEY) & HasGroupUnique("Pure Heart", 8)
     , name: "Flopside Tower - Black Door [1-1]"
     , **CHAPTER_DOOR_ER
     },
     { fr: R.MAC12_L_TOWER
     , to: R.LS201
-    , rule: HasChapterKey(I.CHAPTER_8_KEY, I.CHAPTER_8_2_KEY)
+    , rule: HasChapterKey(I.CHAPTER_8_KEY, I.CHAPTER_8_2_KEY) & HasGroupUnique("Pure Heart", 8)
     , name: "Flopside Tower - Black Door [1-2]"
     , **CHAPTER_DOOR_ER
     },
     { fr: R.MAC12_L_TOWER
     , to: R.LS301
-    , rule: HasChapterKey(I.CHAPTER_8_KEY, I.CHAPTER_8_3_KEY)
+    , rule: HasChapterKey(I.CHAPTER_8_KEY, I.CHAPTER_8_3_KEY) & HasGroupUnique("Pure Heart", 8)
     , name: "Flopside Tower - Black Door [1-3]"
     , **CHAPTER_DOOR_ER
     },
     { fr: R.MAC12_L_TOWER
     , to: R.LS401
-    , rule: HasChapterKey(I.CHAPTER_8_KEY, I.CHAPTER_8_4_KEY)
+    , rule: HasChapterKey(I.CHAPTER_8_KEY, I.CHAPTER_8_4_KEY) & HasGroupUnique("Pure Heart", 8)
     , name: "Flopside Tower - Black Door [1-4]"
     , **CHAPTER_DOOR_ER
     },
@@ -377,6 +394,7 @@ ENTRANCE_RULES = [
     , to: R.MAC01_LAYER1
     , name: "Flipside Tower - Fall"
     , group: EGroup.HUB | EGroup.FALL
+    , etype: EntranceType.ONE_WAY
     },
     { fr: R.MAC02_L_TOWER
     , to: R.MAC02_LAYER1
@@ -406,7 +424,8 @@ ENTRANCE_RULES = [
     { fr: R.MAC02_LAYER1
     , to: R.MAC01_LAYER1
     , name: "Flipside 2F - Layer 1 - Elevator Up"
-    , group: EGroup.ELEVATOR_UP | EGroup.HUB
+    # TODO: Figure out why this entrance in particular screws over ER. Probably too few possible placements?
+    # , group: EGroup.ELEVATOR_UP | EGroup.HUB
     },
     { fr: R.MAC02_LAYER1
     , to: R.MAC05_LAYER1
@@ -541,6 +560,7 @@ ENTRANCE_RULES = [
     { fr: R.MAC09_LAYER1
     , to: R.MAC03_LAYER1
     , name: "Flipside 1F - Door"
+    , group: EGroup.HUB | EGroup.DOOR
     },
     { fr: R.MAC09_LAYER1
     , to: R.MAC09_LAYER2
@@ -734,6 +754,7 @@ ENTRANCE_RULES = [
     { fr: R.MAC19_LAYER1
     , to: R.MAC03_LAYER2
     , name: "Flopside 1F - Layer 1 - Door"
+    , group: EGroup.HUB | EGroup.DOOR
     },
     { fr: R.MAC19_LAYER1
     , to: R.MAC19_LAYER2
@@ -772,7 +793,288 @@ ENTRANCE_RULES = [
     { fr: R.MAC03_LAYER2
     , to: R.MAC03_LAYER1
     , name: "Flipside 1F - Mirror Hall - Layer 2 -> 1"
-    }
+    },
+    #endregion
+    #region Chapter 1-1
+    #TODO: ER settings
+    { fr: R.HE101
+    , to: R.HE106
+    , rule: Has(I.PIXL_TIPPI)
+    , name: f"{R.HE101} - Bestovius' House, Hidden Door"
+    },
+    { fr: R.HE101
+    , to: R.HE103
+    , name: f"{R.HE101} - Front Pipe near Bestovius' House"
+    },
+    { fr: R.HE101
+    , to: R.HE102
+    , name: f"{R.HE101} - Sealed Door"
+    , rule: RuleHolder.can_flip
+    },
+    { fr: R.HE102
+    , to: R.HE101
+    , name: f"{R.HE102} - Left Door"
+    },
+    { fr: R.HE102
+    , to: R.HE104
+    , name: f"{R.HE102} - Right Door"
+    , rule: RuleHolder.can_flip | RuleHolder.can_float
+    },
+    { fr: R.HE103
+    , to: R.HE101
+    , name: f"{R.HE103} - Right Pipe"
+    },
+    { fr: R.HE104
+    , to: R.HE102
+    , name: f"{R.HE104} - Left Door"
+    },
+    { fr: R.HE104
+    , to: R.HE105
+    , name: f"{R.HE104} - Right Door"
+    , rule: RuleHolder.can_flip | RuleHolder.can_super_jump
+    },
+    { fr: R.HE105
+    , to: R.HE104
+    , name: f"{R.HE105} - Left Door"
+    },
+    { fr: R.HE106
+    , to: R.HE101
+    , name: f"{R.HE106} - Door"
+    },
+    #endregion
+    #region Chapter 1-2
+    { fr: R.HE201
+    , to: R.HE202
+    , name: f"{R.HE201} - Right Door"
+    },
+    { fr: R.HE201
+    , to: R.HE202
+    , name: f"{R.HE201} - Hidden Shortcut Door"
+    , rule: RuleHolder.can_flip
+    },
+    { fr: R.HE202
+    , to: R.HE201
+    , name: f"{R.HE202} - Left Door"
+    },
+    { fr: R.HE202
+    , to: R.HE203
+    , name: f"{R.HE202} - Right Door"
+    , rule: RuleHolder.can_flip | (RuleHolder.can_float & RuleHolder.can_super_jump & Has(I.PIXL_DASHELL))
+    },
+    { fr: R.HE203
+    , to: R.HE208
+    , name: f"{R.HE203} - Pipe behind bricks"
+    , rule: RuleHolder.can_flip
+    },
+    { fr: R.HE203
+    , to: R.HE206
+    , name: f"{R.HE203} - Pipe in house behind partition"
+    , rule: RuleHolder.can_flip
+    },
+    { fr: R.HE203
+    , to: R.HE202
+    , name: f"{R.HE203} - Left Door"
+    },
+    { fr: R.HE203
+    , to: R.HE204
+    , name: f"{R.HE203} - Red's House"
+    },
+    { fr: R.HE203
+    , to: R.HE205
+    , name: f"{R.HE203} - Green's House"
+    , rule: RuleHolder.can_flip | RuleHolder.can_float | Has(I.PIXL_DASHELL)
+    },
+    { fr: R.HE204
+    , to: R.HE203
+    , name: f"{R.HE204} - Door"
+    },
+    { fr: R.HE205
+    , to: R.HE203
+    , name: f"{R.HE205} - Door"
+    },
+    { fr: R.HE206
+    , to: R.HE203
+    , name: f"{R.HE206} - Left Pipe"
+    },
+    { fr: R.HE206
+    , to: R.HE209
+    , name: f"{R.HE206} - Right Door"
+    },
+    { fr: R.HE207
+    , to: R.HE209
+    , name: f"{R.HE207} - Door"
+    , rule: Has(I.PIXL_THOREAU)
+    },
+    { fr: R.HE208
+    , to: R.HE203
+    , name: f"{R.HE208} - Door"
+    },
+    { fr: R.HE209
+    , to: R.HE206
+    , name: f"{R.HE209} - Left Door"
+    },
+    { fr: R.HE209
+    , to: R.HE207
+    , name: f"{R.HE209} - Right Door"
+    , rule: Has(I.PIXL_TIPPI)
+    },
+    #endregion
+    #region Chapter 1-3
+    { fr: R.HE301
+    , to: R.HE303
+    , name: f"{R.HE301} - Door below red palm tree"
+    },
+    { fr: R.HE301
+    , to: R.HE302
+    , name: f"{R.HE301} - Right door"
+    },
+    { fr: R.HE302
+    , to: R.HE301
+    , name: f"{R.HE302} - Left Door"
+    },
+    { fr: R.HE303
+    , to: R.HE305
+    , name: f"{R.HE303} - Pipe on floating bricks"
+    # TODO: Double-check rules
+    , rule: RuleHolder.can_flip | RuleHolder.can_float | Has(I.PIXL_DASHELL)
+            | (Has(I.PIXL_THOREAU) & RuleHolder.can_super_jump)
+    },
+    { fr: R.HE303
+    , to: R.HE301
+    , name: f"{R.HE303} - Left Door"
+    },
+    { fr: R.HE303
+    , to: R.HE304
+    , name: f"{R.HE303} - Right Door"
+    , rule: RuleHolder.can_flip | RuleHolder.can_float | HasAny(I.PIXL_DASHELL, I.PIXL_THOREAU)
+    },
+    { fr: R.HE304
+    , to: R.HE303
+    , name: f"{R.HE304} - Left Door"
+    },
+    { fr: R.HE304
+    , to: R.HE306
+    , name: f"{R.HE304} - Right Door"
+    },
+    { fr: R.HE305
+    , to: R.HE303
+    , name: f"{R.HE305} - Pipe"
+    },
+    { fr: R.HE306
+    , to: R.HE307
+    , name: f"{R.HE306} - Left door on floating bricks"
+    },
+    { fr: R.HE306
+    , to: R.HE304
+    , name: f"{R.HE306} - Door on ground"
+    },
+    { fr: R.HE306
+    , to: R.HE308
+    , name: f"{R.HE306} - Right door on floating bricks"
+    },
+    { fr: R.HE307
+    , to: R.HE306
+    , name: f"{R.HE307} - Door"
+    },
+    { fr: R.HE308
+    , to: R.HE306
+    , name: f"{R.HE308} - Door"
+    },
+    #endregion
+    # Chapter 1-4
+    { fr: R.HE401
+    , to: R.HE402
+    , name: f"{R.HE401} - Door"
+    },
+    { fr: R.HE402
+    , to: R.HE401
+    , name: f"{R.HE402} - Left Door"
+    },
+    { fr: R.HE402
+    , to: R.HE403
+    , name: f"{R.HE402} - Right Door"
+    },
+    { fr: R.HE403
+    , to: R.HE402
+    , name: f"{R.HE403} - Left Door"
+    },
+    { fr: R.HE403
+    , to: R.HE405
+    , name: f"{R.HE403} - Middle Door"
+    # MOD: Will ruins keys be split into 3 separate ids for each door? If so we don't need full key logic here for ER.
+    , rule: Has(I.RUINS_KEY, count=3, options=[OptionFilter(EntranceRando, Toggle.option_true)])
+            | Has(I.RUINS_KEY)
+    },
+    { fr: R.HE403
+    , to: R.HE404
+    , name: f"{R.HE403} - Right Door"
+    , rule: RuleHolder.can_flip
+    },
+    { fr: R.HE404
+    , to: R.HE403
+    , name: f"{R.HE404} - Door"
+    },
+    { fr: R.HE405
+    , to: R.HE403
+    , name: f"{R.HE405} - Left Door"
+    },
+    { fr: R.HE405
+    , to: R.HE406
+    , name: f"{R.HE405} - Right Upper Door"
+    },
+    { fr: R.HE405
+    , to: R.HE412
+    , name: f"{R.HE405} - Right Lower Door"
+    , rule: Has(I.RUINS_KEY, count=3, options=[OptionFilter(EntranceRando, Toggle.option_true)])
+            | Has(I.RUINS_KEY, count=2)
+    },
+    { fr: R.HE406
+    , to: R.HE405
+    , name: f"{R.HE406} - Door"
+    },
+    { fr: R.HE407
+    , to: R.HE412
+    , name: f"{R.HE407} - Left Door"
+    },
+    { fr: R.HE407
+    , to: R.HE408
+    , name: f"{R.HE407} - Right Door"
+    , rule: Has(I.RUINS_KEY, count=3)
+    },
+    { fr: R.HE408
+    , to: R.HE407
+    , name: f"{R.HE408} - Lower Door"
+    },
+    { fr: R.HE408
+    , to: R.HE409
+    , name: f"{R.HE408} - Upper Door"
+    , rule: RuleHolder.can_flip
+    },
+    { fr: R.HE409
+    , to: R.HE410
+    , name: f"{R.HE409} - Pipe"
+    },
+    { fr: R.HE409
+    , to: R.HE408
+    , name: f"{R.HE409} - Door"
+    },
+    { fr: R.HE410
+    , to: R.HE411
+    , name: f"{R.HE410} - Door"
+    },
+    { fr: R.HE411
+    , to: R.HE410
+    , name: f"{R.HE411} - Door"
+    },
+    { fr: R.HE412
+    , to: R.HE405
+    , name: f"{R.HE412} - Left Door"
+    },
+    { fr: R.HE412
+    , to: R.HE407
+    , name: f"{R.HE412} - Right Door"
+    , rule: Has(I.PIXL_TIPPI)
+    },
     #endregion
 ]
 
@@ -808,7 +1110,7 @@ LOCATION_RULES = [
     { loc: L.FLIPSIDE_HEART_PILLAR_ORANGE
     , rule: (RuleHolder.can_float
             # Throeau places a squig below the pillars to jump off of
-            | Has(I.PIXL_THOREAU, options=[OptionFilter(ObscureTricks, Toggle.option_true)])
+            | Has(I.PIXL_THOREAU, options=[OptionFilter(ObscureTricks, Toggle.option_true)], filtered_resolution=True)
             ) & Has(I.ORANGE_PURE_HEART)
     },
     { loc: L.FLIPSIDE_HEART_PILLAR_YELLOW
@@ -846,6 +1148,65 @@ LOCATION_RULES = [
     },
     { loc: E.SMASH_FLOPSIDE_B1_OUTSKIRTS_BLOCK
     , rule: Has(I.PIXL_CUDGE)
+    },
+    #endregion
+    #region Chapter 1-1
+    { loc: L.C11_OPEN_ITEM_INSIDE_BESTOVIUS_HOUSE_HALLWAY
+    , rule: RuleHolder.can_flip
+    },
+    { loc: L.C11_OPEN_ITEM_BEHIND_PIPE
+    , rule: RuleHolder.can_flip
+    },
+    { loc: L.C11_CHEST_AFTER_STAR_BLOCK
+    , rule: RuleHolder.can_flip
+    },
+    { loc: L.C11_FIRST_OPEN_ITEM_INSIDE_BESTOVIUS_ROOM
+    , rule: RuleHolder.can_flip
+    },
+    { loc: L.C11_SECOND_OPEN_ITEM_INSIDE_BESTOVIUS_ROOM
+    , rule: RuleHolder.can_flip
+    },
+    #endregion
+    #region Chapter 1-2
+    { loc: L.C12_CHEST_IN_SHORTCUT
+    , rule: RuleHolder.can_flip
+    },
+    { loc: L.C12_OPEN_ITEM_ON_TOP_OF_WATCHITTS_HOUSE
+    , rule: RuleHolder.can_flip | RuleHolder.can_float | Has(I.PIXL_DASHELL)
+    },
+    { loc: L.C12_STAR_BLOCK
+    # MOD: Will Watchitt still require having Thoreau to tell Green to build the bridge?
+    , rule: (RuleHolder.can_flip & Has(I.PIXL_THOREAU)) | RuleHolder.can_float | Has(I.PIXL_DASHELL)
+    },
+    { loc: L.C12_OPEN_ITEM_BEHIND_GREENS_BED
+    , rule: RuleHolder.can_flip
+    },
+    #endregion
+    #region Chapter 1-3
+    { loc: L.C13_OPEN_ITEM_BEHIND_ROCK_IN_FIRST_ROOM
+    , rule: RuleHolder.can_flip
+    },
+    { loc: L.C13_OPEN_ITEM_BEHIND_ROCK_IN_SECOND_ROOM
+    , rule: RuleHolder.can_flip
+    },
+    { loc: L.C13_OPEN_ITEM_BEHIND_ROCK_IN_SIXTH_ROOM
+    , rule: RuleHolder.can_flip
+    },
+    #endregion
+    #region Chapter 1-4
+    # MOD: THOREAU has to be patched to always be thrown at *Mario's* height!
+    # Otherwise this has to be updated to always require mario.
+    { loc: L.C14_OPEN_KEY_BEHIND_BLOCKS
+    , rule: HasAll(I.PIXL_THOREAU, E.SWITCH_YOLD_RUINS_SQUIG_ROOM)
+    },
+    { loc: E.SWITCH_YOLD_RUINS_SQUIG_ROOM
+    , rule: RuleHolder.can_super_jump | Has(I.PIXL_THOREAU)
+    },
+    { loc: L.C14_HIDDEN_CHEST_AFTER_3D_PATH
+    , rule: RuleHolder.can_flip
+    },
+    { loc: L.C14_OPEN_KEY_BEHIND_BLOCKS
+    , rule: RuleHolder.can_flip
     },
     #endregion
 ]

@@ -1,7 +1,7 @@
 import asyncio
 import subprocess
 import traceback
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, ClassVar
 
 import dolphin_memory_engine as dme
 
@@ -10,7 +10,6 @@ import settings
 import Utils
 from CommonClient import (
     ClientCommandProcessor,
-    CommonContext,
     get_base_parser,
     gui_enabled,
     logger,
@@ -18,9 +17,19 @@ from CommonClient import (
 )
 
 from .data import GAME
+from .data.location_data import LOCATION_DATA
+from .flags import StorageType
+from .locations import BASE_LOCATION_ID
 
 if TYPE_CHECKING:
     import kvui
+
+tracker_loaded = False
+try:
+    from worlds.tracker.TrackerClient import TrackerGameContext as SuperContext
+    tracker_loaded = True
+except ModuleNotFoundError:
+    from CommonClient import CommonContext as SuperContext
 
 
 DOLPHIN_STATUS_INITIALIZING = "Dolphin connection has not been initiated."
@@ -36,8 +45,29 @@ class SPMCommandProcessor(ClientCommandProcessor):
         if isinstance(self.ctx, SuperPaperMarioContext):
             logger.info(f"Dolphin Status: {self.ctx.dolphin_status}")
 
+    def _cmd_set_gswf(self, bit_number: int):
+        """Used to manually set a GSWF bit."""
+        byte_address, bit = gswf_set(int(bit_number))
+        logger.info(f"Bit {bit} written at {hex(byte_address)}")
 
-class SuperPaperMarioContext(CommonContext):
+    def _cmd_check_gswf(self, bit_number: int):
+        """Used to manually check a GSWF bit."""
+        result = gswf_check(int(bit_number))
+        logger.info(f"GSWF Check: 0x{format(result, 'x')}")
+
+    def _cmd_set_gsw(self, gsw: int, value: int):
+        """Used to manually set a GSW flag."""
+        gsw_set(int(gsw), int(value))
+
+    def _cmd_check_gsw(self, gsw: int):
+        """Used to manually check a GSW flag."""
+        result = gsw_check(int(gsw))
+        logger.info(f"GSWF Check: {result}")
+
+
+class SuperPaperMarioContext(SuperContext):
+    command_processor = SPMCommandProcessor
+    tags: ClassVar[set[str]] = {"AP"}
     game = GAME
     system = "WII"
     patch_suffix = ".apspm"
@@ -45,13 +75,14 @@ class SuperPaperMarioContext(CommonContext):
     awaiting_rom: bool
     dolphin_sync_task: asyncio.Task[None] | None
     dolphin_status: str
+    checked_locations = set()
 
     def __init__(self, server_address, password) -> None:
         super().__init__(server_address, password)
         self.awaiting_rom = False
         self.dolphin_status = "Dolphin connection has not been initiated."
 
-    async def validate_rom(self, ctx: CommonContext):
+    async def validate_rom(self, ctx: SuperContext):
         pass
 
     async def disconnect(self, allow_autoreconnect: bool = False):
@@ -75,6 +106,28 @@ class SuperPaperMarioContext(CommonContext):
         ui.base_title = "Archipelago Super Paper Mario Client"
         return ui
 
+    async def check_spm_locations(self):
+        locations_to_send = set()
+        try:
+            #TODO: optimize to exclude locations that have already been checked
+            for ldata in LOCATION_DATA:
+                lid = ldata.code + BASE_LOCATION_ID
+                if ldata.var is None or lid is None or lid in self.checked_locations:
+                    continue
+                mode = ldata.var.mode
+                addr = ldata.var.addr
+                value = ldata.var.value
+                if mode == StorageType.GSW:
+                    if gsw_check(addr) >= value:
+                        locations_to_send.add(lid)
+                elif mode == StorageType.GSWF:
+                    if gswf_check(addr):
+                        locations_to_send.add(lid)
+            if len(locations_to_send) > 0:
+                self.checked_locations &= locations_to_send
+                await self.send_msgs([{"cmd": "LocationChecks", "locations": locations_to_send}])
+        except Exception:
+            logger.error(traceback.format_exc())
 
 def check_ingame() -> bool:
     return read_string(MEMORY["file_name"], 8) != "default"
@@ -114,14 +167,40 @@ def read_word(address: int) -> int:
     return int.from_bytes(dme.read_bytes(address, 2), byteorder="big")
 
 
-def write_short(address: int, value: int) -> None:
-    """
-    Write a 2-byte short to Dolphin memory.
+def _get_bit_address(bit_number: int) -> tuple:
+    word_index = bit_number >> 5
+    bit_position = bit_number & 0x1F
+    word_address = MEMORY["gswf_start"] + (word_index * 4)
+    byte_within_word = 3 - (bit_position >> 3)
+    byte_address = word_address + byte_within_word
+    bit = bit_position & 0x7
+    return byte_address, bit
 
-    :param address: Address to write to.
-    :param value: Value to write.
-    """
-    dme.write_bytes(address, value.to_bytes(2, byteorder="big"))
+def gswf_set(bit_number: int):
+    result = _get_bit_address(bit_number)
+    if not result:
+        return False
+    byte_address, bit = result
+    current_byte = dme.read_byte(byte_address)
+    bit_mask = 1 << bit
+    new_byte = current_byte | bit_mask
+    dme.write_byte(byte_address, new_byte)
+    return result
+
+def gswf_check(bit_number: int) -> bool:
+    result = _get_bit_address(bit_number)
+    if not result:
+        return False
+    byte_address, bit = result
+    current_byte = dme.read_byte(byte_address)
+    bit_mask = 1 << bit
+    return bool(current_byte & bit_mask)
+
+def gsw_set(index, value):
+    dme.write_word(MEMORY["gsw0"], value) if index == 0 else dme.write_byte(MEMORY["gsw1"] + index, value)
+
+def gsw_check(index):
+    return dme.read_word(MEMORY["gsw0"]) if index == 0 else dme.read_byte(MEMORY["gsw0"] + index)
 
 
 async def dolphin_sync_task(ctx: SuperPaperMarioContext) -> None:
@@ -155,11 +234,11 @@ async def dolphin_sync_task(ctx: SuperPaperMarioContext) -> None:
                         # death check
                         pass
                     # give items, check locations, etc.
-
+                    await ctx.check_spm_locations()
                 else:
                     if not ctx.auth:
                         # set auth from slot name in rom
-                        pass
+                        ctx.auth = "Player1"  # TODO: player name should be read from rom
                     if ctx.awaiting_rom:
                         await ctx.server_auth()
                 sleep_time = 0.1
@@ -198,10 +277,10 @@ async def _run_game(rom: str):
     import os
 
     # TODO: Fix weird settings name
-    auto_start = settings.get_settings()['super_paper_mario.world_options'].rom_start
+    auto_start = settings.get_settings()["super_paper_mario.world_options"].rom_start
 
     if auto_start is True:
-        dolphin_path = settings.get_settings()['super_paper_mario.world_options'].dolphin_path
+        dolphin_path = settings.get_settings()["super_paper_mario.world_options"].dolphin_path
         subprocess.Popen(
             [
                 dolphin_path,
@@ -253,7 +332,7 @@ def main(*args) -> None:
             await ctx.dolphin_sync_task
 
     parser = get_base_parser()
-    parser.add_argument("patch_file", default="", type=str, nargs="?", help="Path to an APTTYD file")
+    parser.add_argument("patch_file", default="", type=str, nargs="?", help="Path to an APSPM file")
     args = parser.parse_args(args)
 
     import colorama
@@ -263,14 +342,10 @@ def main(*args) -> None:
     colorama.deinit()
 
 
-if __name__ == "__main__":
-    parser = get_base_parser()
-    parser.add_argument("patch_file", default="", type=str, nargs="?", help="Path to an APSPM file")
-    args = parser.parse_args()
-    main(args.connect, args.password, args.patch_file)
-
-
+# Only US0 addresses for now until I figure out if I can support more revisions
 MEMORY = {
     "file_name": 0x804E2570,
+    "gsw0": 0x804E2690,
     "gswf_start": 0x804E2694,
+    "gsw1": 0x804E2A95,
 }

@@ -5,7 +5,7 @@ from typing import TYPE_CHECKING, Any
 from BaseClasses import ItemClassification
 
 from ..names.item_names import ItemName as I
-from ..options import ChapterKeysLock, SuperPaperMarioOptions
+from ..options import ChapterDoorAccess, SuperPaperMarioOptions
 
 if TYPE_CHECKING:
     from .. import SuperPaperMarioWorld
@@ -42,7 +42,7 @@ GROUP_FETCH = "Fetch"
 GROUP_ABILITY = "Ability"
 GROUP_COOKING_DISC = "Cooking Disc"
 GROUP_CONSUMABLE = "Consumable"
-GROUP_TOWER_KEY = "Tower Key"
+GROUP_TOWER_KEY = "Tower Key"  # This should only be paired with either chapter / subchapter key
 GROUP_CHAPTER_KEY = "Chapter Key"
 GROUP_SUBCHAPTER_KEY = "Subchapter Key"
 
@@ -53,11 +53,11 @@ def fetch_amount(world: "SuperPaperMarioWorld") -> int:
 
 
 def chapter_key_amount(world: "SuperPaperMarioWorld") -> int:
-    return 1 if world.options.chapter_keys_lock.value == ChapterKeysLock.option_chapter_locked else 0
+    return 1 if world.options.chapter_door_access.value == ChapterDoorAccess.option_chapter_locked else 0
 
 
 def subchapter_key_amount(world: "SuperPaperMarioWorld") -> int:
-    return 1 if world.options.chapter_keys_lock.value == ChapterKeysLock.option_subchapters_locked else 0
+    return 1 if world.options.chapter_door_access.value == ChapterDoorAccess.option_subchapters_locked else 0
 
 
 def trap_amount(world: "SuperPaperMarioWorld") -> int | None:
@@ -65,7 +65,7 @@ def trap_amount(world: "SuperPaperMarioWorld") -> int | None:
 
 
 def ability_amount(world: "SuperPaperMarioWorld") -> int:
-    return 1 if world.options.shuffle_abilities else 0
+    return 1 if world.options.ability_shuffle else 0
 
 
 ITEM_LIST_DICT: list[dict[str, Any]] = [
@@ -1213,7 +1213,7 @@ ITEM_LIST_DICT: list[dict[str, Any]] = [
     , groups: {GROUP_CONSUMABLE}
     },
     #endregion
-    #region Non-standard Items
+    #region Special Items
     # Things that exist in-game but not as "items"
     { name: I.CHARACTER_MARIO
     , code: 216
@@ -1295,6 +1295,9 @@ ITEM_LIST_DICT: list[dict[str, Any]] = [
     , classification: ItemClassification.useful
     , groups: {GROUP_PIXL}
     },
+    #endregion
+    #region AP Items
+    # These items don't exist in-game. They're concepts introduced by the rando.
     { name: I.RED_PURE_HEART
     , code: 232
     , classification: ItemClassification.progression_skip_balancing
@@ -1335,9 +1338,6 @@ ITEM_LIST_DICT: list[dict[str, Any]] = [
     , classification: ItemClassification.progression_skip_balancing
     , groups: {GROUP_HEART}
     },
-    #endregion
-    #region AP Items
-    # These items don't exist in-game. They're concepts introduced by the rando.
     { name: I.ABILITY_FLIP
     , code: 240
     , classification: ItemClassification.progression
@@ -1434,6 +1434,7 @@ ITEM_LIST_DICT: list[dict[str, Any]] = [
     , groups: {GROUP_TOWER_KEY, GROUP_SUBCHAPTER_KEY}
     , amount: subchapter_key_amount
     },
+    # MOD: hopefully item ids aren't a single byte
     { name: I.CHAPTER_2_1_KEY
     , code: 256
     , classification: ItemClassification.progression
