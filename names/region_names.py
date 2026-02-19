@@ -164,28 +164,29 @@ class RegionName(StrEnum):
 
     # 2-3: Breaking the Bank
     MI301 = f"{MI3} - Entrance"
-    # MI302 = f"{MI3} - "
-    # MI303 = f"{MI3} - "
-    # MI304 = f"{MI3} - "
-    # MI305 = f"{MI3} - "
-    # MI306 = f"{MI3} - "
+    MI302 = f"{MI3} - Prisoner Lounge"
+    MI303 = f"{MI3} - Hampter Wheels"  # not a typo :p
+    MI304 = f"{MI3} - Electric Treadmill"
+    MI305 = f"{MI3} - Mushroom Block"
+    MI306 = f"{MI3} - Rubee Bank"
 
     # 2-4: The Basement Face-Off
+    # see: https://www.mariowiki.com/Merlee's_Basement#/media/File:MerleesBasementMap.png
     MI401 = f"{MI4} - Entrance"
-    # MI402 = f"{MI4} - "
-    # MI403 = f"{MI4} - "
-    # MI404 = f"{MI4} - "
-    # MI405 = f"{MI4} - "
-    # MI406 = f"{MI4} - "
-    # MI407 = f"{MI4} - "
-    # MI408 = f"{MI4} - "
-    # MI409 = f"{MI4} - "
-    # MI410 = f"{MI4} - "
-    # MI411 = f"{MI4} - "
-    # MI412 = f"{MI4} - "
-    # MI413 = f"{MI4} - "
-    # MI414 = f"{MI4} - "
-    # MI415 = f"{MI4} - "
+    MI402 = f"{MI4} - Room 1"
+    MI403 = f"{MI4} - Room 2"
+    MI404 = f"{MI4} - Room 3"
+    MI405 = f"{MI4} - Room 4"
+    MI406 = f"{MI4} - Great Hall"
+    MI407 = f"{MI4} - Room 6"
+    MI408 = f"{MI4} - Room 7"
+    MI409 = f"{MI4} - Room 5"  # Room after MI406 / Great Hall
+    MI410 = f"{MI4} - Room 8"
+    MI411 = f"{MI4} - Room 9"
+    MI412 = f"{MI4} - Bathroom Hall"
+    MI413 = f"{MI4} - Men's Bathroom"
+    MI414 = f"{MI4} - Women's Bathroom"
+    MI415 = f"{MI4} - Staircase to Bathrooms"  # Room after MI411 / Room 9
 
     # 3-1: When Geeks Attack
     TA101 = f"{TA1} - Entrance"

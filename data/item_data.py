@@ -50,6 +50,10 @@ GROUP_MAP = "Map"
 
 
 # Amounts
+def heart_amount(world: "SuperPaperMarioWorld") -> int:
+    return 1 if world.options.shuffle_pure_hearts else 0  # else pure hearts are placed via RT.VANILLA_WORLD
+
+
 def fetch_amount(world: "SuperPaperMarioWorld") -> int:
     return 1 if world.options.trading_quest else 0
 
@@ -1153,41 +1157,49 @@ ITEM_LIST_DICT: list[dict[str, Any]] = [
     , code: 232
     , classification: ItemClassification.progression_skip_balancing
     , groups: {GROUP_HEART}
+    , amount: heart_amount
     },
     { name: I.ORANGE_PURE_HEART
     , code: 233
     , classification: ItemClassification.progression_skip_balancing
     , groups: {GROUP_HEART}
+    , amount: heart_amount
     },
     { name: I.YELLOW_PURE_HEART
     , code: 234
     , classification: ItemClassification.progression_skip_balancing
     , groups: {GROUP_HEART}
+    , amount: heart_amount
     },
     { name: I.GREEN_PURE_HEART
     , code: 235
     , classification: ItemClassification.progression_skip_balancing
     , groups: {GROUP_HEART}
+    # , amount: heart_amount  # commented to default to 1 until its chapter logic is finished
     },
     { name: I.CYAN_PURE_HEART
     , code: 236
     , classification: ItemClassification.progression_skip_balancing
     , groups: {GROUP_HEART}
+    # , amount: heart_amount  # commented to default to 1 until its chapter logic is finished
     },
     { name: I.BLUE_PURE_HEART
     , code: 237
     , classification: ItemClassification.progression_skip_balancing
     , groups: {GROUP_HEART}
+    # , amount: heart_amount  # commented to default to 1 until its chapter logic is finished
     },
     { name: I.PURPLE_PURE_HEART
     , code: 238
     , classification: ItemClassification.progression_skip_balancing
     , groups: {GROUP_HEART}
+    # , amount: heart_amount  # commented to default to 1 until its chapter logic is finished
     },
     { name: I.WHITE_PURE_HEART
     , code: 239
     , classification: ItemClassification.progression_skip_balancing
     , groups: {GROUP_HEART}
+    # , amount: heart_amount  # commented to default to 1 until its chapter logic is finished
     },
     { name: I.ABILITY_FLIP
     , code: 240

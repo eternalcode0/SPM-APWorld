@@ -7,7 +7,7 @@ from ..names.event_names import EventName as E
 from ..names.item_names import ItemName as I
 from ..names.location_names import LocationName as L
 from ..names.region_names import RegionName as R
-from ..options import PitAccess, SuperPaperMarioOptions
+from ..options import ChapterDoorAccess, PitAccess, SuperPaperMarioOptions
 from . import RandomizationType as RT  # noqa: N817
 
 
@@ -54,6 +54,10 @@ def heart_pillar(opt: SuperPaperMarioOptions) -> RT:
 
 def pure_heart(opt: SuperPaperMarioOptions) -> RT:
     return RT.RANDOM if opt.shuffle_pure_hearts else RT.VANILLA_WORLD
+
+
+def star_block(opt: SuperPaperMarioOptions) -> RT:
+    return RT.RANDOM if opt.chapter_door_access == ChapterDoorAccess.option_subchapters_locked else RT.VANILLA_EVENT
 
 
 def shop(opt: SuperPaperMarioOptions) -> RT:
@@ -1165,6 +1169,7 @@ LOCATION_LIST_DICT: list[dict[str, Any]] = [
     , var: GSWF(604)
     , item: I.CATCH_CARD_KOOPA_TROOPA
     , region: R.HE105
+    , setting: star_block
     },
     { name: L.C11_OPEN_ITEM_ABOVE_BESTOVIUS_HOUSE
     , code: 126
@@ -1214,6 +1219,7 @@ LOCATION_LIST_DICT: list[dict[str, Any]] = [
     , var: GSW(0, 17)
     , item: I.CHAPTER_1_2_KEY
     , region: R.HE105
+    , setting: star_block
     },
     #endregion
     #region 1-2
@@ -1251,6 +1257,7 @@ LOCATION_LIST_DICT: list[dict[str, Any]] = [
     , var: GSW(0, 28)
     , item: I.CHAPTER_1_3_KEY
     , region: R.HE203
+    , setting: star_block
     },
     #endregion
     #region 1-3
@@ -1281,6 +1288,7 @@ LOCATION_LIST_DICT: list[dict[str, Any]] = [
     , var: GSW(0, 38)
     , item: I.CHAPTER_1_4_KEY
     , region: R.HE308
+    , setting: star_block
     },
     #endregion
     #region 1-4
@@ -1329,262 +1337,294 @@ LOCATION_LIST_DICT: list[dict[str, Any]] = [
     },
     #endregion
     #region 2-1
-    # { name: L.C21_CHEST_AFTER_SQUIGS
-    # , code: 148
-    # , rom: 0
-    # , var: GSWF(735)
-    # , item: I.DOOR_KEY_21
-    # , region: R.MI105
-    # },
-    # { name: L.C21_BOOMER_CHEST
-    # , code: 149
-    # , rom: 0
-    # , var: GSW(0, 73)
-    # , item: I.PIXL_BOOMER
-    # , region: R.MI107
-    # },
-    # { name: L.C21_CHEST_BEHIND_BOOMER_CHEST
-    # , code: 150
-    # , rom: 0
-    # , var: GSWF(738)
-    # , item: I.CATCH_CARD_OLD_MAN_WATCHITT
-    # , region: R.MI107
-    # },
-    # { name: L.C21_LEFT_CHEST_BEFORE_STAR_BLOCK
-    # , code: 151
-    # , rom: 0
-    # , var: GSWF(732)
-    # , item: I.CATCH_CARD_SHLURP
-    # , region: R.MI104
-    # },
-    # { name: L.C21_RIGHT_CHEST_BEFORE_STAR_BLOCK
-    # , code: 152
-    # , rom: 0
-    # , var: GSWF(733)
-    # , item: I.CATCH_CARD_SWOOPER
-    # , region: R.MI104
-    # },
-    # { name: L.C21_STAR_BLOCK
-    # , code: 153
-    # , rom: 0
-    # , var: GSW(0, 76)
-    # , item: I.CHAPTER_2_2_KEY
-    # , region: R.MI104
-    # },
+    { name: E.SWITCH_GLOAM_VALLEY_UNDERGROUND
+    , code: 148
+    , rom: None
+    , var: None
+    , item: E.SWITCH_GLOAM_VALLEY_UNDERGROUND
+    , region: R.MI102
+    , setting: RT.VANILLA_EVENT
+    },
+    { name: E.SWITCH_GLOAM_VALLEY_BACKGROUND
+    , code: 149
+    , rom: None
+    , var: None
+    , item: E.SWITCH_GLOAM_VALLEY_BACKGROUND
+    , region: R.MI108
+    , setting: RT.VANILLA_EVENT
+    },
+    { name: L.C21_CHEST_AFTER_SQUIGS
+    , code: 150
+    , rom: 0
+    , var: GSWF(735)
+    , item: I.DOOR_KEY_21
+    , region: R.MI105
+    },
+    { name: L.C21_BOOMER_CHEST
+    , code: 151
+    , rom: 0
+    , var: GSW(0, 73)
+    , item: I.PIXL_BOOMER
+    , region: R.MI107
+    },
+    { name: L.C21_CHEST_BEHIND_BOOMER_CHEST
+    , code: 152
+    , rom: 0
+    , var: GSWF(738)
+    , item: I.CATCH_CARD_OLD_MAN_WATCHITT
+    , region: R.MI107
+    },
+    { name: L.C21_LEFT_CHEST_BEFORE_STAR_BLOCK
+    , code: 153
+    , rom: 0
+    , var: GSWF(732)
+    , item: I.CATCH_CARD_SHLURP
+    , region: R.MI104
+    , setting: star_block
+    },
+    { name: L.C21_RIGHT_CHEST_BEFORE_STAR_BLOCK
+    , code: 154
+    , rom: 0
+    , var: GSWF(733)
+    , item: I.CATCH_CARD_SWOOPER
+    , region: R.MI104
+    , setting: star_block
+    },
+    { name: L.C21_STAR_BLOCK
+    , code: 155
+    , rom: 0
+    , var: GSW(0, 76)
+    , item: I.CHAPTER_2_3_KEY
+    , region: R.MI104
+    , setting: star_block
+    },
     #endregion
     # TODO: verify remaining script variables & items
     #region 2-2
-    # { name: L.C22_CHEST_ON_ROOF
-    # , code: 154
-    # , rom: 0
-    # , var: GSWF(729)
-    # , item: I.STOP_WATCH
-    # , region: R.MI201
-    # },
-    # { name: L.C22_CHEST_ABOVE_ENTRANCE
-    # , code: 155
-    # , rom: 0
-    # , var: GSWF(730)
-    # , item: I.CATCH_CARD_CURSYA
-    # , region: R.MI201
-    # },
-    # { name: L.C22_OPEN_ITEM_DRAGGED_BY_ROPE
-    # , code: 156
-    # , rom: None
-    # , var: None
-    # , item: I.MUSHROOM
-    # , region: R.MI207
-    # },
-    # { name: L.C22_OPEN_ITEM_HUNG_BY_ROPE
-    # , code: 157
-    # , rom: None
-    # , var: None
-    # , item: I.MUSHROOM
-    # , region: R.MI204
-    # },
-    # { name: L.C22_CHEST_ABOVE_SPIKE_ROOF
-    # , code: 158
-    # , rom: 0
-    # , var: GSW(0, 79)
-    # , item: I.HOUSE_KEY
-    # , region: R.MI206
-    # },
-    # { name: L.C22_STAR_BLOCK
-    # , code: 159
-    # , rom: 0
-    # , var: GSW(0, 82)
-    # , item: I.CHAPTER_2_3_KEY
-    # , region: R.MI208
-    # },
+    { name: L.C22_CHEST_ON_ROOF
+    , code: 156
+    , rom: 0
+    , var: GSWF(729)
+    , item: I.STOP_WATCH
+    , region: R.MI201
+    },
+    { name: L.C22_CHEST_ABOVE_ENTRANCE
+    , code: 157
+    , rom: 0
+    , var: GSWF(730)
+    , item: I.CATCH_CARD_CURSYA
+    , region: R.MI201
+    },
+    { name: L.C22_OPEN_ITEM_DRAGGED_BY_ROPE
+    , code: 158
+    , rom: None
+    , var: None
+    , item: I.MUSHROOM
+    , region: R.MI207
+    },
+    { name: L.C22_OPEN_ITEM_HUNG_BY_ROPE
+    , code: 159
+    , rom: None
+    , var: None
+    , item: I.MUSHROOM
+    , region: R.MI204
+    },
+    { name: L.C22_CHEST_ABOVE_SPIKE_ROOF
+    , code: 160
+    , rom: 0
+    , var: GSW(0, 79)
+    , item: I.HOUSE_KEY
+    , region: R.MI206
+    },
+    { name: L.C22_STAR_BLOCK
+    , code: 161
+    , rom: 0
+    , var: GSW(0, 82)
+    , item: I.CHAPTER_2_3_KEY
+    , region: R.MI208
+    , setting: star_block
+    },
     #endregion
     #region 2-3
-    # { name: L.C23_CHEST_BEHIND_BLOCKS
-    # , code: 160
-    # , rom: None
-    # , var: None
-    # , item: None
-    # , region: None
-    # },
-    # { name: L.C23_SLIM_CHEST
-    # , code: 161
-    # , rom: None
-    # , var: None
-    # , item: None
-    # , region: None
-    # },
-    # { name: L.C23_STAR_BLOCK
-    # , code: 162
-    # , rom: None
-    # , var: None
-    # , item: None
-    # , region: None
-    # },
+    { name: E.OPEN_THE_RUBEE_VAULT
+    , code: 162
+    , rom: None
+    , var: None
+    , item: E.OPEN_THE_RUBEE_VAULT
+    , region: R.MI301
+    , setting: RT.VANILLA_EVENT
+    },
+    { name: L.C23_CHEST_BEHIND_BLOCKS
+    , code: 163
+    , rom: None
+    , var: None
+    , item: I.CATCH_CARD_BOO
+    , region: R.MI301
+    },
+    { name: L.C23_SLIM_CHEST
+    , code: 164
+    , rom: None
+    , var: None
+    , item: I.PIXL_SLIM
+    , region: R.MI301
+    },
+    { name: L.C23_STAR_BLOCK
+    , code: 165
+    , rom: None
+    , var: None
+    , item: I.CHAPTER_2_4_KEY
+    , region: R.MI306
+    , setting: star_block
+    },
     #endregion
     #region 2-4
-    # { name: L.C24_OPEN_ITEM_BEHIND_ROOM_08_SIGN
-    # , code: 163
-    # , rom: None
-    # , var: None
-    # , item: None
-    # , region: None
-    # },
-    # { name: L.C24_YELLOW_PURE_HEART
-    # , code: 164
-    # , rom: None
-    # , var: None
-    # , item: I.YELLOW_PURE_HEART
-    # , region: None
-    # , setting: pure_heart
-    # },
+    { name: L.C24_OPEN_ITEM_BEHIND_ROOM_08_SIGN
+    , code: 166
+    , rom: None
+    , var: None
+    , item: None
+    , region: R.MI410
+    },
+    { name: L.C24_YELLOW_PURE_HEART
+    , code: 167
+    , rom: None
+    , var: None
+    , item: I.YELLOW_PURE_HEART
+    , region: R.MI414
+    , setting: pure_heart
+    },
     #endregion
     #region 3-1
     # { name: L.C31_TALK_TO_BARRY_AFTER_DEFEATING_FRANCIS
-    # , code: 165
-    # , rom: None
-    # , var: None
-    # , item: None
-    # , region: None
-    # },
-    # { name: L.C31_CHEST_IN_WARP_ZONE_RIGHT_PIPE
-    # , code: 166
-    # , rom: None
-    # , var: None
-    # , item: None
-    # , region: None
-    # },
-    # { name: L.C31_OPEN_ITEM_IN_BACKGROUND
-    # , code: 167
-    # , rom: None
-    # , var: None
-    # , item: None
-    # , region: None
-    # },
-    # { name: L.C31_CHEST_IN_BACKGROUND_PIPE
     # , code: 168
     # , rom: None
     # , var: None
     # , item: None
     # , region: None
     # },
-    # { name: L.C31_CHEST_ABOVE_COLORFUL_PERSONS
+    # { name: L.C31_CHEST_IN_WARP_ZONE_RIGHT_PIPE
     # , code: 169
     # , rom: None
     # , var: None
     # , item: None
     # , region: None
     # },
-    # { name: L.C31_OPEN_ITEM_IN_BACKGROUND_2
+    # { name: L.C31_OPEN_ITEM_IN_BACKGROUND
     # , code: 170
     # , rom: None
     # , var: None
     # , item: None
     # , region: None
     # },
-    # { name: L.C31_BOWSER
+    # { name: L.C31_CHEST_IN_BACKGROUND_PIPE
     # , code: 171
     # , rom: None
     # , var: None
     # , item: None
     # , region: None
     # },
-    # { name: L.C31_STAR_BLOCK
+    # { name: L.C31_CHEST_ABOVE_COLORFUL_PERSONS
     # , code: 172
     # , rom: None
     # , var: None
     # , item: None
     # , region: None
     # },
-    #endregion
-    #region 3-2
-    # { name: L.C32_HIDDEN_CHEST_NEAR_PIPE
+    # { name: L.C31_OPEN_ITEM_IN_BACKGROUND_2
     # , code: 173
     # , rom: None
     # , var: None
     # , item: None
     # , region: None
     # },
-    # { name: L.C32_THUDLEY_CHEST
+    # { name: L.C31_BOWSER
     # , code: 174
     # , rom: None
     # , var: None
     # , item: None
     # , region: None
     # },
-    # { name: L.C32_STAR_BLOCK
+    # { name: L.C31_STAR_BLOCK
     # , code: 175
     # , rom: None
     # , var: None
     # , item: None
     # , region: None
+    # , setting: star_block
     # },
     #endregion
-    #region 3-3
-    # { name: L.C33_CHOMPS_CHEST
+    #region 3-2
+    # { name: L.C32_HIDDEN_CHEST_NEAR_PIPE
     # , code: 176
     # , rom: None
     # , var: None
     # , item: None
     # , region: None
     # },
-    # { name: L.C33_STAR_BLOCK
+    # { name: L.C32_THUDLEY_CHEST
     # , code: 177
     # , rom: None
     # , var: None
     # , item: None
     # , region: None
     # },
-    #endregion
-    #region 3-4
-    # { name: L.C34_CHEST_IN_PIPE_OUTSIDE_OF_CASTLE
+    # { name: L.C32_STAR_BLOCK
     # , code: 178
     # , rom: None
     # , var: None
     # , item: None
     # , region: None
+    # , setting: star_block
     # },
-    # { name: L.C34_FREE_CARRIE
+    #endregion
+    #region 3-3
+    # { name: L.C33_CHOMPS_CHEST
     # , code: 179
     # , rom: None
     # , var: None
     # , item: None
     # , region: None
     # },
-    # { name: L.C34_RIGHT_FRANCIS_CHAMBER_CHEST
+    # { name: L.C33_STAR_BLOCK
     # , code: 180
     # , rom: None
     # , var: None
     # , item: None
     # , region: None
+    # , setting: star_block
     # },
-    # { name: L.C34_LEFT_FRANCIS_CHAMBER_CHEST
+    #endregion
+    #region 3-4
+    # { name: L.C34_CHEST_IN_PIPE_OUTSIDE_OF_CASTLE
     # , code: 181
     # , rom: None
     # , var: None
     # , item: None
     # , region: None
     # },
-    # { name: L.C34_GREEN_PURE_HEART
+    # { name: L.C34_FREE_CARRIE
     # , code: 182
+    # , rom: None
+    # , var: None
+    # , item: None
+    # , region: None
+    # },
+    # { name: L.C34_RIGHT_FRANCIS_CHAMBER_CHEST
+    # , code: 183
+    # , rom: None
+    # , var: None
+    # , item: None
+    # , region: None
+    # },
+    # { name: L.C34_LEFT_FRANCIS_CHAMBER_CHEST
+    # , code: 184
+    # , rom: None
+    # , var: None
+    # , item: None
+    # , region: None
+    # },
+    # { name: L.C34_GREEN_PURE_HEART
+    # , code: 185
     # , rom: None
     # , var: None
     # , item: I.GREEN_PURE_HEART
@@ -1594,132 +1634,135 @@ LOCATION_LIST_DICT: list[dict[str, Any]] = [
     #endregion
     #region 4-1
     # { name: L.C41_SQUIRPS
-    # , code: 183
-    # , rom: None
-    # , var: None
-    # , item: None
-    # , region: None
-    # },
-    # { name: L.C41_OPEN_ITEM_BEHIND_ASTEROID_1
-    # , code: 184
-    # , rom: None
-    # , var: None
-    # , item: None
-    # , region: None
-    # },
-    # { name: L.C41_OPEN_ITEM_BEHIND_ASTEROID_2
-    # , code: 185
-    # , rom: None
-    # , var: None
-    # , item: None
-    # , region: None
-    # },
-    # { name: L.C41_STAR_BLOCK
     # , code: 186
     # , rom: None
     # , var: None
     # , item: None
     # , region: None
     # },
-    #endregion
-    #region 4-2
-    # { name: L.C42_FLIP_THE_DIMENSIONAL_RIFT
+    # { name: L.C41_OPEN_ITEM_BEHIND_ASTEROID_1
     # , code: 187
     # , rom: None
     # , var: None
     # , item: None
     # , region: None
     # },
-    # { name: L.C42_OPEN_ITEM_IN_CHASM_3_D
+    # { name: L.C41_OPEN_ITEM_BEHIND_ASTEROID_2
     # , code: 188
     # , rom: None
     # , var: None
     # , item: None
     # , region: None
     # },
-    # { name: L.C42_OPEN_ITEM_BEHIND_PIPE_NEAR_BLAPPYS_HOUSE
+    # { name: L.C41_STAR_BLOCK
     # , code: 189
     # , rom: None
     # , var: None
     # , item: None
     # , region: None
+    # , setting: star_block
     # },
-    # { name: L.C42_TALK_TO_BLAPPY
+    #endregion
+    #region 4-2
+    # { name: L.C42_FLIP_THE_DIMENSIONAL_RIFT
     # , code: 190
     # , rom: None
     # , var: None
     # , item: None
     # , region: None
     # },
-    # { name: L.C42_FLEEP
+    # { name: L.C42_OPEN_ITEM_IN_CHASM_3_D
     # , code: 191
     # , rom: None
     # , var: None
     # , item: None
     # , region: None
     # },
-    # { name: L.C42_STAR_BLOCK
+    # { name: L.C42_OPEN_ITEM_BEHIND_PIPE_NEAR_BLAPPYS_HOUSE
     # , code: 192
     # , rom: None
     # , var: None
     # , item: None
     # , region: None
     # },
-    #endregion
-    #region 4-3
-    # { name: L.C43_OPEN_ITEM_BEHIND_FIRST_BLOCKS
+    # { name: L.C42_TALK_TO_BLAPPY
     # , code: 193
     # , rom: None
     # , var: None
     # , item: None
     # , region: None
     # },
-    # { name: L.C43_OPEN_ITEM_BEHIND_BLOCKS_IN_MANY_WORMHOLE_ROOM
+    # { name: L.C42_FLEEP
     # , code: 194
     # , rom: None
     # , var: None
     # , item: None
     # , region: None
     # },
-    # { name: L.C43_VISIBLE_OPEN_ITEM_IN_BLOCKS
+    # { name: L.C42_STAR_BLOCK
     # , code: 195
     # , rom: None
     # , var: None
     # , item: None
     # , region: None
+    # , setting: star_block
     # },
-    # { name: L.C43_STAR_BLOCK
+    #endregion
+    #region 4-3
+    # { name: L.C43_OPEN_ITEM_BEHIND_FIRST_BLOCKS
     # , code: 196
     # , rom: None
     # , var: None
     # , item: None
     # , region: None
     # },
-    #endregion
-    #region 4-4
-    # { name: L.C44_CHEST_NEAR_BARRIBAD
+    # { name: L.C43_OPEN_ITEM_BEHIND_BLOCKS_IN_MANY_WORMHOLE_ROOM
     # , code: 197
     # , rom: None
     # , var: None
     # , item: None
     # , region: None
     # },
-    # { name: L.C44_CHEST_ABOVE_LOCKED_DOOR
+    # { name: L.C43_VISIBLE_OPEN_ITEM_IN_BLOCKS
     # , code: 198
     # , rom: None
     # , var: None
     # , item: None
     # , region: None
     # },
-    # { name: L.C44_CHEST_IN_3_BLOCK_ROOM
+    # { name: L.C43_STAR_BLOCK
     # , code: 199
+    # , rom: None
+    # , var: None
+    # , item: None
+    # , region: None
+    # , setting: star_block
+    # },
+    #endregion
+    #region 4-4
+    # { name: L.C44_CHEST_NEAR_BARRIBAD
+    # , code: 200
+    # , rom: None
+    # , var: None
+    # , item: None
+    # , region: None
+    # },
+    # { name: L.C44_CHEST_ABOVE_LOCKED_DOOR
+    # , code: 201
+    # , rom: None
+    # , var: None
+    # , item: None
+    # , region: None
+    # },
+    # { name: L.C44_CHEST_IN_3_BLOCK_ROOM
+    # , code: 202
     # , rom: None
     # , var: None
     # , item: None
     # , region: None
     # },
     # { name: L.C44_CYAN_PURE_HEART
-    # , code: 200
+    # , code: 203
     # , rom: None
     # , var: None
     # , item: I.CYAN_PURE_HEART
@@ -1729,153 +1772,157 @@ LOCATION_LIST_DICT: list[dict[str, Any]] = [
     #endregion
     #region 5-1
     # { name: L.C51_CHEST_NEAR_WHACKA
-    # , code: 201
-    # , rom: None
-    # , var: None
-    # , item: None
-    # , region: None
-    # },
-    # { name: L.C51_CHEST_AFTER_SHLORPS
-    # , code: 202
-    # , rom: None
-    # , var: None
-    # , item: None
-    # , region: None
-    # },
-    # { name: L.C51_CHEST_IN_CHASM_3_D
-    # , code: 203
-    # , rom: None
-    # , var: None
-    # , item: None
-    # , region: None
-    # },
-    # { name: L.C51_STAR_BLOCK
     # , code: 204
     # , rom: None
     # , var: None
     # , item: None
     # , region: None
     # },
-    #endregion
-    #region 5-2
-    # { name: L.C52_FIRE_TABLET
+    # { name: L.C51_CHEST_AFTER_SHLORPS
     # , code: 205
     # , rom: None
     # , var: None
     # , item: None
     # , region: None
     # },
-    # { name: L.C52_OPEN_ITEM_IN_BACKGROUND
+    # { name: L.C51_CHEST_IN_CHASM_3_D
     # , code: 206
     # , rom: None
     # , var: None
     # , item: None
     # , region: None
     # },
-    # { name: L.C52_OPEN_ITEM_IN_FRONT_OF_PIPE
+    # { name: L.C51_STAR_BLOCK
     # , code: 207
     # , rom: None
     # , var: None
     # , item: None
     # , region: None
+    # , setting: star_block
     # },
-    # { name: L.C52_STONE_TABLET
+    #endregion
+    #region 5-2
+    # { name: L.C52_FIRE_TABLET
     # , code: 208
     # , rom: None
     # , var: None
     # , item: None
     # , region: None
     # },
-    # { name: L.C52_WATER_TABLET
+    # { name: L.C52_OPEN_ITEM_IN_BACKGROUND
     # , code: 209
     # , rom: None
     # , var: None
     # , item: None
     # , region: None
     # },
-    # { name: L.C52_CUDGE
+    # { name: L.C52_OPEN_ITEM_IN_FRONT_OF_PIPE
     # , code: 210
     # , rom: None
     # , var: None
     # , item: None
     # , region: None
     # },
-    # { name: L.C52_CHEST_NEAR_STAR_BLOCK
+    # { name: L.C52_STONE_TABLET
     # , code: 211
     # , rom: None
     # , var: None
     # , item: None
     # , region: None
     # },
-    # { name: L.C52_STAR_BLOCK
+    # { name: L.C52_WATER_TABLET
     # , code: 212
     # , rom: None
     # , var: None
     # , item: None
     # , region: None
     # },
-    #endregion
-    #region 5-3
-    # { name: L.C53_OPEN_ITEM_IN_CAVE
+    # { name: L.C52_CUDGE
     # , code: 213
     # , rom: None
     # , var: None
     # , item: None
     # , region: None
     # },
-    # { name: L.C53_SAVE_CRAGLEY_S_CREW
+    # { name: L.C52_CHEST_NEAR_STAR_BLOCK
     # , code: 214
     # , rom: None
     # , var: None
     # , item: None
     # , region: None
+    # , setting: star_block
     # },
-    # { name: L.C53_STAR_BLOCK
+    # { name: L.C52_STAR_BLOCK
     # , code: 215
     # , rom: None
     # , var: None
     # , item: None
     # , region: None
+    # , setting: star_block
     # },
     #endregion
-    #region 5-4
-    # { name: L.C54_DOTTIE
+    #region 5-3
+    # { name: L.C53_OPEN_ITEM_IN_CAVE
     # , code: 216
     # , rom: None
     # , var: None
     # , item: None
     # , region: None
     # },
-    # { name: L.C54_OPEN_ITEM_NEAR_PROCESSING_CENTER
+    # { name: L.C53_SAVE_CRAGLEY_S_CREW
     # , code: 217
     # , rom: None
     # , var: None
     # , item: None
     # , region: None
     # },
-    # { name: L.C54_OPEN_ITEM_BEHIND_PIPE
+    # { name: L.C53_STAR_BLOCK
     # , code: 218
     # , rom: None
     # , var: None
     # , item: None
     # , region: None
+    # , setting: star_block
     # },
-    # { name: L.C54_FLIP_THE_SKULL
+    #endregion
+    #region 5-4
+    # { name: L.C54_DOTTIE
     # , code: 219
     # , rom: None
     # , var: None
     # , item: None
     # , region: None
     # },
-    # { name: L.C54_DEFEAT_FLORO_CHUNKS
+    # { name: L.C54_OPEN_ITEM_NEAR_PROCESSING_CENTER
     # , code: 220
     # , rom: None
     # , var: None
     # , item: None
     # , region: None
     # },
-    # { name: L.C54_BLUE_PURE_HEART
+    # { name: L.C54_OPEN_ITEM_BEHIND_PIPE
     # , code: 221
+    # , rom: None
+    # , var: None
+    # , item: None
+    # , region: None
+    # },
+    # { name: L.C54_FLIP_THE_SKULL
+    # , code: 222
+    # , rom: None
+    # , var: None
+    # , item: None
+    # , region: None
+    # },
+    # { name: L.C54_DEFEAT_FLORO_CHUNKS
+    # , code: 223
+    # , rom: None
+    # , var: None
+    # , item: None
+    # , region: None
+    # },
+    # { name: L.C54_BLUE_PURE_HEART
+    # , code: 224
     # , rom: None
     # , var: None
     # , item: I.PURPLE_PURE_HEART
@@ -1885,113 +1932,117 @@ LOCATION_LIST_DICT: list[dict[str, Any]] = [
     #endregion
     #region 6-1
     # { name: L.C61_PETRIFIED_PURE_HEART
-    # , code: 222
-    # , rom: None
-    # , var: None
-    # , item: None
-    # , region: None
-    # },
-    # { name: L.C61_STAR_BLOCK
-    # , code: 223
-    # , rom: None
-    # , var: None
-    # , item: None
-    # , region: None
-    # },
-    #endregion
-    #region 6-2
-    # { name: L.C62_STAR_BLOCK
-    # , code: 224
-    # , rom: None
-    # , var: None
-    # , item: None
-    # , region: None
-    # },
-    #endregion
-    #region 6-3
-    # { name: L.C63_STAR_BLOCK
     # , code: 225
     # , rom: None
     # , var: None
     # , item: None
     # , region: None
     # },
-    #endregion
-    #region 6-4
-    # { name: L.C64_SAMMER_KING_REWARD_1
+    # { name: L.C61_STAR_BLOCK
     # , code: 226
     # , rom: None
     # , var: None
     # , item: None
     # , region: None
+    # , setting: star_block
     # },
-    # { name: L.C64_SAMMER_KING_REWARD_2
+    #endregion
+    #region 6-2
+    # { name: L.C62_STAR_BLOCK
     # , code: 227
     # , rom: None
     # , var: None
     # , item: None
     # , region: None
+    # , setting: star_block
     # },
-    # { name: L.C64_SAMMER_KING_REWARD_3
+    #endregion
+    #region 6-3
+    # { name: L.C63_STAR_BLOCK
     # , code: 228
     # , rom: None
     # , var: None
     # , item: None
     # , region: None
+    # , setting: star_block
     # },
-    # { name: L.C64_SAMMER_KING_REWARD_4
+    #endregion
+    #region 6-4
+    # { name: L.C64_SAMMER_KING_REWARD_1
     # , code: 229
     # , rom: None
     # , var: None
     # , item: None
     # , region: None
     # },
-    # { name: L.C64_SAMMER_KING_REWARD_5
+    # { name: L.C64_SAMMER_KING_REWARD_2
     # , code: 230
     # , rom: None
     # , var: None
     # , item: None
     # , region: None
     # },
-    # { name: L.C64_SAMMER_KING_REWARD_6
+    # { name: L.C64_SAMMER_KING_REWARD_3
     # , code: 231
     # , rom: None
     # , var: None
     # , item: None
     # , region: None
     # },
-    # { name: L.C64_SAMMER_KING_REWARD_7
+    # { name: L.C64_SAMMER_KING_REWARD_4
     # , code: 232
     # , rom: None
     # , var: None
     # , item: None
     # , region: None
     # },
-    # { name: L.C64_STAR_BLOCK
+    # { name: L.C64_SAMMER_KING_REWARD_5
     # , code: 233
     # , rom: None
     # , var: None
     # , item: None
     # , region: None
     # },
-    #endregion
-    #region 7-1
-    # { name: L.C71_CHEST_AFTER_GIGABYTE
+    # { name: L.C64_SAMMER_KING_REWARD_6
     # , code: 234
     # , rom: None
     # , var: None
     # , item: None
     # , region: None
     # },
-    # { name: L.C71_OPEN_ITEM_ABOVE_PIPE
+    # { name: L.C64_SAMMER_KING_REWARD_7
     # , code: 235
     # , rom: None
     # , var: None
     # , item: None
     # , region: None
     # },
-    # { name: L.C71_GIVE_THE_PETRIFIED_PURE_HEART_TO_JAYDES
+    # { name: L.C64_STAR_BLOCK
     # , code: 236
+    # , rom: None
+    # , var: None
+    # , item: None
+    # , region: None
+    # , setting: star_block
+    # },
+    #endregion
+    #region 7-1
+    # { name: L.C71_CHEST_AFTER_GIGABYTE
+    # , code: 237
+    # , rom: None
+    # , var: None
+    # , item: None
+    # , region: None
+    # },
+    # { name: L.C71_OPEN_ITEM_ABOVE_PIPE
+    # , code: 238
+    # , rom: None
+    # , var: None
+    # , item: None
+    # , region: None
+    # },
+    # { name: L.C71_GIVE_THE_PETRIFIED_PURE_HEART_TO_JAYDES
+    # , code: 239
     # , rom: None
     # , var: None
     # , item: I.PURPLE_PURE_HEART
@@ -1999,216 +2050,220 @@ LOCATION_LIST_DICT: list[dict[str, Any]] = [
     # , setting: pure_heart
     # },
     # { name: L.C71_LUIGI
-    # , code: 237
-    # , rom: None
-    # , var: None
-    # , item: None
-    # , region: None
-    # },
-    # { name: L.C71_HIDDEN_OPEN_ITEM_NEAR_LUIGI
-    # , code: 238
-    # , rom: None
-    # , var: None
-    # , item: None
-    # , region: None
-    # },
-    # { name: L.C71_HIDDEN_CHEST_IN_LUIGI_S_ROOM
-    # , code: 239
-    # , rom: None
-    # , var: None
-    # , item: None
-    # , region: None
-    # },
-    # { name: L.C71_STAR_BLOCK
     # , code: 240
     # , rom: None
     # , var: None
     # , item: None
     # , region: None
     # },
-    #endregion
-    #region 7-2
-    # { name: L.C72_CHEST_IN_FIRST_DARK_ROOM
+    # { name: L.C71_HIDDEN_OPEN_ITEM_NEAR_LUIGI
     # , code: 241
     # , rom: None
     # , var: None
     # , item: None
     # , region: None
     # },
-    # { name: L.C72_DEFEAT_BOWSER
+    # { name: L.C71_HIDDEN_CHEST_IN_LUIGI_S_ROOM
     # , code: 242
     # , rom: None
     # , var: None
     # , item: None
     # , region: None
     # },
-    # { name: L.C72_TALK_TO_HAGRA_AND_GET_THE_BOOK_FROM_THE_D_MAN
+    # { name: L.C71_STAR_BLOCK
     # , code: 243
     # , rom: None
     # , var: None
     # , item: None
     # , region: None
+    # , setting: star_block
     # },
-    # { name: L.C72_BRING_THE_DIET_BOOK_TO_HAGRA
+    #endregion
+    #region 7-2
+    # { name: L.C72_CHEST_IN_FIRST_DARK_ROOM
     # , code: 244
     # , rom: None
     # , var: None
     # , item: None
     # , region: None
     # },
-    # { name: L.C72_STAR_BLOCK
+    # { name: L.C72_DEFEAT_BOWSER
     # , code: 245
     # , rom: None
     # , var: None
     # , item: None
     # , region: None
     # },
-    #endregion
-    #region 7-3
-    # { name: L.C73_CHEST_RIGHT_OF_25
+    # { name: L.C72_TALK_TO_HAGRA_AND_GET_THE_BOOK_FROM_THE_D_MAN
     # , code: 246
     # , rom: None
     # , var: None
     # , item: None
     # , region: None
     # },
-    # { name: L.C73_CHEST_AT_34
+    # { name: L.C72_BRING_THE_DIET_BOOK_TO_HAGRA
     # , code: 247
     # , rom: None
     # , var: None
     # , item: None
     # , region: None
     # },
-    # { name: L.C73_CHEST_LEFT_OF_47
+    # { name: L.C72_STAR_BLOCK
     # , code: 248
     # , rom: None
     # , var: None
     # , item: None
     # , region: None
+    # , setting: star_block
     # },
-    # { name: L.C73_WAKE_PEACH_UP
+    #endregion
+    #region 7-3
+    # { name: L.C73_CHEST_RIGHT_OF_25
     # , code: 249
     # , rom: None
     # , var: None
     # , item: None
     # , region: None
     # },
-    # { name: L.C73_CHEST_AT_68
+    # { name: L.C73_CHEST_AT_34
     # , code: 250
     # , rom: None
     # , var: None
     # , item: None
     # , region: None
     # },
-    # { name: L.C73_CHEST_RIGHT_OF_69
+    # { name: L.C73_CHEST_LEFT_OF_47
     # , code: 251
     # , rom: None
     # , var: None
     # , item: None
     # , region: None
     # },
-    # { name: L.C73_CHEST_RIGHT_OF_CYRRUS
+    # { name: L.C73_WAKE_PEACH_UP
     # , code: 252
     # , rom: None
     # , var: None
     # , item: None
     # , region: None
     # },
-    # { name: L.C73_CHEST_ATOP_BUILDING_AT_80
+    # { name: L.C73_CHEST_AT_68
     # , code: 253
     # , rom: None
     # , var: None
     # , item: None
     # , region: None
     # },
-    # { name: L.C73_CHEST_BEHIND_STAR_BLOCK
+    # { name: L.C73_CHEST_RIGHT_OF_69
     # , code: 254
     # , rom: None
     # , var: None
     # , item: None
     # , region: None
     # },
-    # { name: L.C73_STAR_BLOCK
+    # { name: L.C73_CHEST_RIGHT_OF_CYRRUS
     # , code: 255
     # , rom: None
     # , var: None
     # , item: None
     # , region: None
     # },
-    #endregion
-    #region 7-4
-    # { name: L.C74_SAVE_SUNBI
+    # { name: L.C73_CHEST_ATOP_BUILDING_AT_80
     # , code: 256
     # , rom: None
     # , var: None
     # , item: None
     # , region: None
     # },
-    # { name: L.C74_CHEST_AFTER_GIGABYTE
+    # { name: L.C73_CHEST_BEHIND_STAR_BLOCK
     # , code: 257
     # , rom: None
     # , var: None
     # , item: None
     # , region: None
+    # , setting: star_block
     # },
-    # { name: L.C74_FREE_WHIBBI
+    # { name: L.C73_STAR_BLOCK
     # , code: 258
     # , rom: None
     # , var: None
     # , item: None
     # , region: None
+    # , setting: star_block
     # },
-    # { name: L.C74_TALK_TO_YEBBI
+    #endregion
+    #region 7-4
+    # { name: L.C74_SAVE_SUNBI
     # , code: 259
     # , rom: None
     # , var: None
     # , item: None
     # , region: None
     # },
-    # { name: L.C74_OPEN_ITEM_ABOVE_TWO_DOORS
+    # { name: L.C74_CHEST_AFTER_GIGABYTE
     # , code: 260
     # , rom: None
     # , var: None
     # , item: None
     # , region: None
     # },
-    # { name: L.C74_TALK_TO_REBBI
+    # { name: L.C74_FREE_WHIBBI
     # , code: 261
     # , rom: None
     # , var: None
     # , item: None
     # , region: None
     # },
-    # { name: L.C74_BIG_CHEST_BELOW_REBBI
+    # { name: L.C74_TALK_TO_YEBBI
     # , code: 262
     # , rom: None
     # , var: None
     # , item: None
     # , region: None
     # },
-    # { name: L.C74_TALK_TO_BLUBI_AFTER_WHIBBI
+    # { name: L.C74_OPEN_ITEM_ABOVE_TWO_DOORS
     # , code: 263
     # , rom: None
     # , var: None
     # , item: None
     # , region: None
     # },
-    # { name: L.C74_CHEST_BEHIND_STAIRS
+    # { name: L.C74_TALK_TO_REBBI
     # , code: 264
     # , rom: None
     # , var: None
     # , item: None
     # , region: None
     # },
-    # { name: L.C74_CHEST_FAR_RIGHT_OF_MELEE
+    # { name: L.C74_BIG_CHEST_BELOW_REBBI
     # , code: 265
     # , rom: None
     # , var: None
     # , item: None
     # , region: None
     # },
-    # { name: L.C74_WHITE_PURE_HEART
+    # { name: L.C74_TALK_TO_BLUBI_AFTER_WHIBBI
     # , code: 266
+    # , rom: None
+    # , var: None
+    # , item: None
+    # , region: None
+    # },
+    # { name: L.C74_CHEST_BEHIND_STAIRS
+    # , code: 267
+    # , rom: None
+    # , var: None
+    # , item: None
+    # , region: None
+    # },
+    # { name: L.C74_CHEST_FAR_RIGHT_OF_MELEE
+    # , code: 268
+    # , rom: None
+    # , var: None
+    # , item: None
+    # , region: None
+    # },
+    # { name: L.C74_WHITE_PURE_HEART
+    # , code: 269
     # , rom: None
     # , var: None
     # , item: I.WHITE_PURE_HEART
@@ -2218,21 +2273,21 @@ LOCATION_LIST_DICT: list[dict[str, Any]] = [
     #endregion
     #region 8-1
     # { name: L.C81_RIGHT_CHEST_ABOVE_PEACH_CUTSCENE_START
-    # , code: 267
+    # , code: 270
     # , rom: None
     # , var: None
     # , item: None
     # , region: None
     # },
     # { name: L.C81_LEFT_CHEST_ABOVE_PEACH_CUTSCENE_START
-    # , code: 268
+    # , code: 271
     # , rom: None
     # , var: None
     # , item: None
     # , region: None
     # },
     # { name: L.C81_CHEST_IN_SOOPA_STRIKER_HALLWAY
-    # , code: 269
+    # , code: 272
     # , rom: None
     # , var: None
     # , item: None
@@ -2241,70 +2296,70 @@ LOCATION_LIST_DICT: list[dict[str, Any]] = [
     #endregion
     #region 8-2
     # { name: L.C82_LEFT_CHEST_ABOVE_MERLON_ROOM
-    # , code: 270
-    # , rom: None
-    # , var: None
-    # , item: None
-    # , region: None
-    # },
-    # { name: L.C82_MIDDLE_CHEST_ABOVE_MERLON_ROOM
-    # , code: 271
-    # , rom: None
-    # , var: None
-    # , item: None
-    # , region: None
-    # },
-    # { name: L.C82_RIGHT_CHEST_ABOVE_MERLON_ROOM
-    # , code: 272
-    # , rom: None
-    # , var: None
-    # , item: None
-    # , region: None
-    # },
-    # { name: L.C82_OPEN_ITEM_BEHIND_5TH_PIPE
     # , code: 273
     # , rom: None
     # , var: None
     # , item: None
     # , region: None
     # },
-    # { name: L.C82_CHEST_IN_CURSYA_ROOM
+    # { name: L.C82_MIDDLE_CHEST_ABOVE_MERLON_ROOM
     # , code: 274
     # , rom: None
     # , var: None
     # , item: None
     # , region: None
     # },
-    # { name: L.C82_FIRST_HUNG_ITEM
+    # { name: L.C82_RIGHT_CHEST_ABOVE_MERLON_ROOM
     # , code: 275
     # , rom: None
     # , var: None
     # , item: None
     # , region: None
     # },
-    # { name: L.C82_SECOND_HUNG_ITEM
+    # { name: L.C82_OPEN_ITEM_BEHIND_5TH_PIPE
     # , code: 276
     # , rom: None
     # , var: None
     # , item: None
     # , region: None
     # },
-    # { name: L.C82_THIRD_HUNG_ITEM
+    # { name: L.C82_CHEST_IN_CURSYA_ROOM
     # , code: 277
     # , rom: None
     # , var: None
     # , item: None
     # , region: None
     # },
-    # { name: L.C82_DEFEAT_THE_CHROMEBA
+    # { name: L.C82_FIRST_HUNG_ITEM
     # , code: 278
     # , rom: None
     # , var: None
     # , item: None
     # , region: None
     # },
-    # { name: L.C82_MERLEES_THUNDER_RAGE
+    # { name: L.C82_SECOND_HUNG_ITEM
     # , code: 279
+    # , rom: None
+    # , var: None
+    # , item: None
+    # , region: None
+    # },
+    # { name: L.C82_THIRD_HUNG_ITEM
+    # , code: 280
+    # , rom: None
+    # , var: None
+    # , item: None
+    # , region: None
+    # },
+    # { name: L.C82_DEFEAT_THE_CHROMEBA
+    # , code: 281
+    # , rom: None
+    # , var: None
+    # , item: None
+    # , region: None
+    # },
+    # { name: L.C82_MERLEES_THUNDER_RAGE
+    # , code: 282
     # , rom: None
     # , var: None
     # , item: None
@@ -2313,35 +2368,35 @@ LOCATION_LIST_DICT: list[dict[str, Any]] = [
     #endregion
     #region 8-3
     # { name: L.C83_RIGHT_CHEST_BEHIND_FIRST_HALL_OF_MIRRORS
-    # , code: 280
-    # , rom: None
-    # , var: None
-    # , item: None
-    # , region: None
-    # },
-    # { name: L.C83_LEFT_CHEST_BEHIND_FIRST_HALL_OF_MIRRORS
-    # , code: 281
-    # , rom: None
-    # , var: None
-    # , item: None
-    # , region: None
-    # },
-    # { name: L.C83_CHEST_AFTER_BLOCK_PUZZLE
-    # , code: 282
-    # , rom: None
-    # , var: None
-    # , item: None
-    # , region: None
-    # },
-    # { name: L.C83_RIGHT_CHEST_BEHIND_SECOND_HALL_OF_MIRRORS
     # , code: 283
     # , rom: None
     # , var: None
     # , item: None
     # , region: None
     # },
-    # { name: L.C83_LEFT_CHEST_BEHIND_SECOND_HALL_OF_MIRRORS
+    # { name: L.C83_LEFT_CHEST_BEHIND_FIRST_HALL_OF_MIRRORS
     # , code: 284
+    # , rom: None
+    # , var: None
+    # , item: None
+    # , region: None
+    # },
+    # { name: L.C83_CHEST_AFTER_BLOCK_PUZZLE
+    # , code: 285
+    # , rom: None
+    # , var: None
+    # , item: None
+    # , region: None
+    # },
+    # { name: L.C83_RIGHT_CHEST_BEHIND_SECOND_HALL_OF_MIRRORS
+    # , code: 286
+    # , rom: None
+    # , var: None
+    # , item: None
+    # , region: None
+    # },
+    # { name: L.C83_LEFT_CHEST_BEHIND_SECOND_HALL_OF_MIRRORS
+    # , code: 287
     # , rom: None
     # , var: None
     # , item: None
@@ -2350,35 +2405,35 @@ LOCATION_LIST_DICT: list[dict[str, Any]] = [
     #endregion
     #region 8-4
     # { name: L.C84_CHEST_AFTER_TINY_PASSAGE
-    # , code: 285
-    # , rom: None
-    # , var: None
-    # , item: None
-    # , region: None
-    # },
-    # { name: L.C84_CHEST_IN_FIRST_3_D_HALLWAYS
-    # , code: 286
-    # , rom: None
-    # , var: None
-    # , item: None
-    # , region: None
-    # },
-    # { name: L.C84_CHEST_IN_SECOND_3_D_HALLWAYS
-    # , code: 287
-    # , rom: None
-    # , var: None
-    # , item: None
-    # , region: None
-    # },
-    # { name: L.C84_CHEST_IN_THIRD_3_D_HALLWAYS
     # , code: 288
     # , rom: None
     # , var: None
     # , item: None
     # , region: None
     # },
+    # { name: L.C84_CHEST_IN_FIRST_3_D_HALLWAYS
+    # , code: 289
+    # , rom: None
+    # , var: None
+    # , item: None
+    # , region: None
+    # },
+    # { name: L.C84_CHEST_IN_SECOND_3_D_HALLWAYS
+    # , code: 290
+    # , rom: None
+    # , var: None
+    # , item: None
+    # , region: None
+    # },
+    # { name: L.C84_CHEST_IN_THIRD_3_D_HALLWAYS
+    # , code: 291
+    # , rom: None
+    # , var: None
+    # , item: None
+    # , region: None
+    # },
     { name: L.CHAPTER_8_4_END
-    , code: 289
+    , code: 292
     , rom: None
     , var: GSW(0, 416)
     , item: E.VICTORY
@@ -2388,7 +2443,7 @@ LOCATION_LIST_DICT: list[dict[str, Any]] = [
     #endregion
     #region Flamm / Treasure Maps
     { name: L.FLAMM_ITEM_1
-    , code: 290
+    , code: 293
     , rom: None
     , var: None
     , item: I.MAP_1
@@ -2396,7 +2451,7 @@ LOCATION_LIST_DICT: list[dict[str, Any]] = [
     , setting: flamm
     },
     { name: L.FLAMM_ITEM_2
-    , code: 291
+    , code: 294
     , rom: None
     , var: None
     , item: I.MAP_2
@@ -2404,7 +2459,7 @@ LOCATION_LIST_DICT: list[dict[str, Any]] = [
     , setting: flamm
     },
     { name: L.FLAMM_ITEM_3
-    , code: 292
+    , code: 295
     , rom: None
     , var: None
     , item: I.MAP_3
@@ -2412,7 +2467,7 @@ LOCATION_LIST_DICT: list[dict[str, Any]] = [
     , setting: flamm
     },
     { name: L.FLAMM_ITEM_4
-    , code: 293
+    , code: 296
     , rom: None
     , var: None
     , item: I.MAP_4
@@ -2420,7 +2475,7 @@ LOCATION_LIST_DICT: list[dict[str, Any]] = [
     , setting: flamm
     },
     { name: L.FLAMM_ITEM_5
-    , code: 294
+    , code: 297
     , rom: None
     , var: None
     , item: I.MAP_5
@@ -2428,7 +2483,7 @@ LOCATION_LIST_DICT: list[dict[str, Any]] = [
     , setting: flamm
     },
     { name: L.FLAMM_ITEM_6
-    , code: 295
+    , code: 298
     , rom: None
     , var: None
     , item: I.MAP_6
@@ -2436,7 +2491,7 @@ LOCATION_LIST_DICT: list[dict[str, Any]] = [
     , setting: flamm
     },
     { name: L.FLAMM_ITEM_7
-    , code: 296
+    , code: 299
     , rom: None
     , var: None
     , item: I.MAP_7
@@ -2444,7 +2499,7 @@ LOCATION_LIST_DICT: list[dict[str, Any]] = [
     , setting: flamm
     },
     { name: L.FLAMM_ITEM_8
-    , code: 297
+    , code: 300
     , rom: None
     , var: None
     , item: I.MAP_8
@@ -2452,7 +2507,7 @@ LOCATION_LIST_DICT: list[dict[str, Any]] = [
     , setting: flamm
     },
     { name: L.FLAMM_ITEM_9
-    , code: 298
+    , code: 301
     , rom: None
     , var: None
     , item: I.MAP_9
@@ -2460,7 +2515,7 @@ LOCATION_LIST_DICT: list[dict[str, Any]] = [
     , setting: flamm
     },
     { name: L.FLAMM_ITEM_10
-    , code: 299
+    , code: 302
     , rom: None
     , var: None
     , item: I.MAP_10
@@ -2468,7 +2523,7 @@ LOCATION_LIST_DICT: list[dict[str, Any]] = [
     , setting: flamm
     },
     { name: L.FLAMM_ITEM_11
-    , code: 300
+    , code: 303
     , rom: None
     , var: None
     , item: I.MAP_11
@@ -2476,7 +2531,7 @@ LOCATION_LIST_DICT: list[dict[str, Any]] = [
     , setting: flamm
     },
     { name: L.FLAMM_ITEM_12
-    , code: 301
+    , code: 304
     , rom: None
     , var: None
     , item: I.MAP_12
@@ -2484,7 +2539,7 @@ LOCATION_LIST_DICT: list[dict[str, Any]] = [
     , setting: flamm
     },
     { name: L.FLAMM_ITEM_13
-    , code: 302
+    , code: 305
     , rom: None
     , var: None
     , item: I.MAP_13
@@ -2492,7 +2547,7 @@ LOCATION_LIST_DICT: list[dict[str, Any]] = [
     , setting: flamm
     },
     { name: L.FLAMM_ITEM_14
-    , code: 303
+    , code: 306
     , rom: None
     , var: None
     , item: I.MAP_14
@@ -2500,7 +2555,7 @@ LOCATION_LIST_DICT: list[dict[str, Any]] = [
     , setting: flamm
     },
     { name: L.FLAMM_ITEM_15
-    , code: 304
+    , code: 307
     , rom: None
     , var: None
     , item: I.MAP_15
@@ -2508,7 +2563,7 @@ LOCATION_LIST_DICT: list[dict[str, Any]] = [
     , setting: flamm
     },
     { name: L.FLAMM_ITEM_16
-    , code: 305
+    , code: 308
     , rom: None
     , var: None
     , item: I.MAP_16
@@ -2516,7 +2571,7 @@ LOCATION_LIST_DICT: list[dict[str, Any]] = [
     , setting: flamm
     },
     { name: L.FLAMM_ITEM_17
-    , code: 306
+    , code: 309
     , rom: None
     , var: None
     , item: I.MAP_17
@@ -2524,7 +2579,7 @@ LOCATION_LIST_DICT: list[dict[str, Any]] = [
     , setting: flamm
     },
     { name: L.FLAMM_ITEM_18
-    , code: 307
+    , code: 310
     , rom: None
     , var: None
     , item: I.MAP_18
@@ -2532,7 +2587,7 @@ LOCATION_LIST_DICT: list[dict[str, Any]] = [
     , setting: flamm
     },
     { name: L.FLAMM_ITEM_19
-    , code: 308
+    , code: 311
     , rom: None
     , var: None
     , item: I.MAP_19
@@ -2540,7 +2595,7 @@ LOCATION_LIST_DICT: list[dict[str, Any]] = [
     , setting: flamm
     },
     { name: L.FLAMM_ITEM_20
-    , code: 309
+    , code: 312
     , rom: None
     , var: None
     , item: I.MAP_20
@@ -2548,7 +2603,7 @@ LOCATION_LIST_DICT: list[dict[str, Any]] = [
     , setting: flamm
     },
     { name: L.FLAMM_ITEM_21
-    , code: 310
+    , code: 313
     , rom: None
     , var: None
     , item: I.MAP_21
@@ -2556,7 +2611,7 @@ LOCATION_LIST_DICT: list[dict[str, Any]] = [
     , setting: flamm
     },
     { name: L.FLAMM_ITEM_22
-    , code: 311
+    , code: 314
     , rom: None
     , var: None
     , item: I.MAP_22
@@ -2564,7 +2619,7 @@ LOCATION_LIST_DICT: list[dict[str, Any]] = [
     , setting: flamm
     },
     { name: L.FLAMM_ITEM_23
-    , code: 312
+    , code: 315
     , rom: None
     , var: None
     , item: I.MAP_23
@@ -2572,7 +2627,7 @@ LOCATION_LIST_DICT: list[dict[str, Any]] = [
     , setting: flamm
     },
     { name: L.FLAMM_ITEM_24
-    , code: 313
+    , code: 316
     , rom: None
     , var: None
     , item: I.MAP_24
@@ -2580,7 +2635,7 @@ LOCATION_LIST_DICT: list[dict[str, Any]] = [
     , setting: flamm
     },
     { name: L.FLAMM_ITEM_25
-    , code: 314
+    , code: 317
     , rom: None
     , var: None
     , item: I.MAP_25
@@ -2588,7 +2643,7 @@ LOCATION_LIST_DICT: list[dict[str, Any]] = [
     , setting: flamm
     },
     { name: L.FLAMM_ITEM_26
-    , code: 315
+    , code: 318
     , rom: None
     , var: None
     , item: I.MAP_26
@@ -2596,7 +2651,7 @@ LOCATION_LIST_DICT: list[dict[str, Any]] = [
     , setting: flamm
     },
     { name: L.FLAMM_ITEM_27
-    , code: 316
+    , code: 319
     , rom: None
     , var: None
     , item: I.MAP_27
@@ -2604,7 +2659,7 @@ LOCATION_LIST_DICT: list[dict[str, Any]] = [
     , setting: flamm
     },
     { name: L.FLAMM_ITEM_28
-    , code: 317
+    , code: 320
     , rom: None
     , var: None
     , item: I.MAP_28
@@ -2612,7 +2667,7 @@ LOCATION_LIST_DICT: list[dict[str, Any]] = [
     , setting: flamm
     },
     { name: L.FLAMM_ITEM_29
-    , code: 318
+    , code: 321
     , rom: None
     , var: None
     , item: I.MAP_29
@@ -2620,7 +2675,7 @@ LOCATION_LIST_DICT: list[dict[str, Any]] = [
     , setting: flamm
     },
     { name: L.FLAMM_ITEM_30
-    , code: 319
+    , code: 322
     , rom: None
     , var: None
     , item: I.MAP_30
@@ -2628,7 +2683,7 @@ LOCATION_LIST_DICT: list[dict[str, Any]] = [
     , setting: flamm
     },
     { name: L.FLAMM_ITEM_31
-    , code: 320
+    , code: 323
     , rom: None
     , var: None
     , item: I.MAP_31
@@ -2636,7 +2691,7 @@ LOCATION_LIST_DICT: list[dict[str, Any]] = [
     , setting: flamm
     },
     { name: L.FLAMM_ITEM_32
-    , code: 321
+    , code: 324
     , rom: None
     , var: None
     , item: I.MAP_32
@@ -2644,7 +2699,7 @@ LOCATION_LIST_DICT: list[dict[str, Any]] = [
     , setting: flamm
     },
     { name: L.FLAMM_ITEM_33
-    , code: 322
+    , code: 325
     , rom: None
     , var: None
     , item: I.MAP_33
@@ -2652,7 +2707,7 @@ LOCATION_LIST_DICT: list[dict[str, Any]] = [
     , setting: flamm
     },
     { name: L.FLAMM_ITEM_34
-    , code: 323
+    , code: 326
     , rom: None
     , var: None
     , item: I.MAP_34
@@ -2660,7 +2715,7 @@ LOCATION_LIST_DICT: list[dict[str, Any]] = [
     , setting: flamm
     },
     { name: L.FLAMM_ITEM_35
-    , code: 324
+    , code: 327
     , rom: None
     , var: None
     , item: I.MAP_35
@@ -2668,7 +2723,7 @@ LOCATION_LIST_DICT: list[dict[str, Any]] = [
     , setting: flamm
     },
     { name: L.FLAMM_ITEM_36
-    , code: 325
+    , code: 328
     , rom: None
     , var: None
     , item: I.MAP_36
@@ -2676,7 +2731,7 @@ LOCATION_LIST_DICT: list[dict[str, Any]] = [
     , setting: flamm
     },
     { name: L.FLAMM_ITEM_37
-    , code: 326
+    , code: 329
     , rom: None
     , var: None
     , item: I.MAP_37
@@ -2684,7 +2739,7 @@ LOCATION_LIST_DICT: list[dict[str, Any]] = [
     , setting: flamm
     },
     { name: L.FLAMM_ITEM_38
-    , code: 327
+    , code: 330
     , rom: None
     , var: None
     , item: I.MAP_38
@@ -2692,7 +2747,7 @@ LOCATION_LIST_DICT: list[dict[str, Any]] = [
     , setting: flamm
     },
     { name: L.FLAMM_ITEM_39
-    , code: 328
+    , code: 331
     , rom: None
     , var: None
     , item: I.MAP_39
@@ -2700,7 +2755,7 @@ LOCATION_LIST_DICT: list[dict[str, Any]] = [
     , setting: flamm
     },
     { name: L.FLAMM_ITEM_40
-    , code: 329
+    , code: 332
     , rom: None
     , var: None
     , item: I.MAP_40
@@ -2708,7 +2763,7 @@ LOCATION_LIST_DICT: list[dict[str, Any]] = [
     , setting: flamm
     },
     { name: L.FLAMM_ITEM_41
-    , code: 330
+    , code: 333
     , rom: None
     , var: None
     , item: I.MAP_41
@@ -2716,7 +2771,7 @@ LOCATION_LIST_DICT: list[dict[str, Any]] = [
     , setting: flamm
     },
     { name: L.FLAMM_ITEM_42
-    , code: 331
+    , code: 334
     , rom: None
     , var: None
     , item: I.MAP_42
@@ -2724,7 +2779,7 @@ LOCATION_LIST_DICT: list[dict[str, Any]] = [
     , setting: flamm
     },
     { name: L.FLAMM_ITEM_43
-    , code: 332
+    , code: 335
     , rom: None
     , var: None
     , item: I.MAP_43
@@ -2732,7 +2787,7 @@ LOCATION_LIST_DICT: list[dict[str, Any]] = [
     , setting: flamm
     },
     { name: L.FLAMM_ITEM_44
-    , code: 333
+    , code: 336
     , rom: None
     , var: None
     , item: I.MAP_44
@@ -2740,7 +2795,7 @@ LOCATION_LIST_DICT: list[dict[str, Any]] = [
     , setting: flamm
     },
     { name: L.FLAMM_ITEM_45
-    , code: 334
+    , code: 337
     , rom: None
     , var: None
     , item: I.MAP_45
@@ -2748,7 +2803,7 @@ LOCATION_LIST_DICT: list[dict[str, Any]] = [
     , setting: flamm
     },
     { name: L.FLAMM_ITEM_46
-    , code: 335
+    , code: 338
     , rom: None
     , var: None
     , item: I.MAP_46
@@ -2756,7 +2811,7 @@ LOCATION_LIST_DICT: list[dict[str, Any]] = [
     , setting: flamm
     },
     { name: L.FLAMM_ITEM_47
-    , code: 336
+    , code: 339
     , rom: None
     , var: None
     , item: I.MAP_47
@@ -2764,7 +2819,7 @@ LOCATION_LIST_DICT: list[dict[str, Any]] = [
     , setting: flamm
     },
     { name: L.FLAMM_ITEM_48
-    , code: 337
+    , code: 340
     , rom: None
     , var: None
     , item: I.MAP_48
@@ -2772,7 +2827,7 @@ LOCATION_LIST_DICT: list[dict[str, Any]] = [
     , setting: flamm
     },
     { name: L.FLEEP_MAP_REVEAL_01
-    , code: 338
+    , code: 341
     , rom: None
     , var: None
     , item: I.GOLD_BAR
@@ -2780,7 +2835,7 @@ LOCATION_LIST_DICT: list[dict[str, Any]] = [
     , setting: treasure_spot
     },
     { name: L.FLEEP_MAP_REVEAL_02
-    , code: 339
+    , code: 342
     , rom: None
     , var: None
     , item: I.CATCH_CARD_WELDERBERG
@@ -2788,7 +2843,7 @@ LOCATION_LIST_DICT: list[dict[str, Any]] = [
     , setting: treasure_spot
     },
     { name: L.FLEEP_MAP_REVEAL_03
-    , code: 340
+    , code: 343
     , rom: None
     , var: None
     , item: I.ULTRA_SHROOM_SHAKE
@@ -2796,7 +2851,7 @@ LOCATION_LIST_DICT: list[dict[str, Any]] = [
     , setting: treasure_spot
     },
     { name: L.FLEEP_MAP_REVEAL_04
-    , code: 341
+    , code: 344
     , rom: None
     , var: None
     , item: I.CATCH_CARD_KING_SAMMER
@@ -2804,7 +2859,7 @@ LOCATION_LIST_DICT: list[dict[str, Any]] = [
     , setting: treasure_spot
     },
     { name: L.FLEEP_MAP_REVEAL_05
-    , code: 342
+    , code: 345
     , rom: None
     , var: None
     , item: I.CATCH_CARD_O_CHUNKS
@@ -2812,348 +2867,348 @@ LOCATION_LIST_DICT: list[dict[str, Any]] = [
     , setting: treasure_spot
     },
     # { name: L.FLEEP_MAP_REVEAL_06
-    # , code: 343
+    # , code: 346
     # , rom: None
     # , var: None
     # , item: I.CATCH_CARD_BESTOVIUS
     # , region: None
-    # , setting: treasure_map
+    # , setting: treasure_spot
     # },
     # { name: L.FLEEP_MAP_REVEAL_07
-    # , code: 344
+    # , code: 347
     # , rom: None
     # , var: None
     # , item: I.GOLDEN_LEAF
     # , region: None
-    # , setting: treasure_map
+    # , setting: treasure_spot
     # },
     # { name: L.FLEEP_MAP_REVEAL_08
-    # , code: 345
+    # , code: 348
     # , rom: None
     # , var: None
     # , item: I.CATCH_CARD_BROBOT_L_TYPE
     # , region: None
-    # , setting: treasure_map
+    # , setting: treasure_spot
     # },
     # { name: L.FLEEP_MAP_REVEAL_09
-    # , code: 346
+    # , code: 349
     # , rom: None
     # , var: None
     # , item: I.GOLD_BAR_X3
     # , region: None
-    # , setting: treasure_map
+    # , setting: treasure_spot
     # },
     # { name: L.FLEEP_MAP_REVEAL_10
-    # , code: 347
+    # , code: 350
     # , rom: None
     # , var: None
     # , item: I.CATCH_CARD_FRACKTAIL
     # , region: None
-    # , setting: treasure_map
+    # , setting: treasure_spot
     # },
     # { name: L.FLEEP_MAP_REVEAL_11
-    # , code: 348
+    # , code: 351
     # , rom: None
     # , var: None
     # , item: I.CATCH_CARD_MERLUMINA
     # , region: None
-    # , setting: treasure_map
+    # , setting: treasure_spot
     # },
     # { name: L.FLEEP_MAP_REVEAL_12
-    # , code: 349
+    # , code: 352
     # , rom: None
     # , var: None
     # , item: I.SHOOTING_STAR
     # , region: None
-    # , setting: treasure_map
+    # , setting: treasure_spot
     # },
     # { name: L.FLEEP_MAP_REVEAL_13
-    # , code: 350
+    # , code: 353
     # , rom: None
     # , var: None
     # , item: I.CATCH_CARD_SP
     # , region: None
-    # , setting: treasure_map
+    # , setting: treasure_spot
     # },
     # { name: L.FLEEP_MAP_REVEAL_14
-    # , code: 351
+    # , code: 354
     # , rom: None
     # , var: None
     # , item: I.CATCH_CARD_GNIP
     # , region: None
-    # , setting: treasure_map
+    # , setting: treasure_spot
     # },
-    # { name: L.FLEEP_MAP_REVEAL_15
-    # , code: 352
-    # , rom: None
-    # , var: None
-    # , item: I.CATCH_CARD_MIMI
-    # , region: None
-    # , setting: treasure_map
-    # },
-    # { name: L.FLEEP_MAP_REVEAL_16
-    # , code: 353
-    # , rom: None
-    # , var: None
-    # , item: I.GOLD_BAR_X3
-    # , region: None
-    # , setting: treasure_map
-    # },
-    # { name: L.FLEEP_MAP_REVEAL_17
-    # , code: 354
-    # , rom: None
-    # , var: None
-    # , item: I.DRIED_SHROOM
-    # , region: None
-    # , setting: treasure_map
-    # },
+    { name: L.FLEEP_MAP_REVEAL_15
+    , code: 355
+    , rom: None
+    , var: None
+    , item: I.CATCH_CARD_MIMI
+    , region: R.MI306
+    , setting: treasure_spot
+    },
+    { name: L.FLEEP_MAP_REVEAL_16
+    , code: 356
+    , rom: None
+    , var: None
+    , item: I.GOLD_BAR_X3
+    , region: R.MI401
+    , setting: treasure_spot
+    },
+    { name: L.FLEEP_MAP_REVEAL_17
+    , code: 357
+    , rom: None
+    , var: None
+    , item: I.DRIED_SHROOM
+    , region: R.MI414
+    , setting: treasure_spot
+    },
     # { name: L.FLEEP_MAP_REVEAL_18
-    # , code: 355
+    # , code: 358
     # , rom: None
     # , var: None
     # , item: I.CATCH_CARD_BACK_CURSYA
     # , region: None
-    # , setting: treasure_map
+    # , setting: treasure_spot
     # },
     # { name: L.FLEEP_MAP_REVEAL_19
-    # , code: 356
+    # , code: 359
     # , rom: None
     # , var: None
     # , item: I.ULTRA_SHROOM_SHAKE
     # , region: None
-    # , setting: treasure_map
+    # , setting: treasure_spot
     # },
     # { name: L.FLEEP_MAP_REVEAL_20
-    # , code: 357
+    # , code: 360
     # , rom: None
     # , var: None
     # , item: I.CATCH_CARD_BIG_BLOOPER
     # , region: None
-    # , setting: treasure_map
+    # , setting: treasure_spot
     # },
     # { name: L.FLEEP_MAP_REVEAL_21
-    # , code: 358
+    # , code: 361
     # , rom: None
     # , var: None
     # , item: I.POWER_PLUS
     # , region: None
-    # , setting: treasure_map
+    # , setting: treasure_spot
     # },
     # { name: L.FLEEP_MAP_REVEAL_22
-    # , code: 359
+    # , code: 362
     # , rom: None
     # , var: None
     # , item: I.CATCH_CARD_DIMENTIO
     # , region: None
-    # , setting: treasure_map
+    # , setting: treasure_spot
     # },
     # { name: L.FLEEP_MAP_REVEAL_23
-    # , code: 360
+    # , code: 363
     # , rom: None
     # , var: None
     # , item: I.CATCH_CARD_TIPTRON
     # , region: None
-    # , setting: treasure_map
+    # , setting: treasure_spot
     # },
     # { name: L.FLEEP_MAP_REVEAL_24
-    # , code: 361
+    # , code: 364
     # , rom: None
     # , var: None
     # , item: I.CATCH_CARD_FRANCIS
     # , region: None
-    # , setting: treasure_map
+    # , setting: treasure_spot
     # },
     # { name: L.FLEEP_MAP_REVEAL_25
-    # , code: 362
+    # , code: 365
     # , rom: None
     # , var: None
     # , item: I.CATCH_CARD_SQUIRPS
     # , region: None
-    # , setting: treasure_map
+    # , setting: treasure_spot
     # },
     # { name: L.FLEEP_MAP_REVEAL_26
-    # , code: 363
+    # , code: 366
     # , rom: None
     # , var: None
     # , item: I.CATCH_CARD_HOOLIGON
     # , region: None
-    # , setting: treasure_map
+    # , setting: treasure_spot
     # },
     # { name: L.FLEEP_MAP_REVEAL_27
-    # , code: 364
+    # , code: 367
     # , rom: None
     # , var: None
     # , item: I.CATCH_CARD_MR_L
     # , region: None
-    # , setting: treasure_map
+    # , setting: treasure_spot
     # },
     # { name: L.FLEEP_MAP_REVEAL_28
-    # , code: 365
+    # , code: 368
     # , rom: None
     # , var: None
     # , item: I.CATCH_CARD_BROBOT
     # , region: None
-    # , setting: treasure_map
+    # , setting: treasure_spot
     # },
     # { name: L.FLEEP_MAP_REVEAL_29
-    # , code: 366
+    # , code: 369
     # , rom: None
     # , var: None
     # , item: I.CATCH_CARD_MUTH
     # , region: None
-    # , setting: treasure_map
+    # , setting: treasure_spot
     # },
     # { name: L.FLEEP_MAP_REVEAL_30
-    # , code: 367
+    # , code: 370
     # , rom: None
     # , var: None
     # , item: I.CATCH_CARD_FLINT_CRAGLEY
     # , region: None
-    # , setting: treasure_map
+    # , setting: treasure_spot
     # },
     # { name: L.FLEEP_MAP_REVEAL_31
-    # , code: 368
+    # , code: 371
     # , rom: None
     # , var: None
     # , item: I.FIRE_BURST
     # , region: None
-    # , setting: treasure_map
+    # , setting: treasure_spot
     # },
     # { name: L.FLEEP_MAP_REVEAL_32
-    # , code: 369
+    # , code: 372
     # , rom: None
     # , var: None
     # , item: I.FIRE_BURST
     # , region: None
-    # , setting: treasure_map
+    # , setting: treasure_spot
     # },
     # { name: L.FLEEP_MAP_REVEAL_33
-    # , code: 370
+    # , code: 373
     # , rom: None
     # , var: None
     # , item: I.ULTRA_SHROOM_SHAKE
     # , region: None
-    # , setting: treasure_map
+    # , setting: treasure_spot
     # },
     # { name: L.FLEEP_MAP_REVEAL_34
-    # , code: 371
+    # , code: 374
     # , rom: None
     # , var: None
     # , item: I.SHOOTING_STAR
     # , region: None
-    # , setting: treasure_map
+    # , setting: treasure_spot
     # },
     # { name: L.FLEEP_MAP_REVEAL_35
-    # , code: 372
+    # , code: 375
     # , rom: None
     # , var: None
     # , item: I.CATCH_CARD_HORNFELS_MONZO
     # , region: None
-    # , setting: treasure_map
+    # , setting: treasure_spot
     # },
     # { name: L.FLEEP_MAP_REVEAL_36
-    # , code: 373
+    # , code: 376
     # , rom: None
     # , var: None
     # , item: I.POISON_SHROOM
     # , region: None
-    # , setting: treasure_map
+    # , setting: treasure_spot
     # },
     # { name: L.FLEEP_MAP_REVEAL_37
-    # , code: 374
+    # , code: 377
     # , rom: None
     # , var: None
     # , item: I.CATCH_CARD_KING_CROACUS
     # , region: None
-    # , setting: treasure_map
+    # , setting: treasure_spot
     # },
     # { name: L.FLEEP_MAP_REVEAL_38
-    # , code: 375
+    # , code: 378
     # , rom: None
     # , var: None
     # , item: I.CATCH_CARD_JAYDES
     # , region: None
-    # , setting: treasure_map
+    # , setting: treasure_spot
     # },
     # { name: L.FLEEP_MAP_REVEAL_39
-    # , code: 376
+    # , code: 379
     # , rom: None
     # , var: None
     # , item: I.CATCH_CARD_UNDERHAND
     # , region: None
-    # , setting: treasure_map
+    # , setting: treasure_spot
     # },
     # { name: L.FLEEP_MAP_REVEAL_40
-    # , code: 377
+    # , code: 380
     # , rom: None
     # , var: None
     # , item: I.TRIAL_STEW
     # , region: None
-    # , setting: treasure_map
+    # , setting: treasure_spot
     # },
     # { name: L.FLEEP_MAP_REVEAL_41
-    # , code: 378
+    # , code: 381
     # , rom: None
     # , var: None
     # , item: I.CATCH_CARD_THE_UNDERCHOMP
     # , region: None
-    # , setting: treasure_map
+    # , setting: treasure_spot
     # },
     # { name: L.FLEEP_MAP_REVEAL_42
-    # , code: 379
+    # , code: 382
     # , rom: None
     # , var: None
     # , item: I.GOLD_BAR_X3
     # , region: None
-    # , setting: treasure_map
+    # , setting: treasure_spot
     # },
     # { name: L.FLEEP_MAP_REVEAL_43
-    # , code: 380
+    # , code: 383
     # , rom: None
     # , var: None
     # , item: I.CATCH_CARD_GRAMBI
     # , region: None
-    # , setting: treasure_map
+    # , setting: treasure_spot
     # },
     # { name: L.FLEEP_MAP_REVEAL_44
-    # , code: 381
+    # , code: 384
     # , rom: None
     # , var: None
     # , item: I.CATCH_CARD_LUVBI
     # , region: None
-    # , setting: treasure_map
+    # , setting: treasure_spot
     # },
     # { name: L.FLEEP_MAP_REVEAL_45
-    # , code: 382
+    # , code: 385
     # , rom: None
     # , var: None
     # , item: I.CATCH_CARD_BONECHILL
     # , region: None
-    # , setting: treasure_map
+    # , setting: treasure_spot
     # },
     # { name: L.FLEEP_MAP_REVEAL_46
-    # , code: 383
+    # , code: 386
     # , rom: None
     # , var: None
     # , item: I.CATCH_CARD_NASTASIA
     # , region: None
-    # , setting: treasure_map
+    # , setting: treasure_spot
     # },
     # { name: L.FLEEP_MAP_REVEAL_47
-    # , code: 384
+    # , code: 387
     # , rom: None
     # , var: None
     # , item: I.CATCH_CARD_SUPER_DIMENTIO
     # , region: None
-    # , setting: treasure_map
+    # , setting: treasure_spot
     # },
     # { name: L.FLEEP_MAP_REVEAL_48
-    # , code: 385
+    # , code: 388
     # , rom: None
     # , var: None
     # , item: I.CATCH_CARD_COUNT_BLECK
     # , region: None
-    # , setting: treasure_map
+    # , setting: treasure_spot
     # },
     #endregion
 ]

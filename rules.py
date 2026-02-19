@@ -165,9 +165,23 @@ class RuleHolder:
         can_fire
     )
 
+    # chapter 2 rules
+    mi110_door_group = (
+        # Luigi jumps to the doors without touching the blocks
+        can_super_jump |
+        # Bowser builds up speed on carrie and jumps at the blocks while breathing fire
+        (can_fire & Has(I.PIXL_CARRIE)) |
+        # Bowser too big to cudge the blocks
+        (HasAny(I.CHARACTER_LUIGI, I.CHARACTER_MARIO, I.CHARACTER_PEACH) & Has(I.PIXL_CUDGE)) |
+        # The normal way to break the blocks
+        Has(I.PIXL_BOOMER)
+    )
+
 
 def connect_regions(world: "SuperPaperMarioWorld") -> list[Entrance]:
-    """Assign all of the location/event collection rules as well as the completion condition"""
+    """Connects all the regions together with the appropriate rules.
+    Returns the list of entrances that can be randomized.
+    """
 
     def create_entrance(world: "SuperPaperMarioWorld",
         from_region: R,
@@ -1105,8 +1119,397 @@ ENTRANCE_RULES = [
     , name: f"{R.MI101} - Pipe"
     , rule: (RuleHolder.can_float | Has(I.PIXL_DASHELL)) & (RuleHolder.can_flip | RuleHolder.can_super_jump)
     },
+    { fr: R.MI101
+    , to: R.MI108
+    , name: f"{R.MI101} - Locked Door"
+    , rule: (RuleHolder.can_float | Has(I.PIXL_DASHELL)) & Has(I.DOOR_KEY_21)
+    },
+    { fr: R.MI102
+    , to: R.MI110
+    , name: f"{R.MI102} - Bottom Door"
+    },
+    { fr: R.MI102
+    , to: R.MI110  # TODO: split out this and the connection above for ER
+    , name: f"{R.MI102} - Top Door"
+    },
+    { fr: R.MI103
+    , to: R.MI110
+    , name: f"{R.MI103} - Bottom Door"
+    },
+    { fr: R.MI103
+    , to: R.MI110
+    , name: f"{R.MI103} - Top Door"
+    },
+    { fr: R.MI104
+    , to: R.MI110
+    , name: f"{R.MI104} - Door"
+    },
+    { fr: R.MI105
+    , to: R.MI101
+    , name: f"{R.MI105} - Pipe"
+    },
+    { fr: R.MI106
+    , to: R.MI110
+    , name: f"{R.MI106} - Right Pipe"
+    },
+    { fr: R.MI106
+    , to: R.MI107
+    , name: f"{R.MI106} - Left Pipe"
+    },
+    { fr: R.MI107
+    , to: R.MI106
+    , name: f"{R.MI107} - Pipe"
+    },
+    { fr: R.MI108
+    , to: R.MI101
+    , name: f"{R.MI108} - Left Door"
+    },
+    { fr: R.MI108
+    , to: R.MI109
+    , name: f"{R.MI108} - Middle Door"
+    },
+    { fr: R.MI108
+    , to: R.MI111
+    , name: f"{R.MI108} - Right Door"
+    , rule: Has(E.SWITCH_GLOAM_VALLEY_BACKGROUND)
+    },
+    { fr: R.MI109
+    , to: R.MI108
+    , name: f"{R.MI109} - Door"
+    },
+    { fr: R.MI110
+    , to: R.MI106
+    , name: f"{R.MI110} - Pipe"
+    , rule: RuleHolder.mi110_door_group
+    },
+    { fr: R.MI110
+    , to: R.MI111
+    , name: f"{R.MI110} - Ground Door"
+    , rule: RuleHolder.mi110_door_group
+    },
+    { fr: R.MI110
+    , to: R.MI104
+    , name: f"{R.MI110} - Left Elevated Door (Switch)"
+    , rule: RuleHolder.mi110_door_group
+    },
+    { fr: R.MI110
+    , to: R.MI102
+    , name: f"{R.MI110} - Middle Left Elevated Door"
+    , rule: RuleHolder.mi110_door_group
+    },
+    { fr: R.MI110
+    , to: R.MI103
+    , name: f"{R.MI110} - Middle Elevated Door"
+    , rule: RuleHolder.mi110_door_group
+    },
+    { fr: R.MI111
+    , to: R.MI108
+    , name: f"{R.MI111} - Left Door"
+    },
+    { fr: R.MI111
+    , to: R.MI110
+    , name: f"{R.MI111} - Right Door"
+    },
+    #endregion
+    #region Chapter 2-2
+    { fr: R.MI201
+    , to: R.MI202
+    , name: f"{R.MI201} - Mansion Front Door"
+    },
+    { fr: R.MI202
+    , to: R.MI201
+    , name: f"{R.MI202} - Mansion Front Door"
+    },
+    { fr: R.MI202
+    , to: R.MI203
+    , name: f"{R.MI202} - Door Behind Curtains"
+    , rule: RuleHolder.can_flip
+    },
+    { fr: R.MI203
+    , to: R.MI202
+    , name: f"{R.MI203} - Far Left Door"
+    },
+    { fr: R.MI203
+    , to: R.MI207
+    , name: f"{R.MI203} - Bottom Right, Left Door"
+    },
+    { fr: R.MI203
+    , to: R.MI204
+    , name: f"{R.MI203} - Top Right, Left Door"
+    },
+    { fr: R.MI203
+    , to: R.MI205
+    , name: f"{R.MI203} - Top Right, Middle Door"
+    },
+    { fr: R.MI203
+    , to: R.MI206
+    , name: f"{R.MI203} - Top Right, Right Door"
+    },
+    { fr: R.MI203
+    , to: R.MI208
+    , name: f"{R.MI203} - Bottom Right, Right Door"
+    , rule: Has(I.HOUSE_KEY)
+    },
+    { fr: R.MI204
+    , to: R.MI203
+    , name: f"{R.MI204} - Door"
+    },
+    { fr: R.MI204
+    , to: R.MI209
+    , name: f"{R.MI204} - Pit Trap"
+    # , etype: EntranceType.ONE_WAY
+    },
+    { fr: R.MI205
+    , to: R.MI203
+    , name: f"{R.MI205} - Door"
+    },
+    { fr: R.MI205
+    , to: R.MI210
+    , name: f"{R.MI205} - Pit Trap"
+    # , etype: EntranceType.ONE_WAY
+    },
+    { fr: R.MI206
+    , to: R.MI203
+    , name: f"{R.MI206} - Door"
+    },
+    { fr: R.MI207
+    , to: R.MI203
+    , name: f"{R.MI207} - Door"
+    },
+    { fr: R.MI207
+    , to: R.MI211
+    , name: f"{R.MI207} - Pit Trap"
+    # , etype: EntranceType.ONE_WAY
+    },
+    { fr: R.MI208
+    , to: R.MI203
+    , name: f"{R.MI208} - Door"
+    },
+    { fr: R.MI209
+    , to: R.MI204
+    , name: f"{R.MI209} - Pipe"
+    # Need boomer to defeat the shlurp
+    , rule: Has(I.PIXL_BOOMER)
+    },
+    { fr: R.MI210
+    , to: R.MI205
+    , name: f"{R.MI210} - Pipe"
+    # Bowser can hit the switch from a distance while carrie zooms him out just barely fast enough
+    # Anyone can hit the switch and zoom out with dashell in time
+    , rule: (RuleHolder.can_fire & Has(I.PIXL_CARRIE)) | HasAny(I.PIXL_BOOMER, I.PIXL_DASHELL)
+    },
+    { fr: R.MI211
+    , to: R.MI207
+    , name: f"{R.MI211} - Pipe"
+    # Same as above
+    , rule: (RuleHolder.can_fire & Has(I.PIXL_CARRIE)) | HasAny(I.PIXL_BOOMER, I.PIXL_DASHELL)
+    },
+    #endregion
+    #region 2-3
+    { fr: R.MI301
+    , to: R.MI302
+    , name: f"{R.MI301} - Top Left Door"
+    },
+    { fr: R.MI301
+    , to: R.MI303
+    , name: f"{R.MI301} - Top Middle Door"
+    },
+    { fr: R.MI301
+    , to: R.MI304
+    , name: f"{R.MI301} - Top Right Door"
+    },
+    { fr: R.MI301
+    , to: R.MI305
+    , name: f"{R.MI301} - Lower Left Door"
+    , rule: RuleHolder.can_float | HasAny(I.PIXL_CARRIE, I.PIXL_DASHELL)
+    },
+    { fr: R.MI301
+    , to: R.MI306
+    , name: f"{R.MI301} - Lower Right Door"
+    },
+    { fr: R.MI302
+    , to: R.MI301
+    , name: f"{R.MI302} - Door"
+    },
+    { fr: R.MI303
+    , to: R.MI301
+    , name: f"{R.MI303} - Door"
+    },
+    { fr: R.MI304
+    , to: R.MI301
+    , name: f"{R.MI304} - Door"
+    },
+    { fr: R.MI305
+    , to: R.MI301
+    , name: f"{R.MI305} - Door"
+    },
+    { fr: R.MI306
+    , to: R.MI301
+    , name: f"{R.MI306} - Door"
+    },
+    #endregion
+    #region Chapter 2-4
+    # this chapter has to have the most connections of all time
+    { fr: R.MI401
+    , to: R.MI402
+    , name: f"{R.MI401} - Left Door"
+    },
+    { fr: R.MI401
+    , to: R.MI403
+    , name: f"{R.MI401} - Right Door"
+    },
+    { fr: R.MI402
+    , to: R.MI401
+    , name: f"{R.MI402} - Left Door"
+    },
+    { fr: R.MI402
+    , to: R.MI404
+    , name: f"{R.MI402} - Right Door"
+    },
+    { fr: R.MI403
+    , to: R.MI401
+    , name: f"{R.MI403} - Bottom Left Door"
+    },
+    { fr: R.MI403
+    , to: R.MI404
+    , name: f"{R.MI403} - Bottom Right Door"
+    },
+    { fr: R.MI403
+    , to: R.MI405
+    , name: f"{R.MI403} - Top Right Door"
+    },
+    { fr: R.MI404
+    , to: R.MI406
+    , name: f"{R.MI404} - Top Left Door"
+    },
+    { fr: R.MI404
+    , to: R.MI402
+    , name: f"{R.MI404} - Middle Floating Door"
+    },
+    { fr: R.MI404
+    , to: R.MI403
+    , name: f"{R.MI404} - Bottom Right Door"
+    },
+    { fr: R.MI405
+    , to: R.MI403
+    , name: f"{R.MI405} - Left Door"
+    },
+    { fr: R.MI405
+    , to: R.MI406
+    , name: f"{R.MI405} - Right Door"
+    },
+    { fr: R.MI406
+    , to: R.MI409
+    , name: f"{R.MI406} - Top Right Door"
+    },
+    { fr: R.MI406
+    , to: R.MI405
+    , name: f"{R.MI406} - Bottom Right Door"
+    },
+    { fr: R.MI406
+    , to: R.MI404
+    , name: f"{R.MI406} - Bottom Left Door"
+    },
+    { fr: R.MI407
+    , to: R.MI408
+    , name: f"{R.MI407} - Top Left Door"
+    },
+    { fr: R.MI407
+    , to: R.MI410
+    , name: f"{R.MI407} - Top Right Door"
+    },
+    { fr: R.MI407
+    , to: R.MI409
+    , name: f"{R.MI407} - Bottom Left Door"
+    },
+    { fr: R.MI408
+    , to: R.MI410
+    , name: f"{R.MI408} - Top Left Door"
+    },
+    { fr: R.MI408
+    , to: R.MI411
+    , name: f"{R.MI408} - Top Right Door"
+    },
+    { fr: R.MI408
+    , to: R.MI407
+    , name: f"{R.MI408} - Bottom Left Door"
+    },
+    { fr: R.MI408
+    , to: R.MI410
+    , name: f"{R.MI408} - Bottom Right Door"
+    },
+    { fr: R.MI409
+    , to: R.MI406
+    , name: f"{R.MI409} - Left Door"
+    },
+    { fr: R.MI409
+    , to: R.MI407
+    , name: f"{R.MI409} - Bottom Door"
+    },
+    # MI409 Top door can't be entered
+    { fr: R.MI410
+    , to: R.MI408
+    , name: f"{R.MI410} - Top Left Door"
+    },
+    { fr: R.MI410
+    , to: R.MI411
+    , name: f"{R.MI410} - Top Right Door"
+    },
+    { fr: R.MI410
+    , to: R.MI408
+    , name: f"{R.MI410} - Bottom Left Door"
+    },
+    { fr: R.MI410
+    , to: R.MI407
+    , name: f"{R.MI410} - Bottom Right Door"
+    },
+    { fr: R.MI411
+    , to: R.MI415
+    , name: f"{R.MI411} - Top Left Door"
+    },
+    # { fr: R.MI411
+    # , to: R.MI411
+    # , name: f"{R.MI411} - Top Right Door"  # TODO: double-check, i don't think this door can be entered
+    # },
+    { fr: R.MI411
+    , to: R.MI410
+    , name: f"{R.MI411} - Bottom Left Door"
+    },
+    { fr: R.MI411
+    , to: R.MI409
+    , name: f"{R.MI411} - Bottom Right Door"
+    },
+    { fr: R.MI412
+    , to: R.MI415
+    , name: f"{R.MI412} - Left Door"
+    },
+    { fr: R.MI412
+    , to: R.MI413
+    , name: f"{R.MI412} - Men's Bathroom Door"
+    },
+    { fr: R.MI412
+    , to: R.MI414
+    , name: f"{R.MI412} - Women's Bathroom Door"
+    },
+    { fr: R.MI413
+    , to: R.MI412
+    , name: f"{R.MI413} - Door"
+    },
+    { fr: R.MI414
+    , to: R.MI412
+    , name: f"{R.MI414} - Door"
+    },
+    { fr: R.MI415
+    , to: R.MI411
+    , name: f"{R.MI415} - Bottom Door"
+    },
+    { fr: R.MI415
+    , to: R.MI412
+    , name: f"{R.MI415} - Top Door"
+    },
     #endregion
 ]
+
 
 ENTRANCE_DATA: list[EntranceRule] = [EntranceRule(**edata) for edata in ENTRANCE_RULES]
 
@@ -1269,6 +1672,39 @@ LOCATION_RULES = [
     },
     { loc: E.SWITCH_GLOAM_VALLEY_BACKGROUND
     , rule: RuleHolder.can_float | Has(I.PIXL_DASHELL)
+    },
+    #endregion
+    #region Chapter 2-2
+    { loc: L.C22_CHEST_ON_ROOF
+    , rule: RuleHolder.can_flip
+    },
+    { loc: L.C22_CHEST_ABOVE_SPIKE_ROOF
+    , rule: RuleHolder.can_flip & (HasAny(I.PIXL_BOOMER, I.PIXL_CUDGE) | RuleHolder.can_fire)
+    },
+    #endregion
+    #region Chapter 2-3
+    { loc: E.OPEN_THE_RUBEE_VAULT
+    , rule: RuleHolder.can_flip & Has(I.PIXL_SLIM)
+    },
+    { loc: L.FLEEP_MAP_REVEAL_15
+    , rule: CanFleepTreasureSpot(I.MAP_15)
+    },
+    { loc: L.C23_STAR_BLOCK
+    , rule: Has(E.OPEN_THE_RUBEE_VAULT)
+    },
+    #endregion
+    #region Chapter 2-4
+    { loc: L.FLEEP_MAP_REVEAL_16
+    , rule: CanFleepTreasureSpot(I.MAP_16)
+    },
+    { loc: L.C24_OPEN_ITEM_BEHIND_ROOM_08_SIGN
+    , rule: RuleHolder.can_flip & Has(I.PIXL_BOOMER)
+    },
+    { loc: L.FLEEP_MAP_REVEAL_17
+    , rule: CanFleepTreasureSpot(I.MAP_17)
+    },
+    { loc: L.C24_YELLOW_PURE_HEART
+    , rule: Has(I.PIXL_THOREAU)  # TODO: Add more ways to defeat mimi
     },
     #endregion
 ]
