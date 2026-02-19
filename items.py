@@ -1,7 +1,7 @@
 """Defines the set of game items and item pools"""
 import typing
 
-from BaseClasses import Item
+from BaseClasses import Item, ItemClassification
 
 from .data import GAME, item_data
 from .names import ItemName
@@ -32,8 +32,8 @@ def create_items(world: "SuperPaperMarioWorld") -> list[SPMItem]:
 
     for idata in item_data.ITEM_DATA:
         amount = idata.amount if not callable(idata.amount) else idata.amount(world)
-        # TODO: remove None as a possible value for amount. It was going to be used to represent filler.
-        if amount is None:
+        # Don't add the starting character/pixl or filler to the base pool
+        if idata.name in world.starting_pair or idata.classification == ItemClassification.filler:
             continue
         if amount > 0:
             items.extend(world.create_item(idata.name) for _ in range(0, amount))
@@ -45,3 +45,13 @@ def create_item(world: "SuperPaperMarioWorld", item_name: ItemName) -> SPMItem:
     data = ITEM_ENUM_TO_DATA[item_name]
     clazz = data.classification if not callable(data.classification) else data.classification(world.options)
     return SPMItem(item_name, clazz, data.code, world.player)
+
+
+def override_filler_options(world: "SuperPaperMarioWorld") -> None:
+    for item_name, weight in world.options.filler_weights.items():
+        item_name = ItemName(item_name)
+        data = ITEM_ENUM_TO_DATA[item_name]
+        clazz = data.classification if not callable(data.classification) else data.classification(world.options)
+        if not (clazz == ItemClassification.filler or clazz == ItemClassification.trap):
+            continue
+        world.filler_options[item_name] = weight

@@ -1,3 +1,4 @@
+from time import sleep
 import json
 import os
 import random
@@ -107,8 +108,8 @@ class SPMPatchExtension(APPatchExtension):
 
     @staticmethod
     def apply_practice_codes():
-        os.mkdir(f"{TMP_EXTRACT}/mod")
-        shutil.copyfile("./worlds/super_paper_mario/rel/spm-practice-codes.us0.rel", f"{TMP_EXTRACT}/mod/mod.rel")
+        os.mkdir(f"./{TMP_EXTRACT}/files/mod")
+        shutil.copyfile("./worlds/super_paper_mario/rel/spm-practice-codes.us0.rel", f"./{TMP_EXTRACT}/files/mod/mod.rel")
 
 
 def output_patch(world: "SuperPaperMarioWorld", output_directory: str):

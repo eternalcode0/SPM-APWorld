@@ -54,7 +54,7 @@ class RegionName(StrEnum):
     MAC03_LAYER2 = "Flopside 1F - Mirror Hall"
     MAC04_LAYER1 = "Flipside B1"
     MAC04_ITTY_BITS = "Flipside B1 - Itty Bits"
-    # MAC04_ARCADE_PIPE = "Flipside Beveragarium - Pipe Room"
+    MAC04_BAR = "Flipside Bar - Pipe Room"
     MAC05_LAYER1 = "Flipside B2 - Layer 1"
     MAC05_LAYER2 = "Flipside B2 - Layer 2"
     MAC06_LAYER1 = "Flipside 1F Outskirts - Interior Side"
@@ -67,6 +67,7 @@ class RegionName(StrEnum):
     MAC09_LAYER3 = "Flipside 1F - Layer 3"
     L_FLIPSIDE_PIT_ENTRANCE = "Flipside B2 - Cage top"
     L_FLIPSIDE_PIT = "Flipside Pit of 100 Trials"
+    MAC30 = "Flipside Arcade"
 
     # Flopside
     MAC11_LAYER1 = "Flopside 3F - Layer 1"
@@ -90,7 +91,6 @@ class RegionName(StrEnum):
     MAC19_LAYER2 = "Flopside 1F - Layer 2"
     MAC19_LAYER3 = "Flopside 1F - Layer 3"
     # MAC22  # Cutscenes
-    # MAC30  # Arcade
     L_FLOPSIDE_PIT = "Flopside Pit of 100 Trials"
 
     # 1-1: The Adventure Unfolds

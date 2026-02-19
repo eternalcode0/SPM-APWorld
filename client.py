@@ -37,6 +37,17 @@ DOLPHIN_STATUS_CONNECTED = "Dolphin connected successfully."
 DOLPHIN_STATUS_LOST = "Dolphin connection was lost. Please restart your emulator."
 DOLPHIN_STATUS_BAD_GAME = "Dolphin failed to connect. Please load a randomized ROM for Super Paper Mario."
 
+# US0 addresses until I figure out how to support more versions.
+# GP and its associated offsets: see https://github.com/SeekyCt/spm-decomp/blob/master/spm-headers/include/spm/spmario.h
+GP_BASE      = 0x804E2550
+SAVE_NAME    =       0x20 + GP_BASE
+MAP_NAME     =       0x44 + GP_BASE
+GSW0         =      0x140 + GP_BASE
+GSWF_BASE    =      0x144 + GP_BASE
+GSW_BASE     =      0x544 + GP_BASE
+COIN_ENTRIES =     0x1184 + GP_BASE
+
+EXPECTED_GAME_ID = b"R8PE01"
 
 class SPMCommandProcessor(ClientCommandProcessor):
     """Command Processor for Super Paper Mario"""
@@ -130,7 +141,7 @@ class SuperPaperMarioContext(SuperContext):
             logger.error(traceback.format_exc())
 
 def check_ingame() -> bool:
-    return read_string(MEMORY["file_name"], 8) != "default"
+    return read_string(SAVE_NAME, 8) != "default"
 
 
 def read_string(address: int, strlen: int) -> str:
@@ -170,7 +181,7 @@ def read_word(address: int) -> int:
 def _get_bit_address(bit_number: int) -> tuple:
     word_index = bit_number >> 5
     bit_position = bit_number & 0x1F
-    word_address = MEMORY["gswf_start"] + (word_index * 4)
+    word_address = (word_index * 4) + GSWF_BASE
     byte_within_word = 3 - (bit_position >> 3)
     byte_address = word_address + byte_within_word
     bit = bit_position & 0x7
@@ -197,10 +208,10 @@ def gswf_check(bit_number: int) -> bool:
     return bool(current_byte & bit_mask)
 
 def gsw_set(index, value):
-    dme.write_word(MEMORY["gsw0"], value) if index == 0 else dme.write_byte(MEMORY["gsw1"] + index, value)
+    dme.write_word(GSW0, value) if index == 0 else dme.write_byte(GSW_BASE + index, value)
 
 def gsw_check(index):
-    return dme.read_word(MEMORY["gsw0"]) if index == 0 else dme.read_byte(MEMORY["gsw0"] + index)
+    return dme.read_word(GSW0) if index == 0 else dme.read_byte(GSW_BASE + index)
 
 
 async def dolphin_sync_task(ctx: SuperPaperMarioContext) -> None:
@@ -249,7 +260,7 @@ async def dolphin_sync_task(ctx: SuperPaperMarioContext) -> None:
                 logger.info("Attempting to connect to Dolphin...")
                 dme.hook()
                 if dme.is_hooked():
-                    if dme.read_bytes(0x80000000, 6) != b"R8PE01":
+                    if dme.read_bytes(0x80000000, 6) != EXPECTED_GAME_ID:
                         logger.info(DOLPHIN_STATUS_BAD_GAME)
                         ctx.dolphin_status = DOLPHIN_STATUS_BAD_GAME
                         dme.un_hook()
@@ -313,6 +324,8 @@ def main(*args) -> None:
             await asyncio.create_task(_patch_and_run_game(args.patch_file))
         ctx = SuperPaperMarioContext(args.connect, args.password)
         ctx.server_task = asyncio.create_task(server_loop(ctx), name="ServerLoop")
+        if tracker_loaded:
+            ctx.run_generator()
         if gui_enabled:
             ctx.run_gui()
         ctx.run_cli()
@@ -343,9 +356,9 @@ def main(*args) -> None:
 
 
 # Only US0 addresses for now until I figure out if I can support more revisions
-MEMORY = {
-    "file_name": 0x804E2570,
-    "gsw0": 0x804E2690,
-    "gswf_start": 0x804E2694,
-    "gsw1": 0x804E2A95,
-}
+# MEMORY = {
+#     "file_name": 0x804E2570,
+#     "gsw0": 0x804E2690,
+#     "gswf_start": 0x804E2694,
+#     "gsw1": 0x804E2A95,
+# }

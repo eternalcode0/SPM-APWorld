@@ -1,9 +1,12 @@
 """All types related to the yaml options and presets"""
 
+from collections.abc import Sequence
 from dataclasses import dataclass
 from typing import Any
 
-from Options import Choice, ItemDict, OptionGroup, PerGameCommonOptions, Range, Toggle, Visibility
+from Options import Choice, ItemDict, ItemSet, OptionGroup, PerGameCommonOptions, Range, Toggle, Visibility
+
+from .names import ItemName
 
 
 class Goal(Choice):
@@ -183,35 +186,49 @@ class FlopsidePitLogic(PitLogic):
     default = PitLogic.option_minimum
 
 
-class Traps(Choice):
-    """Adds the various cursya traps to the item pool
-
-    *None*: No cursya traps are added to the pool.
-
-    *Some*: Adds the Slow, Heavy, Reverse, and Tech Cursya traps to the pool.
-
-    *All*: Adds all the above traps as well as the Back Cursya trap to the pool.
-    """
+class TrapTypes(ItemSet):
+    """Which Traps should be included in the item pool"""
     display_name = "Cursya Traps"
-    internal_name = "traps"
+    internal_name = "trap_types"
 
-    option_none = 0
-    option_some = 1
-    option_all = 2
-    alias_false = option_none
-    alias_true = option_some
-    default = option_none
+    valid_keys: Sequence[str] = [
+        ItemName.SLOW_CURSYA_TRAP.value,
+        ItemName.HEAVY_CURSYA_TRAP.value,
+        ItemName.REVERSYA_CURSYA_TRAP.value,
+        ItemName.TECH_CURSYA_TRAP.value,
+        ItemName.BACK_CURSYA_TRAP.value
+    ]
+    default = frozenset({
+        ItemName.SLOW_CURSYA_TRAP.value,
+        ItemName.HEAVY_CURSYA_TRAP.value,
+        ItemName.REVERSYA_CURSYA_TRAP.value,
+        ItemName.TECH_CURSYA_TRAP.value
+    })
 
 
-class EntranceRando(Toggle):
+class FillerWeights(ItemDict):
+    """How common should each filler item be?
+
+    Without using this setting, the filler pool will be decided from the amount of items shuffled *out* of its
+    vanilla locations. Each item specified in here will override its default amount.
+    Cursya Traps can also be listed here."""
+    display_name = "Filler Weights"
+    internal_name = "filler_weights"
+
+
+class EntranceRando(Choice):
     """Do you want entrances to be randomized?
     Doesn't randomize small buildings / entrances that use the spinning black square transition.
-    Doesn't randomize the Chapter doors.
     """
 
     display_name = "Entrance Randomization"
     internal_name = "randomize_entrances"
-    visibility = Visibility.none  # hidden until feature complete
+    visibility = Visibility.none
+
+    option_disabled = 0
+    option_coupled = 1
+    option_disjointed = 2
+    default = option_disabled
 
 
 class EnemyRando(Choice):
@@ -285,6 +302,26 @@ class ObscureTricks(Toggle):
     internal_name = "obscure_tricks"
 
 
+# class TrickEnemyJumps(Toggle):
+#     """Should logic expect you to jump off enemies to reach higher locations?
+#     Some of these may also expect you to use Thoreau to place the enemy in a specific spot first."""
+#     display_name = "Enemy Jumps"
+#     internal_name = "enemy_jumps"
+
+
+# class TrickThudleyJumps(Choice):
+#     """Should logic expect you to perform mid-air jumps using Thudley?
+
+#     Easy only requires doing the jump once or twice in a row.
+#     """
+#     display_name = "Thudley Jumps"
+#     internal_name = "thudley_jumps"
+
+#     option_disabled = 0
+#     option_easy = 1
+#     option_hard = 2
+
+
 class TradingQuest(Toggle):
     """
     Should the Piccolo trading quest items & locations be added to the pool?
@@ -294,20 +331,83 @@ class TradingQuest(Toggle):
     internal_name = "trading_quest"
 
 
+class TreasureMaps(Choice):
+    """What should Flamm sell and when can Fleep reveal Treasure Map locations?
+
+    - *Disabled*: Flamm doesn't sell anything. Map Items aren't in the item and there are no Treasure spots for Fleep to reveal.
+    - *No Flamm and Open Treasures*: Flamm doesn't sell anything. Map Items aren't in the item pool, Fleep can access the Treasure spots without them.
+    - *No Flamm and Standard Treasures*: Flamm doesn't sell anything. Map Items are in the item pool, Fleep has to reveal the Treasure spots like normal.
+    - *Vanilla*: Flamm sells maps like normal. Fleep requires the Map Item to reveal the Treasure spot.
+    - *Only Flamm*: Flamm sells randomized items. Map Items/Treasures aren't in the pool for Fleep to reveal.
+    - *Flamm and Open Treasures*: Flamm sells randomized items. Map Items aren't in the pool but Fleep can reveal them anyway.
+    - *All*: Flamm sells randomized items. Map Items are in the pool for Fleep to use to reveal Map Treasures.
+    """
+    display_name = "Treasure Maps"
+    internal_name = "treasure_maps"
+
+    value_flamm_disabled = 0b00_00  # Flamm doesn't sell anything
+    value_flamm_vanilla = 0b00_01  # Flamm sells the vanilla maps
+    value_flamm_random = 0b00_10  # Flamm sells random items
+    value_FLAMM_MASK = 0b00_11
+
+    value_treasures_disabled = 0b00_00  # Fleep can't reveal map locations, they're disabled in the location pool
+    value_treasures_open = 0b01_00  # Fleep doesn't require the map to reveal treasures
+    value_treasures_standard = 0b10_00  # Treasure locations work as normal, requiring the map to reveal
+    value_TREASURES_MASK = 0b11_00
+
+    option_disabled = value_flamm_disabled | value_treasures_disabled
+    option_no_flamm_and_open_treasures = value_flamm_disabled | value_treasures_open
+    option_no_flamm_and_standard_treasures = value_flamm_disabled | value_treasures_standard
+    # If fleep treasures are disabled, there's no point to flamm having vanilla maps
+    # If fleep treasures are open, there's no point to flamm having vanilla maps
+    option_vanilla = value_flamm_vanilla | value_treasures_standard
+    option_flamm_and_no_treasures = value_flamm_random | value_treasures_disabled
+    option_flamm_and_open_treasures = value_flamm_random | value_treasures_open
+    option_all = value_flamm_random | value_treasures_standard
+
+    default = option_disabled
+
+    @property
+    def flamm_disabled(self) -> bool:
+        return self.value & self.value_FLAMM_MASK == self.value_flamm_disabled
+    @property
+    def flamm_vanilla(self) -> bool:
+        return self.value & self.value_FLAMM_MASK == self.value_flamm_vanilla
+    @property
+    def flamm_random(self) -> bool:
+        return self.value & self.value_FLAMM_MASK == self.value_flamm_random
+
+    @property
+    def treasures_disabled(self) -> bool:
+        return self.value & self.value_TREASURES_MASK == self.value_treasures_disabled
+    @property
+    def treasures_open(self) -> bool:
+        return self.value & self.value_TREASURES_MASK == self.value_treasures_open
+    @property
+    def treasures_standard(self) -> bool:
+        return self.value & self.value_TREASURES_MASK == self.value_treasures_standard
+
+    @property
+    def map_items_in_pool(self) -> bool:
+        return self.value in {self.option_no_flamm_and_standard_treasures, self.option_all}
+
+
 @dataclass
 class SuperPaperMarioOptions(PerGameCommonOptions):
     # World Access
     goal: Goal
     pure_hearts_required: PureHeartsRequired
     chapter_door_access: ChapterDoorAccess
-    # Location Shuffle
-    shuffle_pure_hearts: ShufflePureHearts
-    # Item/Location Pool
+    # Item Pool
     starting_character: StartingCharacter
     starting_pixl: StartingPixl
     ability_shuffle: ShuffleAbilities
+    filler_weights: FillerWeights
+    # Item Shuffle
+    shuffle_pure_hearts: ShufflePureHearts
+    # Location Shuffle
     trading_quest: TradingQuest
-    traps: Traps
+    treasure_maps: TreasureMaps
     # Pit of 100 Trials
     flipside_pit_access: FlipsidePitAccess
     flipside_pit_logic: FlipsidePitLogic
@@ -318,7 +418,7 @@ class SuperPaperMarioOptions(PerGameCommonOptions):
     randomize_enemies: EnemyRando
     randomize_music: MusicRando
     # Logic
-    obscure_tricks: ObscureTricks
+    # obscure_tricks: ObscureTricks
     # Hidden
     practice_codes: PracticeCodes
 
@@ -331,12 +431,16 @@ OPTION_GROUPS = [
         [Goal, PureHeartsRequired, ChapterDoorAccess]
     ),
     OptionGroup(
-        "Location Shuffle",
+        "Item Pool",
+        [StartingCharacter, StartingPixl, ShuffleAbilities, FillerWeights]
+    ),
+    OptionGroup(
+        "Item Shuffle",
         [ShufflePureHearts]
     ),
     OptionGroup(
-        "Item/Location Pool",
-        [StartingCharacter, StartingPixl, ShuffleAbilities, TradingQuest, Traps]
+        "Location Shuffle",
+        [TradingQuest, TreasureMaps]
     ),
     OptionGroup(
         "Pit of 100 Trials",

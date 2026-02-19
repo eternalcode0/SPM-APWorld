@@ -14,7 +14,7 @@ from entrance_rando import (
 )
 from entrance_rando import randomize_entrances as er_randomize_entrances
 from Options import Toggle
-from rule_builder.rules import Has, HasAll, HasAny, HasGroupUnique, OptionFilter, Rule, True_
+from rule_builder.rules import False_, Has, HasAll, HasAny, HasGroupUnique, OptionFilter, Rule, True_
 
 from .data import GAME
 from .names import EventName as E
@@ -117,7 +117,23 @@ class HasChapterKey(Rule["SuperPaperMarioWorld"], game=GAME):
             return Has(self.chapter_key.value).resolve(world)
         if world.options.chapter_door_access == ChapterDoorAccess.option_chapter_locked:
             return Has(self.subchapter_key.value).resolve(world)
-        return True_().resolve(world)  # == ChapterDoorAccess.option_open
+        if world.options.chapter_door_access == ChapterDoorAccess.option_open:
+            return True_().resolve(world)
+        raise NotImplementedError(f"Unknown chapter_door_access option: {world.options.chapter_door_access}")
+
+
+@dataclass
+class CanFleepTreasureSpot(Rule["SuperPaperMarioWorld"], game=GAME):
+    map: I
+
+    def _instantiate(self, world: "SuperPaperMarioWorld") -> Rule.Resolved:
+        if world.options.treasure_maps.maps_open:
+            return Has(I.PIXL_FLEEP).resolve(world)
+        if world.options.treasure_maps.maps_standard:
+            return HasAll(I.PIXL_FLEEP, self.map).resolve(world)
+        if world.options.treasure_maps.maps_disabled:
+            return False_().resolve(world)
+        raise NotImplementedError(f"Unknown treasure maps option: {world.options.treasure_maps}")
 
 
 class RuleHolder:
@@ -161,7 +177,7 @@ def connect_regions(world: "SuperPaperMarioWorld") -> list[Entrance]:
         group: int = 0,
         type: EntranceType = EntranceType.TWO_WAY,
         force_creation: bool = False,
-        ) -> Entrance:
+        ) -> Entrance | None:
         entrance = world.create_entrance(world.rm[from_region], world.rm[to_region], rule, name, force_creation)
         if entrance is not None:
             entrance.randomization_group = group
@@ -176,7 +192,7 @@ def connect_regions(world: "SuperPaperMarioWorld") -> list[Entrance]:
 def randomize_entrances(world: "SuperPaperMarioWorld", entrances: list[Entrance]) -> ERPlacementState:
     _ = [disconnect_entrance_for_randomization(entrance) for entrance in entrances]
     target_group_lookup = bake_target_group_lookup(world, get_target_groups)
-    return er_randomize_entrances(world, True, target_group_lookup, True)
+    return er_randomize_entrances(world, world.options.randomize_entrances.value == EntranceRando.option_coupled, target_group_lookup, True)
 
 
 def set_rules(world: "SuperPaperMarioWorld") -> None:
@@ -187,9 +203,7 @@ def set_rules(world: "SuperPaperMarioWorld") -> None:
         if ldata.loc in world.lm]
 
 
-# Set to the following if ER with chapter doors is ever figured out
-# { group: EGroup.HUB | EGroup.DOOR, etype: EntranceType.ONE_WAY }
-CHAPTER_DOOR_ER = { etype: EntranceType.ONE_WAY }
+CHAPTER_DOOR_ER = { group: EGroup.HUB | EGroup.DOOR, etype: EntranceType.ONE_WAY }
 
 
 ENTRANCE_RULES = [
@@ -476,6 +490,15 @@ ENTRANCE_RULES = [
     , to: R.MAC04_ITTY_BITS
     , rule: Has(I.PIXL_DOTTIE)
     , name: "Flipside B1 - Shrink to Itty Bits"
+    },
+    { fr: R.MAC04_LAYER1
+    , to: R.MAC04_BAR
+    , rule: RuleHolder.can_flip
+    , name: "Flipside B1 - Flip to Bar's backrooms"
+    },
+    { fr: R.MAC04_BAR
+    , to: R.MAC30
+    , name: "Flipside B1 - Bar's backroom pipe"
     },
     { fr: R.MAC05_LAYER1
     , to: R.MAC04_LAYER1
@@ -1076,6 +1099,13 @@ ENTRANCE_RULES = [
     , rule: Has(I.PIXL_TIPPI)
     },
     #endregion
+    #region Chapter 2-1
+    { fr: R.MI101
+    , to: R.MI105
+    , name: f"{R.MI101} - Pipe"
+    , rule: (RuleHolder.can_float | Has(I.PIXL_DASHELL)) & (RuleHolder.can_flip | RuleHolder.can_super_jump)
+    },
+    #endregion
 ]
 
 ENTRANCE_DATA: list[EntranceRule] = [EntranceRule(**edata) for edata in ENTRANCE_RULES]
@@ -1089,6 +1119,9 @@ LOCATION_RULES = [
     { loc: L.FLIPSIDE_3F_EAT_A_SPICY_SOUP
     , rule: True_()  # MOD: will this require spicy soup in the itempool?
     },
+    { loc: L.FLEEP_MAP_REVEAL_01
+    , rule: CanFleepTreasureSpot(I.MAP_1)
+    },
     { loc: L.FLIPSIDE_3F_CHEST_AFTER_INVISIBLE_BLOCKS
     , rule: Has(I.PIXL_TIPPI)
     },
@@ -1098,11 +1131,20 @@ LOCATION_RULES = [
     { loc: L.PICCOLO_FETCH_MERLUVLEE
     , rule: Has(I.TRAINING_MACHINE)
     },
+    { loc: L.FLEEP_MAP_REVEAL_02
+    , rule: CanFleepTreasureSpot(I.MAP_2)
+    },
     { loc: L.FLIPSIDE_HEART_PILLAR_GREEN
     , rule: HasAll(I.PIXL_THUDLEY, I.GREEN_PURE_HEART)
     },
     { loc: L.FLIPSIDE_B1_3D_CHEST
     , rule: RuleHolder.can_flip
+    },
+    { loc: L.FLEEP_MAP_REVEAL_03
+    , rule: CanFleepTreasureSpot(I.MAP_3)
+    },
+    { loc: L.FLEEP_MAP_REVEAL_04
+    , rule: CanFleepTreasureSpot(I.MAP_4)
     },
     { loc: L.FLIPSIDE_B2_CHEST_AFTER_PIPE
     , rule: Has(E.SMASH_FLOPSIDE_B2_OUTSKIRTS_BLOCK)
@@ -1120,6 +1162,9 @@ LOCATION_RULES = [
     #region Flopside
     { loc: L.FLOPSIDE_HEART_PILLAR_CYAN
     , rule: Has(I.CYAN_PURE_HEART)
+    },
+    { loc: L.FLEEP_MAP_REVEAL_05
+    , rule: CanFleepTreasureSpot(I.MAP_5)
     },
     { loc: L.FLOPSIDE_3F_CHEST_IN_PICCOLO_BLOCK
     , rule: Has(I.PIXL_PICCOLO)
@@ -1207,6 +1252,23 @@ LOCATION_RULES = [
     },
     { loc: L.C14_OPEN_KEY_BEHIND_BLOCKS
     , rule: RuleHolder.can_flip
+    },
+    #endregion
+    #region Chapter 2-1
+    { loc: E.SWITCH_GLOAM_VALLEY_UNDERGROUND
+    , rule: RuleHolder.can_flip & Has(I.PIXL_BOOMER)
+    },
+    { loc: L.C21_LEFT_CHEST_BEFORE_STAR_BLOCK
+    , rule: RuleHolder.can_flip
+    },
+    { loc: L.C21_RIGHT_CHEST_BEFORE_STAR_BLOCK
+    , rule: RuleHolder.can_flip
+    },
+    { loc: L.C21_CHEST_BEHIND_BOOMER_CHEST
+    , rule: RuleHolder.can_flip & Has(I.PIXL_BOOMER)
+    },
+    { loc: E.SWITCH_GLOAM_VALLEY_BACKGROUND
+    , rule: RuleHolder.can_float | Has(I.PIXL_DASHELL)
     },
     #endregion
 ]

@@ -67,7 +67,5 @@ class LevelSetupFile:
         size = LEVEL_SETUP_ENTRY_SIZES[header[1]]
         entries_data = content[4:-4]  # shave off the header/footer
         entries_list = [entries_data[i : i + size] for i in range(0, len(entries_data), size)]
-        entries = []
-        for entry in entries_list:
-            entries.append(LevelSetupEntry.unpack(header, entry))
+        entries = [LevelSetupEntry.unpack(header, entry) for entry in entries_list]
         return cls(header, entries, footer)

@@ -32,7 +32,7 @@ def get_location_names_with_ids(location_names: list[LocationName]) -> dict[str,
 def create_all_locations(world: "SuperPaperMarioWorld") -> dict[ItemName, int]:
     # This also returns the filler weights
     filler: dict[ItemName, int] = {}
-    region_map = regions.get_region_map(world)
+    region_map = world.rm
     for location in LOCATION_ENUM_TO_DATA.values():
         rt = location.setting(world.options) if callable(location.setting) else location.setting
         if rt == RandomizationType.VANILLA_WORLD:

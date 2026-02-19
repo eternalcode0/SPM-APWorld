@@ -45,6 +45,8 @@ GROUP_CONSUMABLE = "Consumable"
 GROUP_TOWER_KEY = "Tower Key"  # This should only be paired with either chapter / subchapter key
 GROUP_CHAPTER_KEY = "Chapter Key"
 GROUP_SUBCHAPTER_KEY = "Subchapter Key"
+GROUP_CURSYA_TRAP = "Cursya Trap"
+GROUP_MAP = "Map"
 
 
 # Amounts
@@ -60,12 +62,12 @@ def subchapter_key_amount(world: "SuperPaperMarioWorld") -> int:
     return 1 if world.options.chapter_door_access.value == ChapterDoorAccess.option_subchapters_locked else 0
 
 
-def trap_amount(world: "SuperPaperMarioWorld") -> int | None:
-    return None if world.options.traps else 0  # None means default to filler/trap fill
-
-
 def ability_amount(world: "SuperPaperMarioWorld") -> int:
     return 1 if world.options.ability_shuffle else 0
+
+
+def maps_amount(world: "SuperPaperMarioWorld") -> int:
+    return 1 if world.options.treasure_maps.map_items_in_pool else 0
 
 
 ITEM_LIST_DICT: list[dict[str, Any]] = [
@@ -309,907 +311,756 @@ ITEM_LIST_DICT: list[dict[str, Any]] = [
     { name: I.FIRE_BURST
     , code: 65
     , classification: ItemClassification.filler
-    , amount: None
     , groups: {GROUP_CONSUMABLE}
     },
     { name: I.ICE_STORM
     , code: 66
     , classification: ItemClassification.filler
-    , amount: None
     , groups: {GROUP_CONSUMABLE}
     },
     { name: I.THUNDER_RAGE
     , code: 67
     , classification: ItemClassification.filler
-    , amount: None
     , groups: {GROUP_CONSUMABLE}
     },
     { name: I.SHOOTING_STAR
     , code: 68
     , classification: ItemClassification.filler
-    , amount: None
     , groups: {GROUP_CONSUMABLE}
     },
     { name: I.POW_BLOCK
     , code: 69
     , classification: ItemClassification.filler
-    , amount: None
     , groups: {GROUP_CONSUMABLE}
     },
     { name: I.SHELL_SHOCK
     , code: 70
     , classification: ItemClassification.filler
-    , amount: None
     , groups: {GROUP_CONSUMABLE}
     },
     { name: I.GOLD_BAR
     , code: 71
     , classification: ItemClassification.filler
-    , amount: None
     , groups: {GROUP_CONSUMABLE}
     },
     { name: I.GOLD_BAR_X3
     , code: 72
     , classification: ItemClassification.filler
-    , amount: None
     , groups: {GROUP_CONSUMABLE}
     },
     { name: I.BLOCK_BLOCK
     , code: 73
     , classification: ItemClassification.filler
-    , amount: None
     , groups: {GROUP_CONSUMABLE}
     },
     { name: I.COURAGE_SHELL
     , code: 74
     , classification: ItemClassification.filler
-    , amount: None
     , groups: {GROUP_CONSUMABLE}
     },
     { name: I.MIGHTY_TONIC
     , code: 75
     , classification: ItemClassification.filler
-    , amount: None
     , groups: {GROUP_CONSUMABLE}
     },
     { name: I.VOLT_SHROOM
     , code: 76
     , classification: ItemClassification.filler
-    , amount: None
     , groups: {GROUP_CONSUMABLE}
     },
     { name: I.GHOST_SHROOM
     , code: 77
     , classification: ItemClassification.filler
-    , amount: None
     , groups: {GROUP_CONSUMABLE}
     },
     { name: I.SLEEPY_SHEEP
     , code: 78
     , classification: ItemClassification.filler
-    , amount: None
     , groups: {GROUP_CONSUMABLE}
     },
     { name: I.STOP_WATCH
     , code: 79
     , classification: ItemClassification.filler
-    , amount: None
     , groups: {GROUP_CONSUMABLE}
     },
     { name: I.SHROOM_SHAKE
     , code: 80
     , classification: ItemClassification.filler
-    , amount: None
     , groups: {GROUP_CONSUMABLE}
     },
     { name: I.SUPER_SHROOM_SHAKE
     , code: 81
     , classification: ItemClassification.filler
-    , amount: None
     , groups: {GROUP_CONSUMABLE}
     },
     { name: I.ULTRA_SHROOM_SHAKE
     , code: 82
     , classification: ItemClassification.filler
-    , amount: None
     , groups: {GROUP_CONSUMABLE}
     },
     { name: I.DRIED_SHROOM
     , code: 83
     , classification: ItemClassification.filler
-    , amount: None
     , groups: {GROUP_CONSUMABLE}
     },
     { name: I.LIFE_SHROOM
     , code: 84
     , classification: ItemClassification.filler
-    , amount: None
     , groups: {GROUP_CONSUMABLE}
     },
     { name: I.LONG_LAST_SHAKE
     , code: 85
     , classification: ItemClassification.filler
-    , amount: None
     , groups: {GROUP_CONSUMABLE}
     },
     { name: I.MYSTERY_BOX
     , code: 86
     , classification: ItemClassification.filler
-    , amount: None
     , groups: {GROUP_CONSUMABLE}
     },
     { name: I.CATCH_CARD
     , code: 87
     , classification: ItemClassification.filler
-    , amount: None
     , groups: {GROUP_CONSUMABLE}
     },
     { name: I.CATCH_CARD_SP
     , code: 88
     , classification: ItemClassification.filler
-    , amount: None
     , groups: {GROUP_CONSUMABLE}
     },
     { name: I.HP_PLUS
     , code: 89
     , classification: ItemClassification.filler
-    , amount: None
     , groups: {GROUP_CONSUMABLE}
     },
     { name: I.POWER_PLUS
     , code: 90
     , classification: ItemClassification.filler
-    , amount: None
     , groups: {GROUP_CONSUMABLE}
     },
     { name: I.BLUE_APPLE
     , code: 91
     , classification: ItemClassification.filler
-    , amount: None
     , groups: {GROUP_CONSUMABLE}
     },
     { name: I.YELLOW_APPLE
     , code: 92
     , classification: ItemClassification.filler
-    , amount: None
     , groups: {GROUP_CONSUMABLE}
     },
     { name: I.RED_APPLE
     , code: 93
     , classification: ItemClassification.filler
-    , amount: None
     , groups: {GROUP_CONSUMABLE}
     },
     { name: I.PINK_APPLE
     , code: 94
     , classification: ItemClassification.filler
-    , amount: None
     , groups: {GROUP_CONSUMABLE}
     },
     { name: I.BLACK_APPLE
     , code: 95
     , classification: ItemClassification.filler
-    , amount: None
     , groups: {GROUP_CONSUMABLE}
     },
     { name: I.STAR_MEDAL
     , code: 96
     , classification: ItemClassification.filler
-    , amount: None
     , groups: {GROUP_CONSUMABLE}
     },
     { name: I.GOLD_MEDAL
     , code: 97
     , classification: ItemClassification.filler
-    , amount: None
     , groups: {GROUP_CONSUMABLE}
     },
     { name: I.POISON_SHROOM
     , code: 98
     , classification: ItemClassification.filler
-    , amount: None
     , groups: {GROUP_CONSUMABLE}
     },
     { name: I.SLIMY_SHROOM
     , code: 99
     , classification: ItemClassification.filler
-    , amount: None
     , groups: {GROUP_CONSUMABLE}
     },
     { name: I.PEACHY_PEACH
     , code: 100
     , classification: ItemClassification.filler
-    , amount: None
     , groups: {GROUP_CONSUMABLE}
     },
     { name: I.KEEL_MANGO
     , code: 101
     , classification: ItemClassification.filler
-    , amount: None
     , groups: {GROUP_CONSUMABLE}
     },
     { name: I.PRIMORDIAL_FRUIT
     , code: 102
     , classification: ItemClassification.filler
-    , amount: None
     , groups: {GROUP_CONSUMABLE}
     },
     { name: I.GOLDEN_LEAF
     , code: 103
     , classification: ItemClassification.filler
-    , amount: None
     , groups: {GROUP_CONSUMABLE}
     },
     { name: I.TURTLEY_LEAF
     , code: 104
     , classification: ItemClassification.filler
-    , amount: None
     , groups: {GROUP_CONSUMABLE}
     },
     { name: I.CAKE_MIX
     , code: 105
     , classification: ItemClassification.filler
-    , amount: None
     , groups: {GROUP_CONSUMABLE}
     },
     { name: I.WHACKA_BUMP
     , code: 106
     , classification: ItemClassification.filler
-    , amount: None
     , groups: {GROUP_CONSUMABLE}
     },
     { name: I.HORSETAIL
     , code: 107
     , classification: ItemClassification.filler
-    , amount: None
     , groups: {GROUP_CONSUMABLE}
     },
     { name: I.FRESH_PASTA_BUNCH
     , code: 108
     , classification: ItemClassification.filler
-    , amount: None
     , groups: {GROUP_CONSUMABLE}
     },
     { name: I.HOT_SAUCE
     , code: 109
     , classification: ItemClassification.filler
-    , amount: None
     , groups: {GROUP_CONSUMABLE}
     },
     { name: I.INKY_SAUCE
     , code: 110
     , classification: ItemClassification.filler
-    , amount: None
     , groups: {GROUP_CONSUMABLE}
     },
     { name: I.DAYZEE_TEAR
     , code: 111
     , classification: ItemClassification.filler
-    , amount: None
     , groups: {GROUP_CONSUMABLE}
     },
     { name: I.SAP_SOUP
     , code: 112
     , classification: ItemClassification.filler
-    , amount: None
     , groups: {GROUP_CONSUMABLE}
     },
     { name: I.BONE_IN_CUT
     , code: 113
     , classification: ItemClassification.filler
-    , amount: None
     , groups: {GROUP_CONSUMABLE}
     },
     { name: I.FRESH_VEGGIE
     , code: 114
     , classification: ItemClassification.filler
-    , amount: None
     , groups: {GROUP_CONSUMABLE}
     },
     { name: I.SMELLY_HERB
     , code: 115
     , classification: ItemClassification.filler
-    , amount: None
     , groups: {GROUP_CONSUMABLE}
     },
     { name: I.HONEY_JAR
     , code: 116
     , classification: ItemClassification.filler
-    , amount: None
     , groups: {GROUP_CONSUMABLE}
     },
     { name: I.POWER_STEAK
     , code: 117
     , classification: ItemClassification.filler
-    , amount: None
     , groups: {GROUP_CONSUMABLE}
     },
     { name: I.BIG_EGG
     , code: 118
     , classification: ItemClassification.filler
-    , amount: None
     , groups: {GROUP_CONSUMABLE}
     },
     { name: I.MILD_COCOA_BEAN
     , code: 119
     , classification: ItemClassification.filler
-    , amount: None
     , groups: {GROUP_CONSUMABLE}
     },
     { name: I.SWEET_CHOCO_BAR
     , code: 120
     , classification: ItemClassification.filler
-    , amount: None
     , groups: {GROUP_CONSUMABLE}
     },
     { name: I.SHROOM_CHOCO_BAR
     , code: 121
     , classification: ItemClassification.filler
-    , amount: None
     , groups: {GROUP_CONSUMABLE}
     },
     { name: I.GOLDEN_CHOCO_BAR
     , code: 122
     , classification: ItemClassification.filler
-    , amount: None
     , groups: {GROUP_CONSUMABLE}
     },
     { name: I.GRADUAL_SYRUP
     , code: 123
     , classification: ItemClassification.filler
-    , amount: None
     , groups: {GROUP_CONSUMABLE}
     },
     { name: I.DAYZEE_SYRUP
     , code: 124
     , classification: ItemClassification.filler
-    , amount: None
     , groups: {GROUP_CONSUMABLE}
     },
     { name: I.SLIMY_EXTRACT
     , code: 125
     , classification: ItemClassification.filler
-    , amount: None
     , groups: {GROUP_CONSUMABLE}
     },
     { name: I.FRIED_SHROOM_PLATE
     , code: 126
     , classification: ItemClassification.filler
-    , amount: None
     , groups: {GROUP_CONSUMABLE}
     },
     { name: I.ROAST_SHROOM_DISH
     , code: 127
     , classification: ItemClassification.filler
-    , amount: None
     , groups: {GROUP_CONSUMABLE}
     },
     { name: I.SHROOM_STEAK
     , code: 128
     , classification: ItemClassification.filler
-    , amount: None
     , groups: {GROUP_CONSUMABLE}
     },
     { name: I.HONEY_SHROOM
     , code: 129
     , classification: ItemClassification.filler
-    , amount: None
     , groups: {GROUP_CONSUMABLE}
     },
     { name: I.HONEY_SUPER
     , code: 130
     , classification: ItemClassification.filler
-    , amount: None
     , groups: {GROUP_CONSUMABLE}
     },
     { name: I.SHROOM_BROTH
     , code: 131
     , classification: ItemClassification.filler
-    , amount: None
     , groups: {GROUP_CONSUMABLE}
     },
     { name: I.MUSHROOM_CREPE
     , code: 132
     , classification: ItemClassification.filler
-    , amount: None
     , groups: {GROUP_CONSUMABLE}
     },
     { name: I.SHROOM_CAKE
     , code: 133
     , classification: ItemClassification.filler
-    , amount: None
     , groups: {GROUP_CONSUMABLE}
     },
     { name: I.CHOCOLATE_CAKE
     , code: 134
     , classification: ItemClassification.filler
-    , amount: None
     , groups: {GROUP_CONSUMABLE}
     },
     { name: I.HEARTFUL_CAKE
     , code: 135
     , classification: ItemClassification.filler
-    , amount: None
     , groups: {GROUP_CONSUMABLE}
     },
     { name: I.MOUSSE
     , code: 136
     , classification: ItemClassification.filler
-    , amount: None
     , groups: {GROUP_CONSUMABLE}
     },
     { name: I.PEACH_TART
     , code: 137
     , classification: ItemClassification.filler
-    , amount: None
     , groups: {GROUP_CONSUMABLE}
     },
     { name: I.HORSETAIL_TART
     , code: 138
     , classification: ItemClassification.filler
-    , amount: None
     , groups: {GROUP_CONSUMABLE}
     },
     { name: I.SWEET_COOKIE_SNACK
     , code: 139
     , classification: ItemClassification.filler
-    , amount: None
     , groups: {GROUP_CONSUMABLE}
     },
     { name: I.KOOPA_DUMPLING
     , code: 140
     , classification: ItemClassification.filler
-    , amount: None
     , groups: {GROUP_CONSUMABLE}
     },
     { name: I.SAP_MUFFIN
     , code: 141
     , classification: ItemClassification.filler
-    , amount: None
     , groups: {GROUP_CONSUMABLE}
     },
     { name: I.TOWN_SPECIAL
     , code: 142
     , classification: ItemClassification.filler
-    , amount: None
     , groups: {GROUP_CONSUMABLE}
     },
     { name: I.MANGO_PUDDING
     , code: 143
     , classification: ItemClassification.filler
-    , amount: None
     , groups: {GROUP_CONSUMABLE}
     },
     { name: I.LOVE_PUDDING
     , code: 144
     , classification: ItemClassification.filler
-    , amount: None
     , groups: {GROUP_CONSUMABLE}
     },
     { name: I.COUPLES_CAKE
     , code: 145
     , classification: ItemClassification.filler
-    , amount: None
     , groups: {GROUP_CONSUMABLE}
     },
     { name: I.FRUIT_PARFAIT
     , code: 146
     , classification: ItemClassification.filler
-    , amount: None
     , groups: {GROUP_CONSUMABLE}
     },
     { name: I.SNOW_CONE
     , code: 147
     , classification: ItemClassification.filler
-    , amount: None
     , groups: {GROUP_CONSUMABLE}
     },
     { name: I.SNOW_BUNNY
     , code: 148
     , classification: ItemClassification.filler
-    , amount: None
     , groups: {GROUP_CONSUMABLE}
     },
     { name: I.BERRY_SNOW_BUNNY
     , code: 149
     , classification: ItemClassification.filler
-    , amount: None
     , groups: {GROUP_CONSUMABLE}
     },
     { name: I.HONEY_CANDY
     , code: 150
     , classification: ItemClassification.filler
-    , amount: None
     , groups: {GROUP_CONSUMABLE}
     },
     { name: I.ELECTRO_POP
     , code: 151
     , classification: ItemClassification.filler
-    , amount: None
     , groups: {GROUP_CONSUMABLE}
     },
     { name: I.HERB_TEA
     , code: 152
     , classification: ItemClassification.filler
-    , amount: None
     , groups: {GROUP_CONSUMABLE}
     },
     { name: I.KOOPA_TEA
     , code: 153
     , classification: ItemClassification.filler
-    , amount: None
     , groups: {GROUP_CONSUMABLE}
     },
     { name: I.SPAGHETTI_PLATE
     , code: 154
     , classification: ItemClassification.filler
-    , amount: None
     , groups: {GROUP_CONSUMABLE}
     },
     { name: I.SPICY_PASTA_DISH
     , code: 155
     , classification: ItemClassification.filler
-    , amount: None
     , groups: {GROUP_CONSUMABLE}
     },
     { name: I.INK_PASTA_DISH
     , code: 156
     , classification: ItemClassification.filler
-    , amount: None
     , groups: {GROUP_CONSUMABLE}
     },
     { name: I.KOOPASTA_DISH
     , code: 157
     , classification: ItemClassification.filler
-    , amount: None
     , groups: {GROUP_CONSUMABLE}
     },
     { name: I.LOVE_NOODLE_DISH
     , code: 158
     , classification: ItemClassification.filler
-    , amount: None
     , groups: {GROUP_CONSUMABLE}
     },
     { name: I.FRIED_EGG
     , code: 159
     , classification: ItemClassification.filler
-    , amount: None
     , groups: {GROUP_CONSUMABLE}
     },
     { name: I.EGG_BOMB
     , code: 160
     , classification: ItemClassification.filler
-    , amount: None
     , groups: {GROUP_CONSUMABLE}
     },
     { name: I.DYLLIS_DYNAMITE
     , code: 161
     , classification: ItemClassification.filler
-    , amount: None
     , groups: {GROUP_CONSUMABLE}
     },
     { name: I.SPIT_ROAST
     , code: 162
     , classification: ItemClassification.filler
-    , amount: None
     , groups: {GROUP_CONSUMABLE}
     },
     { name: I.METEOR_MEAL
     , code: 163
     , classification: ItemClassification.filler
-    , amount: None
     , groups: {GROUP_CONSUMABLE}
     },
     { name: I.OMELETTE_PLATE
     , code: 164
     , classification: ItemClassification.filler
-    , amount: None
     , groups: {GROUP_CONSUMABLE}
     },
     { name: I.SPICY_SOUP
     , code: 165
     , classification: ItemClassification.filler
-    , amount: None
     , groups: {GROUP_CONSUMABLE}
     },
     { name: I.HOT_DOG
     , code: 166
     , classification: ItemClassification.filler
-    , amount: None
     , groups: {GROUP_CONSUMABLE}
     },
     { name: I.HEALTHY_SALAD
     , code: 167
     , classification: ItemClassification.filler
-    , amount: None
     , groups: {GROUP_CONSUMABLE}
     },
     { name: I.DYLLIS_DINNER
     , code: 168
     , classification: ItemClassification.filler
-    , amount: None
     , groups: {GROUP_CONSUMABLE}
     },
     { name: I.DYLLIS_SPECIAL
     , code: 169
     , classification: ItemClassification.filler
-    , amount: None
     , groups: {GROUP_CONSUMABLE}
     },
     { name: I.DYLLIS_DELUXE
     , code: 170
     , classification: ItemClassification.filler
-    , amount: None
     , groups: {GROUP_CONSUMABLE}
     },
     { name: I.SPACE_FOOD
     , code: 171
     , classification: ItemClassification.filler
-    , amount: None
     , groups: {GROUP_CONSUMABLE}
     },
     { name: I.EMERGENCY_RATION
     , code: 172
     , classification: ItemClassification.filler
-    , amount: None
     , groups: {GROUP_CONSUMABLE}
     },
     { name: I.DANGEROUS_DELIGHT
     , code: 173
     , classification: ItemClassification.filler
-    , amount: None
     , groups: {GROUP_CONSUMABLE}
     },
     { name: I.TRIAL_STEW
     , code: 174
     , classification: ItemClassification.filler
-    , amount: None
     , groups: {GROUP_CONSUMABLE}
     },
     { name: I.MISTAKE
     , code: 175
     , classification: ItemClassification.filler
-    , amount: None
     , groups: {GROUP_CONSUMABLE}
     },
     { name: I.MISTAKE_SLEEPY_SHEEP
     , code: 176
     , classification: ItemClassification.filler
-    , amount: None
     , groups: {GROUP_CONSUMABLE}
     },
     { name: I.WARM_COCOA
     , code: 177
     , classification: ItemClassification.filler
-    , amount: None
     , groups: {GROUP_CONSUMABLE}
     },
     { name: I.ODD_DINNER
     , code: 178
     , classification: ItemClassification.filler
-    , amount: None
     , groups: {GROUP_CONSUMABLE}
     },
     { name: I.INKY_SOUP
     , code: 179
     , classification: ItemClassification.filler
-    , amount: None
     , groups: {GROUP_CONSUMABLE}
     },
     { name: I.GINGERBREAD_HOUSE
     , code: 180
     , classification: ItemClassification.filler
-    , amount: None
     , groups: {GROUP_CONSUMABLE}
     },
     { name: I.VOLCANO_SHROOM
     , code: 181
     , classification: ItemClassification.filler
-    , amount: None
     , groups: {GROUP_CONSUMABLE}
     },
     { name: I.KOOPA_PILAF
     , code: 182
     , classification: ItemClassification.filler
-    , amount: None
     , groups: {GROUP_CONSUMABLE}
     },
     { name: I.SPICY_DINNER
     , code: 183
     , classification: ItemClassification.filler
-    , amount: None
     , groups: {GROUP_CONSUMABLE}
     },
     { name: I.SHROOM_PUDDING
     , code: 184
     , classification: ItemClassification.filler
-    , amount: None
     , groups: {GROUP_CONSUMABLE}
     },
     { name: I.HEAVY_MEAL
     , code: 185
     , classification: ItemClassification.filler
-    , amount: None
     , groups: {GROUP_CONSUMABLE}
     },
     { name: I.PRIMORDIAL_DINNER
     , code: 186
     , classification: ItemClassification.filler
-    , amount: None
     , groups: {GROUP_CONSUMABLE}
     },
     { name: I.GORGEOUS_STEAK
     , code: 187
     , classification: ItemClassification.filler
-    , amount: None
     , groups: {GROUP_CONSUMABLE}
     },
     { name: I.GOLDEN_MEAL
     , code: 188
     , classification: ItemClassification.filler
-    , amount: None
     , groups: {GROUP_CONSUMABLE}
     },
     { name: I.LUXURIOUS_SET
     , code: 189
     , classification: ItemClassification.filler
-    , amount: None
     , groups: {GROUP_CONSUMABLE}
     },
     { name: I.ROAST_WHACKA_BUMP
     , code: 190
     , classification: ItemClassification.filler
-    , amount: None
     , groups: {GROUP_CONSUMABLE}
     },
     { name: I.DYLLIS_BREAKFAST
     , code: 191
     , classification: ItemClassification.filler
-    , amount: None
     , groups: {GROUP_CONSUMABLE}
     },
     { name: I.DYLLIS_LUNCH
     , code: 192
     , classification: ItemClassification.filler
-    , amount: None
     , groups: {GROUP_CONSUMABLE}
     },
     { name: I.SKY_JUICE
     , code: 193
     , classification: ItemClassification.filler
-    , amount: None
     , groups: {GROUP_CONSUMABLE}
     },
     { name: I.STAMINA_JUICE
     , code: 194
     , classification: ItemClassification.filler
-    , amount: None
     , groups: {GROUP_CONSUMABLE}
     },
     { name: I.CHOCO_PASTA_DISH
     , code: 195
     , classification: ItemClassification.filler
-    , amount: None
     , groups: {GROUP_CONSUMABLE}
     },
     { name: I.SHROOM_DELICACY
     , code: 196
     , classification: ItemClassification.filler
-    , amount: None
     , groups: {GROUP_CONSUMABLE}
     },
     { name: I.ROAST_HORSETAIL
     , code: 197
     , classification: ItemClassification.filler
-    , amount: None
     , groups: {GROUP_CONSUMABLE}
     },
     { name: I.SAP_SYRUP
     , code: 198
     , classification: ItemClassification.filler
-    , amount: None
     , groups: {GROUP_CONSUMABLE}
     },
     { name: I.HAMBURGER
     , code: 199
     , classification: ItemClassification.filler
-    , amount: None
     , groups: {GROUP_CONSUMABLE}
     },
     { name: I.PEACH_JUICE
     , code: 200
     , classification: ItemClassification.filler
-    , amount: None
     , groups: {GROUP_CONSUMABLE}
     },
     { name: I.STANDARD_CHOCOLATE
     , code: 201
     , classification: ItemClassification.filler
-    , amount: None
     , groups: {GROUP_CONSUMABLE}
     },
     { name: I.FRUITY_CAKE
     , code: 202
     , classification: ItemClassification.filler
-    , amount: None
     , groups: {GROUP_CONSUMABLE}
     },
     { name: I.FRUITY_HAMBURGER
     , code: 203
     , classification: ItemClassification.filler
-    , amount: None
     , groups: {GROUP_CONSUMABLE}
     },
     { name: I.FRUITY_PUNCH
     , code: 204
     , classification: ItemClassification.filler
-    , amount: None
     , groups: {GROUP_CONSUMABLE}
     },
     { name: I.FRUITY_SHROOM
     , code: 205
     , classification: ItemClassification.filler
-    , amount: None
     , groups: {GROUP_CONSUMABLE}
     },
     { name: I.BLOCK_MEAL
     , code: 206
     , classification: ItemClassification.filler
-    , amount: None
     , groups: {GROUP_CONSUMABLE}
     },
     { name: I.VEGGIE_SET
     , code: 207
     , classification: ItemClassification.filler
-    , amount: None
     , groups: {GROUP_CONSUMABLE}
     },
     { name: I.WEIRD_EXTRACT
     , code: 208
     , classification: ItemClassification.filler
-    , amount: None
     , groups: {GROUP_CONSUMABLE}
     },
     { name: I.AWESOME_SNACK
     , code: 209
     , classification: ItemClassification.filler
-    , amount: None
     , groups: {GROUP_CONSUMABLE}
     },
     { name: I.MANGO_JUICE
     , code: 210
     , classification: ItemClassification.filler
-    , amount: None
     , groups: {GROUP_CONSUMABLE}
     },
     { name: I.MEAT_PASTA_DISH
     , code: 211
     , classification: ItemClassification.filler
-    , amount: None
     , groups: {GROUP_CONSUMABLE}
     },
     { name: I.MIXED_SHAKE
     , code: 212
     , classification: ItemClassification.filler
-    , amount: None
     , groups: {GROUP_CONSUMABLE}
     },
     { name: I.MIRACLE_DINNER
     , code: 213
     , classification: ItemClassification.filler
-    , amount: None
     , groups: {GROUP_CONSUMABLE}
     },
     { name: I.MEGATON_DINNER
     , code: 214
     , classification: ItemClassification.filler
-    , amount: None
     , groups: {GROUP_CONSUMABLE}
     },
     { name: I.LOVELY_CHOCOLATE
     , code: 215
     , classification: ItemClassification.filler
-    , amount: None
     , groups: {GROUP_CONSUMABLE}
     },
     #endregion
@@ -1606,28 +1457,317 @@ ITEM_LIST_DICT: list[dict[str, Any]] = [
     { name: I.SLOW_CURSYA_TRAP
     , code: 284
     , classification: ItemClassification.trap
-    , amount: None
+    , groups: {GROUP_CURSYA_TRAP}
     },
     { name: I.HEAVY_CURSYA_TRAP
     , code: 285
     , classification: ItemClassification.trap
-    , amount: None
+    , groups: {GROUP_CURSYA_TRAP}
     },
     { name: I.REVERSYA_CURSYA_TRAP
     , code: 286
     , classification: ItemClassification.trap
-    , amount: None
+    , groups: {GROUP_CURSYA_TRAP}
     },
     { name: I.TECH_CURSYA_TRAP
     , code: 287
     , classification: ItemClassification.trap
-    , amount: None
+    , groups: {GROUP_CURSYA_TRAP}
     },
     { name: I.BACK_CURSYA_TRAP
     , code: 288
     , classification: ItemClassification.trap
-    , amount: None
+    , groups: {GROUP_CURSYA_TRAP}
     },
+    # MOD: I couldn't find maps in the item id list, not sure where they belong
+    { name: I.MAP_1
+    , code: 289
+    , classification: ItemClassification.progression
+    , amount: maps_amount
+    , groups: {GROUP_MAP}
+    },
+    { name: I.MAP_2
+    , code: 290
+    , classification: ItemClassification.progression
+    , amount: maps_amount
+    , groups: {GROUP_MAP}
+    },
+    { name: I.MAP_3
+    , code: 291
+    , classification: ItemClassification.progression
+    , amount: maps_amount
+    , groups: {GROUP_MAP}
+    },
+    { name: I.MAP_4
+    , code: 292
+    , classification: ItemClassification.progression
+    , amount: maps_amount
+    , groups: {GROUP_MAP}
+    },
+    { name: I.MAP_5
+    , code: 293
+    , classification: ItemClassification.progression
+    , amount: maps_amount
+    , groups: {GROUP_MAP}
+    },
+    # { name: I.MAP_6
+    # , code: 294
+    # , classification: ItemClassification.progression
+    # , amount: maps_amount
+    # , groups: {GROUP_MAP}
+    # },
+    # { name: I.MAP_7
+    # , code: 295
+    # , classification: ItemClassification.progression
+    # , amount: maps_amount
+    # , groups: {GROUP_MAP}
+    # },
+    # { name: I.MAP_8
+    # , code: 296
+    # , classification: ItemClassification.progression
+    # , amount: maps_amount
+    # , groups: {GROUP_MAP}
+    # },
+    # { name: I.MAP_9
+    # , code: 297
+    # , classification: ItemClassification.progression
+    # , amount: maps_amount
+    # , groups: {GROUP_MAP}
+    # },
+    # { name: I.MAP_10
+    # , code: 298
+    # , classification: ItemClassification.progression
+    # , amount: maps_amount
+    # , groups: {GROUP_MAP}
+    # },
+    # { name: I.MAP_11
+    # , code: 299
+    # , classification: ItemClassification.progression
+    # , amount: maps_amount
+    # , groups: {GROUP_MAP}
+    # },
+    # { name: I.MAP_12
+    # , code: 300
+    # , classification: ItemClassification.progression
+    # , amount: maps_amount
+    # , groups: {GROUP_MAP}
+    # },
+    # { name: I.MAP_13
+    # , code: 301
+    # , classification: ItemClassification.progression
+    # , amount: maps_amount
+    # , groups: {GROUP_MAP}
+    # },
+    # { name: I.MAP_14
+    # , code: 302
+    # , classification: ItemClassification.progression
+    # , amount: maps_amount
+    # , groups: {GROUP_MAP}
+    # },
+    # { name: I.MAP_15
+    # , code: 303
+    # , classification: ItemClassification.progression
+    # , amount: maps_amount
+    # , groups: {GROUP_MAP}
+    # },
+    # { name: I.MAP_16
+    # , code: 304
+    # , classification: ItemClassification.progression
+    # , amount: maps_amount
+    # , groups: {GROUP_MAP}
+    # },
+    # { name: I.MAP_17
+    # , code: 305
+    # , classification: ItemClassification.progression
+    # , amount: maps_amount
+    # , groups: {GROUP_MAP}
+    # },
+    # { name: I.MAP_18
+    # , code: 306
+    # , classification: ItemClassification.progression
+    # , amount: maps_amount
+    # , groups: {GROUP_MAP}
+    # },
+    # { name: I.MAP_19
+    # , code: 307
+    # , classification: ItemClassification.progression
+    # , amount: maps_amount
+    # , groups: {GROUP_MAP}
+    # },
+    # { name: I.MAP_20
+    # , code: 308
+    # , classification: ItemClassification.progression
+    # , amount: maps_amount
+    # , groups: {GROUP_MAP}
+    # },
+    # { name: I.MAP_21
+    # , code: 309
+    # , classification: ItemClassification.progression
+    # , amount: maps_amount
+    # , groups: {GROUP_MAP}
+    # },
+    # { name: I.MAP_22
+    # , code: 310
+    # , classification: ItemClassification.progression
+    # , amount: maps_amount
+    # , groups: {GROUP_MAP}
+    # },
+    # { name: I.MAP_23
+    # , code: 311
+    # , classification: ItemClassification.progression
+    # , amount: maps_amount
+    # , groups: {GROUP_MAP}
+    # },
+    # { name: I.MAP_24
+    # , code: 312
+    # , classification: ItemClassification.progression
+    # , amount: maps_amount
+    # , groups: {GROUP_MAP}
+    # },
+    # { name: I.MAP_25
+    # , code: 313
+    # , classification: ItemClassification.progression
+    # , amount: maps_amount
+    # , groups: {GROUP_MAP}
+    # },
+    # { name: I.MAP_26
+    # , code: 314
+    # , classification: ItemClassification.progression
+    # , amount: maps_amount
+    # , groups: {GROUP_MAP}
+    # },
+    # { name: I.MAP_27
+    # , code: 315
+    # , classification: ItemClassification.progression
+    # , amount: maps_amount
+    # , groups: {GROUP_MAP}
+    # },
+    # { name: I.MAP_28
+    # , code: 316
+    # , classification: ItemClassification.progression
+    # , amount: maps_amount
+    # , groups: {GROUP_MAP}
+    # },
+    # { name: I.MAP_29
+    # , code: 317
+    # , classification: ItemClassification.progression
+    # , amount: maps_amount
+    # , groups: {GROUP_MAP}
+    # },
+    # { name: I.MAP_30
+    # , code: 318
+    # , classification: ItemClassification.progression
+    # , amount: maps_amount
+    # , groups: {GROUP_MAP}
+    # },
+    # { name: I.MAP_31
+    # , code: 319
+    # , classification: ItemClassification.progression
+    # , amount: maps_amount
+    # , groups: {GROUP_MAP}
+    # },
+    # { name: I.MAP_32
+    # , code: 320
+    # , classification: ItemClassification.progression
+    # , amount: maps_amount
+    # , groups: {GROUP_MAP}
+    # },
+    # { name: I.MAP_33
+    # , code: 321
+    # , classification: ItemClassification.progression
+    # , amount: maps_amount
+    # , groups: {GROUP_MAP}
+    # },
+    # { name: I.MAP_34
+    # , code: 322
+    # , classification: ItemClassification.progression
+    # , amount: maps_amount
+    # , groups: {GROUP_MAP}
+    # },
+    # { name: I.MAP_35
+    # , code: 323
+    # , classification: ItemClassification.progression
+    # , amount: maps_amount
+    # , groups: {GROUP_MAP}
+    # },
+    # { name: I.MAP_36
+    # , code: 324
+    # , classification: ItemClassification.progression
+    # , amount: maps_amount
+    # , groups: {GROUP_MAP}
+    # },
+    # { name: I.MAP_37
+    # , code: 325
+    # , classification: ItemClassification.progression
+    # , amount: maps_amount
+    # , groups: {GROUP_MAP}
+    # },
+    # { name: I.MAP_38
+    # , code: 326
+    # , classification: ItemClassification.progression
+    # , amount: maps_amount
+    # , groups: {GROUP_MAP}
+    # },
+    # { name: I.MAP_39
+    # , code: 327
+    # , classification: ItemClassification.progression
+    # , amount: maps_amount
+    # , groups: {GROUP_MAP}
+    # },
+    # { name: I.MAP_40
+    # , code: 328
+    # , classification: ItemClassification.progression
+    # , amount: maps_amount
+    # , groups: {GROUP_MAP}
+    # },
+    # { name: I.MAP_41
+    # , code: 329
+    # , classification: ItemClassification.progression
+    # , amount: maps_amount
+    # , groups: {GROUP_MAP}
+    # },
+    # { name: I.MAP_42
+    # , code: 330
+    # , classification: ItemClassification.progression
+    # , amount: maps_amount
+    # , groups: {GROUP_MAP}
+    # },
+    # { name: I.MAP_43
+    # , code: 331
+    # , classification: ItemClassification.progression
+    # , amount: maps_amount
+    # , groups: {GROUP_MAP}
+    # },
+    # { name: I.MAP_44
+    # , code: 332
+    # , classification: ItemClassification.progression
+    # , amount: maps_amount
+    # , groups: {GROUP_MAP}
+    # },
+    # { name: I.MAP_45
+    # , code: 333
+    # , classification: ItemClassification.progression
+    # , amount: maps_amount
+    # , groups: {GROUP_MAP}
+    # },
+    # { name: I.MAP_46
+    # , code: 334
+    # , classification: ItemClassification.progression
+    # , amount: maps_amount
+    # , groups: {GROUP_MAP}
+    # },
+    # { name: I.MAP_47
+    # , code: 335
+    # , classification: ItemClassification.progression
+    # , amount: maps_amount
+    # , groups: {GROUP_MAP}
+    # },
+    # { name: I.MAP_48
+    # , code: 336
+    # , classification: ItemClassification.progression
+    # , amount: maps_amount
+    # , groups: {GROUP_MAP}
+    # },
     #endregion
 ]
 
