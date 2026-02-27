@@ -14,6 +14,7 @@ class Goal(Choice):
     **Dimentio:** You goal when you defeat Super Dimentio in Chapter 8-4.
         Set "Pure Hearts Required" to access 8-4 eariler.
     """
+
     display_name = "Goal"
     internal_name = "goal"
 
@@ -26,6 +27,7 @@ class Goal(Choice):
 
 class PureHeartsRequired(Range):
     """How many pure hearts are required to goal and/or enter 8-4?"""
+
     display_name = "Pure Hearts Required"
     internal_name = "pure_hearts_required"
 
@@ -46,6 +48,7 @@ class ChapterDoorAccess(Choice):
     **Subchapters Locked:** Chapter Keys unlock a single given subchapter.
         They will be named with their subchapter number, Ex. Chapter 1-1 Key
     """
+
     display_name = "Chapter Door Access"
     internal_name = "chapter_door_access"
 
@@ -58,12 +61,14 @@ class ChapterDoorAccess(Choice):
 
 class ShufflePureHearts(Toggle):
     """Should Pure Hearts get placed anywhere in the multiworld?"""
+
     display_name = "Shuffle Pure Hearts"
     internal_name = "shuffle_pure_hearts"
 
 
 class StartingCharacter(Choice):
     """Which character will you start as?"""
+
     display_name = "Starting Character"
     internal_name = "starting_character"
 
@@ -76,6 +81,7 @@ class StartingCharacter(Choice):
 
 class StartingPixl(Choice):
     """Which pixl will you start with?"""
+
     display_name = "Starting Pixl"
     internal_name = "starting_pixl"
 
@@ -126,6 +132,7 @@ class FlipsidePitAccess(PitAccess):
     *Normal:* Access to Flipside Pit requires hitting the switch above the cage to open it.
         The first floor may be considered in-logic based off whether minimum, characters, chapters, or goal is set.
     """
+
     display_name = "Flipside Pit Access"
     internal_name = "flipside_pit_access"
 
@@ -144,6 +151,7 @@ class FlipsidePitLogic(PitLogic):
 
     *Maximum:* Every floor is considered out-of-logic until you have all Heroes, Pixls, and access to Chapters 1-7
     """
+
     display_name = "Flipside Pit Logic"
     internal_name = "flipside_pit_logic"
 
@@ -161,6 +169,7 @@ class FlopsidePitAccess(PitAccess):
     *No Flipside:* The rift is available before the Flipside Pit is completed.
         Access to Flopside Pit only requires Fleep'ing the rift.
     """
+
     display_name = "Flopside Pit Access"
     internal_name = "flopside_pit_access"
 
@@ -180,6 +189,7 @@ class FlopsidePitLogic(PitLogic):
 
     *Maximum:* Every floor is considered out-of-logic until you have all Heroes, Pixls, and access to Chapters 1-7
     """
+
     display_name = "Flopside Pit Logic"
     internal_name = "flopside_pit_logic"
 
@@ -188,6 +198,7 @@ class FlopsidePitLogic(PitLogic):
 
 class TrapTypes(ItemSet):
     """Which Traps should be included in the item pool"""
+
     display_name = "Cursya Traps"
     internal_name = "trap_types"
 
@@ -196,14 +207,16 @@ class TrapTypes(ItemSet):
         ItemName.HEAVY_CURSYA_TRAP.value,
         ItemName.REVERSYA_CURSYA_TRAP.value,
         ItemName.TECH_CURSYA_TRAP.value,
-        ItemName.BACK_CURSYA_TRAP.value
+        ItemName.BACK_CURSYA_TRAP.value,
     ]
-    default = frozenset({
-        ItemName.SLOW_CURSYA_TRAP.value,
-        ItemName.HEAVY_CURSYA_TRAP.value,
-        ItemName.REVERSYA_CURSYA_TRAP.value,
-        ItemName.TECH_CURSYA_TRAP.value
-    })
+    default = frozenset(
+        {
+            ItemName.SLOW_CURSYA_TRAP.value,
+            ItemName.HEAVY_CURSYA_TRAP.value,
+            ItemName.REVERSYA_CURSYA_TRAP.value,
+            ItemName.TECH_CURSYA_TRAP.value,
+        }
+    )
 
 
 class FillerWeights(ItemDict):
@@ -212,6 +225,7 @@ class FillerWeights(ItemDict):
     Without using this setting, the filler pool will be decided from the amount of items shuffled *out* of its
     vanilla locations. Each item specified in here will override its default amount.
     Cursya Traps can also be listed here."""
+
     display_name = "Filler Weights"
     internal_name = "filler_weights"
 
@@ -269,12 +283,14 @@ class EnemyRando(Choice):
 
 class MusicRando(Toggle):
     """Do you want the music and sound effects to be randomized?"""
+
     display_name = "Music Randomization"
     internal_name = "randomize_music"
 
 
 class PracticeCodes(Toggle):
     """Do you want to enable Seeky's SPM Practice Codes?"""
+
     # No display name, this should always be hidden
     internal_name = "practice_codes"
     visibility = Visibility.none
@@ -288,6 +304,7 @@ class ShuffleAbilities(Toggle):
     - Bowser's Fire
     - Luigi's Super Jump
     """
+
     display_name = "Ability Shuffle"
     internal_name = "ability_shuffle"
 
@@ -297,7 +314,9 @@ class ObscureTricks(Toggle):
     Some examples:
 
     - Jumping off of enemies, some require using Thoraeu to move the enemy first
+    - Mid-air flip jumps to jump around 3d objects
     """
+
     display_name = "Obscure Tricks"
     internal_name = "obscure_tricks"
 
@@ -327,6 +346,7 @@ class TradingQuest(Toggle):
     Should the Piccolo trading quest items & locations be added to the pool?
     Piccolo will still be in the pool, only the intermediary items/locations are removed.
     """
+
     display_name = "Trading Quest"
     internal_name = "trading_quest"
 
@@ -342,6 +362,7 @@ class TreasureMaps(Choice):
     - *Flamm and Open Treasures*: Flamm sells randomized items. Map Items aren't in the pool but Fleep can reveal them anyway.
     - *All*: Flamm sells randomized items. Map Items are in the pool for Fleep to use to reveal Map Treasures.
     """
+
     display_name = "Treasure Maps"
     internal_name = "treasure_maps"
 
@@ -370,9 +391,11 @@ class TreasureMaps(Choice):
     @property
     def flamm_disabled(self) -> bool:
         return self.value & self.value_FLAMM_MASK == self.value_flamm_disabled
+
     @property
     def flamm_vanilla(self) -> bool:
         return self.value & self.value_FLAMM_MASK == self.value_flamm_vanilla
+
     @property
     def flamm_random(self) -> bool:
         return self.value & self.value_FLAMM_MASK == self.value_flamm_random
@@ -380,9 +403,11 @@ class TreasureMaps(Choice):
     @property
     def treasures_disabled(self) -> bool:
         return self.value & self.value_TREASURES_MASK == self.value_treasures_disabled
+
     @property
     def treasures_open(self) -> bool:
         return self.value & self.value_TREASURES_MASK == self.value_treasures_open
+
     @property
     def treasures_standard(self) -> bool:
         return self.value & self.value_TREASURES_MASK == self.value_treasures_standard
@@ -426,39 +451,18 @@ class SuperPaperMarioOptions(PerGameCommonOptions):
 # TODO: send help, I suck at coming up with option group names.
 # particularly "Location Shuffle" & "Item/Location Pool"
 OPTION_GROUPS = [
-    OptionGroup(
-        "World Access",
-        [Goal, PureHeartsRequired, ChapterDoorAccess]
-    ),
-    OptionGroup(
-        "Item Pool",
-        [StartingCharacter, StartingPixl, ShuffleAbilities, FillerWeights]
-    ),
-    OptionGroup(
-        "Item Shuffle",
-        [ShufflePureHearts]
-    ),
-    OptionGroup(
-        "Location Shuffle",
-        [TradingQuest, TreasureMaps]
-    ),
-    OptionGroup(
-        "Pit of 100 Trials",
-        [FlipsidePitAccess, FlipsidePitLogic, FlopsidePitAccess, FlopsidePitLogic]
-    ),
+    OptionGroup("World Access", [Goal, PureHeartsRequired, ChapterDoorAccess]),
+    OptionGroup("Item Pool", [StartingCharacter, StartingPixl, ShuffleAbilities, FillerWeights]),
+    OptionGroup("Item Shuffle", [ShufflePureHearts]),
+    OptionGroup("Location Shuffle", [TradingQuest, TreasureMaps]),
+    OptionGroup("Pit of 100 Trials", [FlipsidePitAccess, FlipsidePitLogic, FlopsidePitAccess, FlopsidePitLogic]),
     OptionGroup(
         "Logic",
         [ObscureTricks],
     ),
-    OptionGroup(
-        "Other Randomization",
-        [EntranceRando, EnemyRando, MusicRando]
-    )
+    OptionGroup("Other Randomization", [EntranceRando, EnemyRando, MusicRando]),
 ]
 
 OPTION_PRESETS: dict[str, dict[str, Any]] = {
-    "easy": {
-        Goal.internal_name: Goal.option_dimentio,
-        PureHeartsRequired.internal_name: 4
-    }
+    "easy": {Goal.internal_name: Goal.option_dimentio, PureHeartsRequired.internal_name: 4}
 }

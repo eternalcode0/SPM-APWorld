@@ -1,4 +1,5 @@
 """All things that define logical access between regions and locations"""
+
 import typing
 from collections.abc import Callable
 from dataclasses import dataclass
@@ -36,6 +37,7 @@ if typing.TYPE_CHECKING:
 
 class EGroup(IntEnum):
     """An Entrance Group for entrance_rando"""
+
     NONE = 0
     # Transportation
     PIPE = 1
@@ -127,11 +129,11 @@ class CanFleepTreasureSpot(Rule["SuperPaperMarioWorld"], game=GAME):
     map: I
 
     def _instantiate(self, world: "SuperPaperMarioWorld") -> Rule.Resolved:
-        if world.options.treasure_maps.maps_open:
+        if world.options.treasure_maps.treasures_open:
             return Has(I.PIXL_FLEEP).resolve(world)
-        if world.options.treasure_maps.maps_standard:
+        if world.options.treasure_maps.treasures_standard:
             return HasAll(I.PIXL_FLEEP, self.map).resolve(world)
-        if world.options.treasure_maps.maps_disabled:
+        if world.options.treasure_maps.treasures_disabled:
             return False_().resolve(world)
         raise NotImplementedError(f"Unknown treasure maps option: {world.options.treasure_maps}")
 
@@ -144,35 +146,29 @@ class RuleHolder:
     flipside_pit_access_filter = OptionFilter(FlipsidePitAccess, FlipsidePitAccess.option_closed, operator="ne")
 
     # Base Rules
-    can_flip = (
-        Has(I.CHARACTER_MARIO) &
-        (Has(I.ABILITY_FLIP, options=[shuffle_ability_filter], filtered_resolution=True))
+    can_flip = Has(I.CHARACTER_MARIO) & (Has(I.ABILITY_FLIP) | shuffle_ability_filter)
+    can_float = Has(I.CHARACTER_PEACH) & (
+        Has(I.ABILITY_UMBRELLA, options=[shuffle_ability_filter], filtered_resolution=True)
     )
-    can_float = (
-        Has(I.CHARACTER_PEACH) &
-        (Has(I.ABILITY_UMBRELLA, options=[shuffle_ability_filter], filtered_resolution=True))
+    can_fire = Has(I.CHARACTER_BOWSER) & (
+        Has(I.ABILITY_FIRE, options=[shuffle_ability_filter], filtered_resolution=True)
     )
-    can_fire = (
-        Has(I.CHARACTER_BOWSER) &
-        (Has(I.ABILITY_FIRE, options=[shuffle_ability_filter], filtered_resolution=True))
+    can_super_jump = Has(I.CHARACTER_LUIGI) & (
+        Has(I.ABILITY_SUPER_JUMP, options=[shuffle_ability_filter], filtered_resolution=True)
     )
-    can_super_jump = (
-        Has(I.CHARACTER_LUIGI) &
-        (Has(I.ABILITY_SUPER_JUMP, options=[shuffle_ability_filter], filtered_resolution=True))
-    )
-    can_break_hard_blocks = (
-        HasAny(I.PIXL_BOOMER, I.PIXL_CUDGE, I.PIXL_THUDLEY) |
-        can_fire
-    )
+    can_break_hard_blocks = HasAny(I.PIXL_BOOMER, I.PIXL_CUDGE, I.PIXL_THUDLEY) | can_fire
 
     # chapter 2 rules
     mi110_door_group = (
         # Luigi jumps to the doors without touching the blocks
-        can_super_jump |
+        can_super_jump
+        |
         # Bowser builds up speed on carrie and jumps at the blocks while breathing fire
-        (can_fire & Has(I.PIXL_CARRIE)) |
+        (can_fire & Has(I.PIXL_CARRIE))
+        |
         # Bowser too big to cudge the blocks
-        (HasAny(I.CHARACTER_LUIGI, I.CHARACTER_MARIO, I.CHARACTER_PEACH) & Has(I.PIXL_CUDGE)) |
+        (HasAny(I.CHARACTER_LUIGI, I.CHARACTER_MARIO, I.CHARACTER_PEACH) & Has(I.PIXL_CUDGE))
+        |
         # The normal way to break the blocks
         Has(I.PIXL_BOOMER)
     )
@@ -183,7 +179,8 @@ def connect_regions(world: "SuperPaperMarioWorld") -> list[Entrance]:
     Returns the list of entrances that can be randomized.
     """
 
-    def create_entrance(world: "SuperPaperMarioWorld",
+    def create_entrance(
+        world: "SuperPaperMarioWorld",
         from_region: R,
         to_region: R,
         rule: typing.Callable[[CollectionState], bool] | Rule[typing.Any] | None = None,
@@ -191,33 +188,45 @@ def connect_regions(world: "SuperPaperMarioWorld") -> list[Entrance]:
         group: int = 0,
         type: EntranceType = EntranceType.TWO_WAY,
         force_creation: bool = False,
-        ) -> Entrance | None:
+    ) -> Entrance | None:
         entrance = world.create_entrance(world.rm[from_region], world.rm[to_region], rule, name, force_creation)
         if entrance is not None:
             entrance.randomization_group = group
             entrance.randomization_type = type
         return entrance
 
-    all_entrances = [create_entrance(world, edata.fr, edata.to, edata.rule, edata.name, edata.group, edata.etype)
-            for edata in ENTRANCE_DATA]
-    return [entrance for entrance in all_entrances if entrance is not None and entrance.randomization_group > 0 and entrance.randomization_type == EntranceType.TWO_WAY]
+    all_entrances = [
+        create_entrance(world, edata.fr, edata.to, edata.rule, edata.name, edata.group, edata.etype)
+        for edata in ENTRANCE_DATA
+    ]
+    return [
+        entrance
+        for entrance in all_entrances
+        if entrance is not None
+        and entrance.randomization_group > 0
+        and entrance.randomization_type == EntranceType.TWO_WAY
+    ]
 
 
 def randomize_entrances(world: "SuperPaperMarioWorld", entrances: list[Entrance]) -> ERPlacementState:
     _ = [disconnect_entrance_for_randomization(entrance) for entrance in entrances]
     target_group_lookup = bake_target_group_lookup(world, get_target_groups)
-    return er_randomize_entrances(world, world.options.randomize_entrances.value == EntranceRando.option_coupled, target_group_lookup, True)
+    return er_randomize_entrances(
+        world, world.options.randomize_entrances.value == EntranceRando.option_coupled, target_group_lookup, True
+    )
 
 
 def set_rules(world: "SuperPaperMarioWorld") -> None:
     world.set_completion_rule(Has(E.VICTORY))
 
-    _ = [world.set_rule(world.lm[ldata.loc], ldata.rule)
+    _ = [
+        world.set_rule(world.lm[ldata.loc], ldata.rule)
         for ldata in LOCATION_DATA
-        if ldata.loc in world.lm]
+        if ldata.loc in world.lm and ldata.rule
+    ]
 
 
-CHAPTER_DOOR_ER = { group: EGroup.HUB | EGroup.DOOR, etype: EntranceType.ONE_WAY }
+CHAPTER_DOOR_ER = {group: EGroup.HUB | EGroup.DOOR, etype: EntranceType.ONE_WAY}
 
 
 ENTRANCE_RULES = [
@@ -395,25 +404,25 @@ ENTRANCE_RULES = [
     # TODO: use the new attribute field resolvers once they're merged
     # otherwise grabbing the pure_hearts_required setting from here is a pain
     , rule: HasChapterKey(I.CHAPTER_8_KEY, I.CHAPTER_8_1_KEY) & HasGroupUnique("Pure Heart", 8)
-    , name: "Flopside Tower - Black Door [1-1]"
+    , name: "Flopside Tower - Black Door [8-1]"
     , **CHAPTER_DOOR_ER
     },
     { fr: R.MAC12_L_TOWER
     , to: R.LS201
     , rule: HasChapterKey(I.CHAPTER_8_KEY, I.CHAPTER_8_2_KEY) & HasGroupUnique("Pure Heart", 8)
-    , name: "Flopside Tower - Black Door [1-2]"
+    , name: "Flopside Tower - Black Door [8-2]"
     , **CHAPTER_DOOR_ER
     },
     { fr: R.MAC12_L_TOWER
     , to: R.LS301
     , rule: HasChapterKey(I.CHAPTER_8_KEY, I.CHAPTER_8_3_KEY) & HasGroupUnique("Pure Heart", 8)
-    , name: "Flopside Tower - Black Door [1-3]"
+    , name: "Flopside Tower - Black Door [8-3]"
     , **CHAPTER_DOOR_ER
     },
     { fr: R.MAC12_L_TOWER
     , to: R.LS401
     , rule: HasChapterKey(I.CHAPTER_8_KEY, I.CHAPTER_8_4_KEY) & HasGroupUnique("Pure Heart", 8)
-    , name: "Flopside Tower - Black Door [1-4]"
+    , name: "Flopside Tower - Black Door [8-4]"
     , **CHAPTER_DOOR_ER
     },
     #endregion
@@ -1508,10 +1517,10 @@ ENTRANCE_RULES = [
     , name: f"{R.MI415} - Top Door"
     },
     #endregion
-]
+]  # fmt: skip
 
 
-ENTRANCE_DATA: list[EntranceRule] = [EntranceRule(**edata) for edata in ENTRANCE_RULES]
+ENTRANCE_DATA: list[EntranceRule] = [EntranceRule(**edata) for edata in ENTRANCE_RULES]  # ty: ignore[invalid-argument-type]
 
 
 LOCATION_RULES = [
@@ -1707,6 +1716,6 @@ LOCATION_RULES = [
     , rule: Has(I.PIXL_THOREAU)  # TODO: Add more ways to defeat mimi
     },
     #endregion
-]
+]  # fmt: skip
 
-LOCATION_DATA: list[LocationRule] = [LocationRule(**ldata) for ldata in LOCATION_RULES]
+LOCATION_DATA: list[LocationRule] = [LocationRule(**ldata) for ldata in LOCATION_RULES]  # ty: ignore[invalid-argument-type]

@@ -4,7 +4,6 @@ import traceback
 from typing import TYPE_CHECKING, ClassVar
 
 import dolphin_memory_engine as dme
-
 import Patch
 import settings
 import Utils
@@ -27,6 +26,7 @@ if TYPE_CHECKING:
 tracker_loaded = False
 try:
     from worlds.tracker.TrackerClient import TrackerGameContext as SuperContext
+
     tracker_loaded = True
 except ModuleNotFoundError:
     from CommonClient import CommonContext as SuperContext
@@ -39,15 +39,16 @@ DOLPHIN_STATUS_BAD_GAME = "Dolphin failed to connect. Please load a randomized R
 
 # US0 addresses until I figure out how to support more versions.
 # GP and its associated offsets: see https://github.com/SeekyCt/spm-decomp/blob/master/spm-headers/include/spm/spmario.h
-GP_BASE      = 0x804E2550
-SAVE_NAME    =       0x20 + GP_BASE
-MAP_NAME     =       0x44 + GP_BASE
-GSW0         =      0x140 + GP_BASE
-GSWF_BASE    =      0x144 + GP_BASE
-GSW_BASE     =      0x544 + GP_BASE
-COIN_ENTRIES =     0x1184 + GP_BASE
+GP_BASE = 0x804E2550
+SAVE_NAME = 0x20 + GP_BASE
+MAP_NAME = 0x44 + GP_BASE
+GSW0 = 0x140 + GP_BASE
+GSWF_BASE = 0x144 + GP_BASE
+GSW_BASE = 0x544 + GP_BASE
+COIN_ENTRIES = 0x1184 + GP_BASE
 
 EXPECTED_GAME_ID = b"R8PE01"
+
 
 class SPMCommandProcessor(ClientCommandProcessor):
     """Command Processor for Super Paper Mario"""
@@ -120,7 +121,7 @@ class SuperPaperMarioContext(SuperContext):
     async def check_spm_locations(self):
         locations_to_send = set()
         try:
-            #TODO: optimize to exclude locations that have already been checked
+            # TODO: optimize to exclude locations that have already been checked
             for ldata in LOCATION_DATA:
                 lid = ldata.code + BASE_LOCATION_ID
                 if ldata.var is None or lid is None or lid in self.checked_locations:
@@ -139,6 +140,7 @@ class SuperPaperMarioContext(SuperContext):
                 await self.send_msgs([{"cmd": "LocationChecks", "locations": locations_to_send}])
         except Exception:
             logger.error(traceback.format_exc())
+
 
 def check_ingame() -> bool:
     return read_string(SAVE_NAME, 8) != "default"
@@ -187,6 +189,7 @@ def _get_bit_address(bit_number: int) -> tuple:
     bit = bit_position & 0x7
     return byte_address, bit
 
+
 def gswf_set(bit_number: int):
     result = _get_bit_address(bit_number)
     if not result:
@@ -198,6 +201,7 @@ def gswf_set(bit_number: int):
     dme.write_byte(byte_address, new_byte)
     return result
 
+
 def gswf_check(bit_number: int) -> bool:
     result = _get_bit_address(bit_number)
     if not result:
@@ -207,8 +211,10 @@ def gswf_check(bit_number: int) -> bool:
     bit_mask = 1 << bit
     return bool(current_byte & bit_mask)
 
+
 def gsw_set(index, value):
     dme.write_word(GSW0, value) if index == 0 else dme.write_byte(GSW_BASE + index, value)
+
 
 def gsw_check(index):
     return dme.read_word(GSW0) if index == 0 else dme.read_byte(GSW_BASE + index)

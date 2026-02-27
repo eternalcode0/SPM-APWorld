@@ -18,6 +18,7 @@ class LevelSetupEntry:
     These entries have variable size based off the file's header, see
     LEVEL_SETUP_ENTRY_SIZES. Typically represents an enemy.
     """
+
     header: bytes | None  # 4byte unknown
     x_pos: float
     y_pos: float
@@ -49,6 +50,7 @@ class LevelSetupEntry:
 @dataclass
 class LevelSetupFile:
     """Internal class to represent a whole /files/setup/ file."""
+
     header: bytes
     entries: list[LevelSetupEntry]
     footer: bytes

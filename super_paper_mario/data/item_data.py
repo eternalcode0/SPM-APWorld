@@ -1781,6 +1781,6 @@ ITEM_LIST_DICT: list[dict[str, Any]] = [
     # , groups: {GROUP_MAP}
     # },
     #endregion
-]
+]  # fmt: skip
 
 ITEM_DATA = [ItemData(**data) for data in ITEM_LIST_DICT]

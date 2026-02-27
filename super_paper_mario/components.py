@@ -1,4 +1,4 @@
-from worlds.LauncherComponents import Component, Type, components, launch_subprocess, SuffixIdentifier
+from worlds.LauncherComponents import Component, SuffixIdentifier, Type, components, launch_subprocess
 
 from .data import GAME
 

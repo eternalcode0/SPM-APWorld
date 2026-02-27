@@ -1,4 +1,3 @@
-from time import sleep
 import json
 import os
 import random
@@ -15,6 +14,7 @@ if TYPE_CHECKING:
     from . import SuperPaperMarioWorld
 
 TMP_EXTRACT = "temp_spm"
+
 
 class SPMProcedurePatch(APProcedurePatch):
     game = GAME
@@ -54,7 +54,7 @@ class SPMPatchExtension(APPatchExtension):
     @staticmethod
     def patch_iso(spmpp: SPMProcedurePatch):
         options = json.loads(spmpp.get_file("options.json").decode("UTF-8"))
-        WIT.unpack_iso(get_settings()['super_paper_mario.world_options'].rom_file, TMP_EXTRACT)
+        WIT.unpack_iso(get_settings()["super_paper_mario.world_options"].rom_file, TMP_EXTRACT)
         if options["randomize_enemies"]:
             SPMPatchExtension.randomize_enemies()
         if options["randomize_music"]:
@@ -109,7 +109,9 @@ class SPMPatchExtension(APPatchExtension):
     @staticmethod
     def apply_practice_codes():
         os.mkdir(f"./{TMP_EXTRACT}/files/mod")
-        shutil.copyfile("./worlds/super_paper_mario/rel/spm-practice-codes.us0.rel", f"./{TMP_EXTRACT}/files/mod/mod.rel")
+        shutil.copyfile(
+            "./worlds/super_paper_mario/rel/spm-practice-codes.us0.rel", f"./{TMP_EXTRACT}/files/mod/mod.rel"
+        )
 
 
 def output_patch(world: "SuperPaperMarioWorld", output_directory: str):

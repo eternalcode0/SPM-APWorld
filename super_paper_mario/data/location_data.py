@@ -30,6 +30,7 @@ class LocationData:
     groups: frozenset[str] = frozenset()
     """What location groups does this belong to"""
 
+
 # convenience strings bc I hate putting quotes everywhere in dicts
 name = "name"
 code = "code"
@@ -46,6 +47,7 @@ GROUP_FLIPSIDE_PIT = "Flipside Pit"
 GROUP_FLOPSIDE_PIT = "Flopside Pit"
 GROUP_PIT = "Pit"
 GROUP_SHOP = "Shop"
+
 
 # Randomization settings
 def heart_pillar(opt: SuperPaperMarioOptions) -> RT:
@@ -77,11 +79,18 @@ def flopside_pit(opt: SuperPaperMarioOptions) -> RT:
 
 
 def flamm(opt: SuperPaperMarioOptions) -> RT:
-    return RT.DISABLED if opt.treasure_maps.flamm_disabled else RT.VANILLA_WORLD if opt.treasure_maps.flamm_vanilla else RT.RANDOM
+    return (
+        RT.DISABLED
+        if opt.treasure_maps.flamm_disabled
+        else RT.VANILLA_WORLD
+        if opt.treasure_maps.flamm_vanilla
+        else RT.RANDOM
+    )
 
 
 def treasure_spot(opt: SuperPaperMarioOptions) -> RT:
     return RT.DISABLED if opt.treasure_maps.treasures_disabled else RT.RANDOM
+
 
 ###
 # WARNING: ALL LOCATION IDS STILL SUBJECT TO CHANGE, DO NOT REFERENCE THESE
@@ -3211,6 +3220,6 @@ LOCATION_LIST_DICT: list[dict[str, Any]] = [
     # , setting: treasure_spot
     # },
     #endregion
-]
+]  # fmt: skip
 
 LOCATION_DATA: list[LocationData] = [LocationData(**loc) for loc in LOCATION_LIST_DICT]

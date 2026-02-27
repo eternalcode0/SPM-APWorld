@@ -2,7 +2,7 @@ from typing import TYPE_CHECKING
 
 from BaseClasses import ItemClassification, Location
 
-from . import items, regions
+from . import items
 from .data import GAME, RandomizationType, location_data
 from .names import ItemName, LocationName
 
@@ -37,12 +37,17 @@ def create_all_locations(world: "SuperPaperMarioWorld") -> dict[ItemName, int]:
         rt = location.setting(world.options) if callable(location.setting) else location.setting
         if rt == RandomizationType.VANILLA_WORLD:
             loc = SPMLocation(
-                world.player, location.name.value, LOCATION_NAME_TO_ID[location.name.value], region_map[location.region.value]
+                world.player,
+                location.name.value,
+                LOCATION_NAME_TO_ID[location.name.value],
+                region_map[location.region.value],
             )
             loc.place_locked_item(world.create_item(location.item.value))
             region_map[location.region].locations.append(loc)
         elif rt == RandomizationType.VANILLA_EVENT:
-            region_map[location.region].add_event(location.name.value, location.item.value, None, SPMLocation, items.SPMItem)
+            region_map[location.region].add_event(
+                location.name.value, location.item.value, None, SPMLocation, items.SPMItem
+            )
         elif rt == RandomizationType.RANDOM:
             if location.item in items.ITEM_ENUM_TO_DATA:
                 data = items.ITEM_ENUM_TO_DATA[location.item]
@@ -51,13 +56,18 @@ def create_all_locations(world: "SuperPaperMarioWorld") -> dict[ItemName, int]:
                     filler[location.item] = filler.get(location.item, 0) + 1
             region_map[location.region].locations.append(
                 SPMLocation(
-                    world.player, location.name.value, LOCATION_NAME_TO_ID[location.name.value], region_map[location.region.value]
+                    world.player,
+                    location.name.value,
+                    LOCATION_NAME_TO_ID[location.name.value],
+                    region_map[location.region.value],
                 )
             )
     return filler
 
 
-def get_location_map(world: "SuperPaperMarioWorld", location_names: list[LocationName] | None = None) -> dict[LocationName, SPMLocation]:
+def get_location_map(
+    world: "SuperPaperMarioWorld", location_names: list[LocationName] | None = None
+) -> dict[LocationName, Location]:
     if location_names is None or len(location_names) == 0:
         location_names = list(LocationName)
     return {location.name: location for location in world.get_locations() if location.name in location_names}
