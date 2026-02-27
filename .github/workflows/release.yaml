@@ -8,5 +8,5 @@ jobs:
         uses: Eijebong/ap-actions/.github/workflows/release-apworld.yml@main
         with:
             apworld-path: super_paper_mario
-            ap-version: "0.6.6"
+            ap-version: "main"
             python-version: "3.11"
