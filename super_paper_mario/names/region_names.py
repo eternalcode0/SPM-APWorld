@@ -65,7 +65,7 @@ class RegionName(StrEnum):
     MAC09_LAYER1 = "Flipside 1F - Layer 1"
     MAC09_LAYER2 = "Flipside 1F - Layer 2"
     MAC09_LAYER3 = "Flipside 1F - Layer 3"
-    L_FLIPSIDE_PIT_ENTRANCE = "Flipside B2 - Cage top"
+    L_FLIPSIDE_PIT_TOP = "Flipside B2 - Cage top"
     L_FLIPSIDE_PIT = "Flipside Pit of 100 Trials"
     MAC30 = "Flipside Arcade"
 
@@ -91,6 +91,7 @@ class RegionName(StrEnum):
     MAC19_LAYER2 = "Flopside 1F - Layer 2"
     MAC19_LAYER3 = "Flopside 1F - Layer 3"
     # MAC22  # Cutscenes
+    L_FLOPSIDE_PIT_TOP = "Flopside B2 - Cage top"
     L_FLOPSIDE_PIT = "Flopside Pit of 100 Trials"
 
     # 1-1: The Adventure Unfolds
@@ -190,14 +191,14 @@ class RegionName(StrEnum):
 
     # 3-1: When Geeks Attack
     TA101 = f"{TA1} - Entrance"
-    # TA102 = f"{TA1} - "
-    # TA103 = f"{TA1} - "
-    # TA104 = f"{TA1} - "
-    # TA105 = f"{TA1} - "
-    # TA106 = f"{TA1} - "
-    # TA107 = f"{TA1} - "
-    # TA108 = f"{TA1} - "
-    # TA109 = f"{TA1} - "
+    # TA102 = f"{TA1} - Long Room"
+    # TA103 = f"{TA1} - SMB 1-2 Level"
+    # TA104 = f"{TA1} - Koopa Fortress"
+    # TA105 = f"{TA1} - Blomeba Room"
+    # TA106 = f"{TA1} - Underground Platform Room"
+    # TA107 = f"{TA1} - Underground Pyramid Room"
+    # TA108 = f"{TA1} - Underground Flip Block Room"
+    # TA109 = f"{TA1} - Mega Koopa Room"
 
     # 3-2: Bloops Ahoy
     TA201 = f"{TA2} - Entrance"

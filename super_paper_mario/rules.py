@@ -115,10 +115,10 @@ class HasChapterKey(Rule["SuperPaperMarioWorld"], game=GAME):
     subchapter_key: I
 
     def _instantiate(self, world: "SuperPaperMarioWorld") -> Rule.Resolved:
-        if world.options.chapter_door_access == ChapterDoorAccess.option_subchapters_locked:
-            return Has(self.chapter_key.value).resolve(world)
-        if world.options.chapter_door_access == ChapterDoorAccess.option_chapter_locked:
-            return Has(self.subchapter_key.value).resolve(world)
+        # if world.options.chapter_door_access == ChapterDoorAccess.option_subchapters_locked:
+        #     return Has(self.chapter_key.value).resolve(world)
+        # if world.options.chapter_door_access == ChapterDoorAccess.option_chapter_locked:
+        #     return Has(self.subchapter_key.value).resolve(world)
         if world.options.chapter_door_access == ChapterDoorAccess.option_open:
             return True_().resolve(world)
         raise NotImplementedError(f"Unknown chapter_door_access option: {world.options.chapter_door_access}")
@@ -146,7 +146,9 @@ class RuleHolder:
     flipside_pit_access_filter = OptionFilter(FlipsidePitAccess, FlipsidePitAccess.option_closed, operator="ne")
 
     # Base Rules
-    can_flip = Has(I.CHARACTER_MARIO) & (Has(I.ABILITY_FLIP) | shuffle_ability_filter)
+    can_flip = Has(I.CHARACTER_MARIO) & (
+        Has(I.ABILITY_FLIP, options=[shuffle_ability_filter], filtered_resolution=True)
+    )
     can_float = Has(I.CHARACTER_PEACH) & (
         Has(I.ABILITY_UMBRELLA, options=[shuffle_ability_filter], filtered_resolution=True)
     )
@@ -189,6 +191,8 @@ def connect_regions(world: "SuperPaperMarioWorld") -> list[Entrance]:
         type: EntranceType = EntranceType.TWO_WAY,
         force_creation: bool = False,
     ) -> Entrance | None:
+        if from_region not in world.rm or to_region not in world.rm:
+            return None
         entrance = world.create_entrance(world.rm[from_region], world.rm[to_region], rule, name, force_creation)
         if entrance is not None:
             entrance.randomization_group = group
@@ -539,17 +543,17 @@ ENTRANCE_RULES = [
     , name: "Flipside B2 - Layer 1 - Sealed Pipe"
     },
     { fr: R.MAC05_LAYER1
-    , to: R.L_FLIPSIDE_PIT_ENTRANCE
+    , to: R.L_FLIPSIDE_PIT_TOP
     , rule: RuleHolder.can_super_jump | Has(E.SWITCH_FLIPSIDE_PIT_CAGE)
     , name: "Flipside B2 - Layer 1 -> Cage"
     },
-    { fr: R.L_FLIPSIDE_PIT_ENTRANCE
+    { fr: R.L_FLIPSIDE_PIT_TOP
     , to: R.MAC05_LAYER2
     , rule: RuleHolder.can_flip
     , name: "Flipside B2 - Layer 1 Cage -> 2"
     },
     { fr: R.MAC05_LAYER2
-    , to: R.L_FLIPSIDE_PIT_ENTRANCE
+    , to: R.L_FLIPSIDE_PIT_TOP
     , rule: HasAll(I.CHARACTER_MARIO, I.PIXL_TIPPI)
     , name: "Flipside B2 Outskirts - Layer 2 -> 1 Cage"
     },
@@ -745,11 +749,19 @@ ENTRANCE_RULES = [
     , to: R.L_FLOPSIDE_PIT
     , name: "Flopside B2 - Layer 1 - Sealed Pipe"
     # TODO: More access rules
-    , rule: True_(options=[OptionFilter(FlopsidePitAccess, FlopsidePitAccess.option_open)])
+    , rule: (
+        True_(options=[OptionFilter(FlopsidePitAccess, FlopsidePitAccess.option_open)]) |
+        HasAll(E.COMPLETED_FLIPSIDE_PIT, E.FLEEP_FLOPSIDE_PIT_CAGE, options=[OptionFilter(FlopsidePitAccess, FlopsidePitAccess.option_normal)]) |
+        Has(E.FLEEP_FLOPSIDE_PIT_CAGE, options=[OptionFilter(FlopsidePitAccess, FlopsidePitAccess.option_no_flipside)]))
     },
     { fr: R.MAC15_LAYER1
     , to: R.MAC12_LAYER1
     , name: "Flopside B2 - Layer 2 - Blue Pipe"
+    },
+    { fr: R.MAC15_LAYER1
+    , to: R.L_FLOPSIDE_PIT_TOP
+    , name: "Flopside B2 - Layer 1 -> Top of Cage"
+    , rule: RuleHolder.can_super_jump
     },
     { fr: R.MAC15_LAYER1
     , to: R.MAC14_RIGHT
@@ -762,6 +774,19 @@ ENTRANCE_RULES = [
     { fr: R.MAC15_LAYER2
     , to: R.MAC17_LAYER2
     , name: "Flopside B2 - Layer 2 - Pipe"
+    },
+    { fr: R.MAC15_LAYER2
+    , to: R.L_FLOPSIDE_PIT_TOP
+    , name: "Flopside B2 - Layer 2 - Cage Top"
+    , rule: (RuleHolder.can_super_jump | Has(I.PIXL_TIPPI)) & RuleHolder.can_flip
+    },
+    { fr: R.L_FLOPSIDE_PIT_TOP
+    , to: R.MAC15_LAYER1
+    , name: "Flopside B2 Cage Top - Drop"
+    },
+    { fr: R.L_FLOPSIDE_PIT_TOP
+    , to: R.MAC15_LAYER2
+    , name: "Flopside B2 Cage Top - Layer 2"
     },
     { fr: R.MAC16_LAYER1
     , to: R.MAC12_LAYER3
@@ -1517,6 +1542,32 @@ ENTRANCE_RULES = [
     , name: f"{R.MI415} - Top Door"
     },
     #endregion
+    #region 3-1
+    # { fr: R.TA101
+    # , to: R.TA102
+    # , name: f"{R.TA101} - Door in the sky"  # doa1_l
+    # },
+    # { fr: R.TA101
+    # , to: R.TA103
+    # , name: f"{R.TA101} - Fall between Red Pipes"  # Entrance has an empty name
+    # , etype: EntranceType.ONE_WAY
+    # },
+    # { fr: R.TA101
+    # , to: R.MAC02_L_TOWER
+    # , name: f"{R.TA101} - Left Red Pipe"  # dokan_m
+    # , etype: EntranceType.ONE_WAY
+    # },
+    # { fr: R.TA101
+    # , to: R.MAC02_L_TOWER
+    # , name: f"{R.TA101} - Right Red Pipe"  # dokan_m2
+    # , etype: EntranceType.ONE_WAY
+    # },
+    # { fr: R.TA101
+    # , to: R.MAC02_L_TOWER
+    # , name: f"{R.TA101} - Right Background Pipe"  # hai_dokan_03
+    # , etype: EntranceType.ONE_WAY
+    # },
+    #endregion
 ]  # fmt: skip
 
 
@@ -1592,6 +1643,9 @@ LOCATION_RULES = [
     },
     { loc: E.SMASH_FLOPSIDE_B2_OUTSKIRTS_BLOCK
     , rule: RuleHolder.can_flip & Has(I.PIXL_CUDGE)
+    },
+    { loc: E.FLEEP_FLOPSIDE_PIT_CAGE
+    , rule: Has(I.PIXL_FLEEP)
     },
     { loc: L.FLOPSIDE_B2_CHEST_AFTER_PIPE
     , rule: Has(E.SMASH_FLOPSIDE_B2_OUTSKIRTS_BLOCK)

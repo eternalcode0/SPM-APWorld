@@ -59,19 +59,21 @@ def fetch_amount(world: "SuperPaperMarioWorld") -> int:
 
 
 def chapter_key_amount(world: "SuperPaperMarioWorld") -> int:
-    return 1 if world.options.chapter_door_access.value == ChapterDoorAccess.option_chapter_locked else 0
+    return 0
+    # return 1 if world.options.chapter_door_access.value == ChapterDoorAccess.option_chapter_locked else 0
 
 
 def subchapter_key_amount(world: "SuperPaperMarioWorld") -> int:
-    return 1 if world.options.chapter_door_access.value == ChapterDoorAccess.option_subchapters_locked else 0
+    return 0
+    # return 1 if world.options.chapter_door_access.value == ChapterDoorAccess.option_subchapters_locked else 0
 
 
 def ability_amount(world: "SuperPaperMarioWorld") -> int:
     return 1 if world.options.ability_shuffle else 0
 
 
-def maps_amount(world: "SuperPaperMarioWorld") -> int:
-    return 1 if world.options.treasure_maps.map_items_in_pool else 0
+# def maps_amount(world: "SuperPaperMarioWorld") -> int:
+#     return 1 if world.options.treasure_maps.map_items_in_pool else 0
 
 
 ITEM_LIST_DICT: list[dict[str, Any]] = [
@@ -1492,36 +1494,36 @@ ITEM_LIST_DICT: list[dict[str, Any]] = [
     , groups: {GROUP_CURSYA_TRAP}
     },
     # MOD: I couldn't find maps in the item id list, not sure where they belong
-    { name: I.MAP_1
-    , code: 289
-    , classification: ItemClassification.progression
-    , amount: maps_amount
-    , groups: {GROUP_MAP}
-    },
-    { name: I.MAP_2
-    , code: 290
-    , classification: ItemClassification.progression
-    , amount: maps_amount
-    , groups: {GROUP_MAP}
-    },
-    { name: I.MAP_3
-    , code: 291
-    , classification: ItemClassification.progression
-    , amount: maps_amount
-    , groups: {GROUP_MAP}
-    },
-    { name: I.MAP_4
-    , code: 292
-    , classification: ItemClassification.progression
-    , amount: maps_amount
-    , groups: {GROUP_MAP}
-    },
-    { name: I.MAP_5
-    , code: 293
-    , classification: ItemClassification.progression
-    , amount: maps_amount
-    , groups: {GROUP_MAP}
-    },
+    # { name: I.MAP_1
+    # , code: 289
+    # , classification: ItemClassification.progression
+    # , amount: maps_amount
+    # , groups: {GROUP_MAP}
+    # },
+    # { name: I.MAP_2
+    # , code: 290
+    # , classification: ItemClassification.progression
+    # , amount: maps_amount
+    # , groups: {GROUP_MAP}
+    # },
+    # { name: I.MAP_3
+    # , code: 291
+    # , classification: ItemClassification.progression
+    # , amount: maps_amount
+    # , groups: {GROUP_MAP}
+    # },
+    # { name: I.MAP_4
+    # , code: 292
+    # , classification: ItemClassification.progression
+    # , amount: maps_amount
+    # , groups: {GROUP_MAP}
+    # },
+    # { name: I.MAP_5
+    # , code: 293
+    # , classification: ItemClassification.progression
+    # , amount: maps_amount
+    # , groups: {GROUP_MAP}
+    # },
     # { name: I.MAP_6
     # , code: 294
     # , classification: ItemClassification.progression

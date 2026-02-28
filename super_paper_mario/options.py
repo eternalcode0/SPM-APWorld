@@ -53,8 +53,8 @@ class ChapterDoorAccess(Choice):
     internal_name = "chapter_door_access"
 
     option_open = 0
-    option_chapter_locked = 1
-    option_subchapters_locked = 2
+    # option_chapter_locked = 1
+    # option_subchapters_locked = 2
     # option_closed = 3  # no chapters accessible, some kind of pit only goal maybe?
     default = option_open
 
@@ -139,23 +139,23 @@ class FlipsidePitAccess(PitAccess):
     default = PitAccess.option_closed
 
 
-class FlipsidePitLogic(PitLogic):
-    """When is each individual floor of the Flipside Pit considered in-logic?
-    *Minimum:* Each floor of the Pit is considered in-logic as soon as the enemies of that floor are defeatable.
-        Ex. Floor 1-12 will be in-logic once the pit is accessible but Floor 13+ will be considered out-of-logic until
-        you have Boomer to defeat the Shlurps.
+# class FlipsidePitLogic(PitLogic):
+#     """When is each individual floor of the Flipside Pit considered in-logic?
+#     *Minimum:* Each floor of the Pit is considered in-logic as soon as the enemies of that floor are defeatable.
+#         Ex. Floor 1-12 will be in-logic once the pit is accessible but Floor 13+ will be considered out-of-logic until
+#         you have Boomer to defeat the Shlurps.
 
-    *Characters:* Every floor is considered out-of-logic until you have all Heroes & Pixls
+#     *Characters:* Every floor is considered out-of-logic until you have all Heroes & Pixls
 
-    *Chapters:* Every floor is considered out-of-logic until you have access to Chapters 1-7
+#     *Chapters:* Every floor is considered out-of-logic until you have access to Chapters 1-7
 
-    *Maximum:* Every floor is considered out-of-logic until you have all Heroes, Pixls, and access to Chapters 1-7
-    """
+#     *Maximum:* Every floor is considered out-of-logic until you have all Heroes, Pixls, and access to Chapters 1-7
+#     """
 
-    display_name = "Flipside Pit Logic"
-    internal_name = "flipside_pit_logic"
+#     display_name = "Flipside Pit Logic"
+#     internal_name = "flipside_pit_logic"
 
-    default = PitLogic.option_minimum
+#     default = PitLogic.option_minimum
 
 
 class FlopsidePitAccess(PitAccess):
@@ -177,23 +177,23 @@ class FlopsidePitAccess(PitAccess):
     default = PitAccess.option_closed
 
 
-class FlopsidePitLogic(PitLogic):
-    """
-    *Minimum:* Each floor of the Pit is considered in-logic as soon as the enemies of that floor are defeatable.
-        Ex. Floor 1-4 will be in-logic once the pit is accessible but Floor 5+ will be considered out-of-logic until
-        you have Carrie, Boomer, or Bowser to kill the Dark Spiked Goombas.
+# class FlopsidePitLogic(PitLogic):
+#     """
+#     *Minimum:* Each floor of the Pit is considered in-logic as soon as the enemies of that floor are defeatable.
+#         Ex. Floor 1-4 will be in-logic once the pit is accessible but Floor 5+ will be considered out-of-logic until
+#         you have Carrie, Boomer, or Bowser to kill the Dark Spiked Goombas.
 
-    *Characters:* Every floor is considered out-of-logic until you have all Heroes & Pixls
+#     *Characters:* Every floor is considered out-of-logic until you have all Heroes & Pixls
 
-    *Chapters:* Every floor is considered out-of-logic until you have access to Chapters 1-7
+#     *Chapters:* Every floor is considered out-of-logic until you have access to Chapters 1-7
 
-    *Maximum:* Every floor is considered out-of-logic until you have all Heroes, Pixls, and access to Chapters 1-7
-    """
+#     *Maximum:* Every floor is considered out-of-logic until you have all Heroes, Pixls, and access to Chapters 1-7
+#     """
 
-    display_name = "Flopside Pit Logic"
-    internal_name = "flopside_pit_logic"
+#     display_name = "Flopside Pit Logic"
+#     internal_name = "flopside_pit_logic"
 
-    default = PitLogic.option_minimum
+#     default = PitLogic.option_minimum
 
 
 class TrapTypes(ItemSet):
@@ -414,7 +414,7 @@ class TreasureMaps(Choice):
 
     @property
     def map_items_in_pool(self) -> bool:
-        return self.value in {self.option_no_flamm_and_standard_treasures, self.option_all}
+        return self.value in {self.option_no_flamm_and_standard_treasures, self.option_all, self.option_vanilla}
 
 
 @dataclass
@@ -432,12 +432,12 @@ class SuperPaperMarioOptions(PerGameCommonOptions):
     shuffle_pure_hearts: ShufflePureHearts
     # Location Shuffle
     trading_quest: TradingQuest
-    treasure_maps: TreasureMaps
+    # treasure_maps: TreasureMaps
     # Pit of 100 Trials
     flipside_pit_access: FlipsidePitAccess
-    flipside_pit_logic: FlipsidePitLogic
+    # flipside_pit_logic: FlipsidePitLogic
     flopside_pit_access: FlopsidePitAccess
-    flopside_pit_logic: FlopsidePitLogic
+    # flopside_pit_logic: FlopsidePitLogic
     # Other Randomization
     randomize_entrances: EntranceRando
     randomize_enemies: EnemyRando
@@ -455,7 +455,7 @@ OPTION_GROUPS = [
     OptionGroup("Item Pool", [StartingCharacter, StartingPixl, ShuffleAbilities, FillerWeights]),
     OptionGroup("Item Shuffle", [ShufflePureHearts]),
     OptionGroup("Location Shuffle", [TradingQuest, TreasureMaps]),
-    OptionGroup("Pit of 100 Trials", [FlipsidePitAccess, FlipsidePitLogic, FlopsidePitAccess, FlopsidePitLogic]),
+    OptionGroup("Pit of 100 Trials", [FlipsidePitAccess, FlopsidePitAccess]),
     OptionGroup(
         "Logic",
         [ObscureTricks],

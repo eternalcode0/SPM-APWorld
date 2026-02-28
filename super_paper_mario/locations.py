@@ -17,7 +17,8 @@ LOCATION_ENUM_TO_DATA = {
 LOCATION_NAME_TO_ID = {name.value: data.code + BASE_LOCATION_ID for name, data in LOCATION_ENUM_TO_DATA.items()}
 LOCATION_GROUPS = {group for loc in location_data.LOCATION_DATA for group in loc.groups}
 LOCATION_GROUP_MAP = {
-    group: {loc.name.value for loc in location_data.LOCATION_DATA if group in loc.groups} for group in LOCATION_GROUPS
+    group: {loc.name.value for loc in location_data.LOCATION_DATA if group in loc.groups and loc.region is not None}
+    for group in LOCATION_GROUPS
 }
 
 

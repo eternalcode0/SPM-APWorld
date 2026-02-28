@@ -10,7 +10,7 @@ from . import items, patch, rules
 from .data import GAME
 from .locations import LOCATION_GROUP_MAP, LOCATION_NAME_TO_ID, SPMLocation, create_all_locations, get_location_map
 from .names import ItemName, LocationName, RegionName
-from .options import PitAccess, SuperPaperMarioOptions
+from .options import FlopsidePitAccess, PitAccess, SuperPaperMarioOptions
 from .regions import create_regions, get_region_map
 from .web_world import SuperPaperMarioWebWorld
 
@@ -76,15 +76,23 @@ class SuperPaperMarioWorld(World):
     # sorted in execution order
 
     def generate_early(self):
+        options = self.options
+
         # Override options if necessary
+        if (
+            options.flopside_pit_access.value == PitAccess.option_normal
+            and options.flipside_pit_access.value == PitAccess.option_closed
+        ):
+            options.flopside_pit_access.value = FlopsidePitAccess.option_no_flipside
 
         # UT shenanigans
         self.is_ut = getattr(self.multiworld, "generation_is_fake", False)
         self.prepare_ut()
 
         # Populate slot data from options
-        visible_option_keys = [key for key in self.options.__dict__.keys()
-                              if getattr(self.options, key).visibility != Visibility.none]
+        visible_option_keys = [
+            key for key in self.options.__dict__.keys() if getattr(self.options, key).visibility != Visibility.none
+        ]
         self.slot_data["options"] = self.options.as_dict(*visible_option_keys)
 
         # Start Inventory
@@ -119,7 +127,8 @@ class SuperPaperMarioWorld(World):
         filler_pool = self.random.choices(
             population=list(self.filler_options.keys()),
             weights=list(self.filler_options.values()),
-            k=total_locations - len(base_pool))
+            k=total_locations - len(base_pool),
+        )
         filler_pool = [self.create_item(name) for name in filler_pool]
         self.multiworld.itempool.extend(base_pool)
         self.multiworld.itempool.extend(filler_pool)
@@ -195,6 +204,8 @@ class SuperPaperMarioWorld(World):
         return []
 
     def gen_diagram(self) -> None:
+        if self.player_name != "TEST123":
+            return
         from Utils import visualize_regions
 
         state = self.multiworld.get_all_state(False)
@@ -211,11 +222,10 @@ class SuperPaperMarioWorld(World):
 
     # endregion
 
-    #region Universal Tracker
+    # region Universal Tracker
 
     def interpret_slot_data(self, slot_data: dict[str, Any]) -> dict[str, Any] | None:
         return slot_data
-
 
     def prepare_ut(self) -> None:
         re_gen_passthrough = getattr(self.multiworld, "re_gen_passthrough", {})
@@ -232,4 +242,4 @@ class SuperPaperMarioWorld(World):
                 # You can also set .value directly but that won't work if you have OptionSets
                 setattr(self.options, key, opt.from_any(value))
 
-    #endregion
+    # endregion
