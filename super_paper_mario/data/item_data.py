@@ -14,8 +14,8 @@ if TYPE_CHECKING:
 @dataclass(frozen=True)
 class ItemData:
     name: I
-    code: int = field(compare=True, hash=True)
-    """A unique id among all other SPM items. Should match the id given to the rom."""
+    code: int = field(compare=False, hash=False)
+    """A unique id among all other SPM items. Should match the id given to the rom. Short value"""
     classification: Callable[[SuperPaperMarioOptions], ItemClassification] | ItemClassification = field(compare=False)
     """What item classification should this be?"""
     amount: Callable[["SuperPaperMarioWorld"], int] | int = field(default=1, compare=False)
@@ -47,6 +47,16 @@ GROUP_CHAPTER_KEY = "Chapter Key"
 GROUP_SUBCHAPTER_KEY = "Subchapter Key"
 GROUP_CURSYA_TRAP = "Cursya Trap"
 GROUP_MAP = "Map"
+GROUP_CATCH_CARD = "Catch Cards"
+GROUP_CHAPTER_ITEMS = "Chapter Items"  # This should only be paired with a specific chapter item group
+GROUP_C1_ITEMS = "Chapter 1 Items"
+GROUP_C2_ITEMS = "Chapter 2 Items"
+GROUP_C3_ITEMS = "Chapter 3 Items"
+GROUP_C4_ITEMS = "Chapter 4 Items"
+GROUP_C5_ITEMS = "Chapter 5 Items"
+GROUP_C6_ITEMS = "Chapter 6 Items"  # Declared for brevity but there are no chapter 6 items
+GROUP_C7_ITEMS = "Chapter 7 Items"
+GROUP_C8_ITEMS = "Chapter 8 Items"
 
 
 # Amounts
@@ -83,34 +93,34 @@ ITEM_LIST_DICT: list[dict[str, Any]] = [
     , code: 16
     , classification: ItemClassification.progression
     , amount: 3
-    , groups: {GROUP_IMPORTANT}
+    , groups: {GROUP_IMPORTANT, GROUP_C1_ITEMS, GROUP_CHAPTER_ITEMS}
     },
     { name: I.DOOR_KEY_21
     , code: 17
     , classification: ItemClassification.progression
-    , groups: {GROUP_IMPORTANT}
+    , groups: {GROUP_IMPORTANT, GROUP_C2_ITEMS, GROUP_CHAPTER_ITEMS}
     },
     { name: I.HOUSE_KEY  # 2-2 Key
     , code: 18
     , classification: ItemClassification.progression
-    , groups: {GROUP_IMPORTANT}
+    , groups: {GROUP_IMPORTANT, GROUP_C2_ITEMS, GROUP_CHAPTER_ITEMS}
     },
     # MOD: There are 3 Fort Keys all with the same name/description but diff ids. Should these be combined or kept unique?
     { name: I.FORT_KEY
     , code: 19
     , classification: ItemClassification.progression
     , amount: 3
-    , groups: {GROUP_IMPORTANT}
+    , groups: {GROUP_IMPORTANT, GROUP_C3_ITEMS, GROUP_CHAPTER_ITEMS}
     },
     # { name: I.FORT_KEY
     # , code: 20
     # , classification: ItemClassification.progression
-    # , groups: {GROUP_IMPORTANT}
+    # , groups: {GROUP_IMPORTANT, GROUP_C3_ITEMS, GROUP_CHAPTER_ITEMS}
     # },
     # { name: I.FORT_KEY
     # , code: 21
     # , classification: ItemClassification.progression
-    # , groups: {GROUP_IMPORTANT}
+    # , groups: {GROUP_IMPORTANT, GROUP_C3_ITEMS, GROUP_CHAPTER_ITEMS}
     # },
     { name: I.GOLDFISH_BOWL_FISH
     , code: 22
@@ -1071,7 +1081,6 @@ ITEM_LIST_DICT: list[dict[str, Any]] = [
     },
     #endregion
     #region Special Items
-    # Things that exist in-game but not as "items"
     { name: I.CHARACTER_MARIO
     , code: 216
     , classification: ItemClassification.progression
@@ -1153,635 +1162,1666 @@ ITEM_LIST_DICT: list[dict[str, Any]] = [
     , groups: {GROUP_PIXL}
     },
     #endregion
-    #region AP Items
-    # These items don't exist in-game. They're concepts introduced by the rando.
-    { name: I.RED_PURE_HEART
-    , code: 232
-    , classification: ItemClassification.progression_skip_balancing
-    , groups: {GROUP_HEART}
-    , amount: heart_amount
-    },
-    { name: I.ORANGE_PURE_HEART
-    , code: 233
-    , classification: ItemClassification.progression_skip_balancing
-    , groups: {GROUP_HEART}
-    , amount: heart_amount
-    },
-    { name: I.YELLOW_PURE_HEART
-    , code: 234
-    , classification: ItemClassification.progression_skip_balancing
-    , groups: {GROUP_HEART}
-    , amount: heart_amount
-    },
-    { name: I.GREEN_PURE_HEART
-    , code: 235
-    , classification: ItemClassification.progression_skip_balancing
-    , groups: {GROUP_HEART}
-    # , amount: heart_amount  # commented to default to 1 until its chapter logic is finished
-    },
-    { name: I.CYAN_PURE_HEART
-    , code: 236
-    , classification: ItemClassification.progression_skip_balancing
-    , groups: {GROUP_HEART}
-    # , amount: heart_amount  # commented to default to 1 until its chapter logic is finished
-    },
-    { name: I.BLUE_PURE_HEART
-    , code: 237
-    , classification: ItemClassification.progression_skip_balancing
-    , groups: {GROUP_HEART}
-    # , amount: heart_amount  # commented to default to 1 until its chapter logic is finished
-    },
-    { name: I.PURPLE_PURE_HEART
-    , code: 238
-    , classification: ItemClassification.progression_skip_balancing
-    , groups: {GROUP_HEART}
-    # , amount: heart_amount  # commented to default to 1 until its chapter logic is finished
-    },
-    { name: I.WHITE_PURE_HEART
-    , code: 239
-    , classification: ItemClassification.progression_skip_balancing
-    , groups: {GROUP_HEART}
-    # , amount: heart_amount  # commented to default to 1 until its chapter logic is finished
-    },
-    { name: I.ABILITY_FLIP
-    , code: 240
-    , classification: ItemClassification.progression
-    , groups: {GROUP_ABILITY}
-    , amount: ability_amount
-    },
-    { name: I.ABILITY_UMBRELLA
-    , code: 241
-    , classification: ItemClassification.progression
-    , groups: {GROUP_ABILITY}
-    , amount: ability_amount
-    },
-    { name: I.ABILITY_FIRE
-    , code: 242
-    , classification: ItemClassification.progression
-    , groups: {GROUP_ABILITY}
-    , amount: ability_amount
-    },
-    { name: I.ABILITY_SUPER_JUMP
-    , code: 243
-    , classification: ItemClassification.progression
-    , groups: {GROUP_ABILITY}
-    , amount: ability_amount
-    },
-    { name: I.CHAPTER_1_KEY
-    , code: 244
-    , classification: ItemClassification.progression
-    , groups: {GROUP_TOWER_KEY,GROUP_CHAPTER_KEY}
-    , amount: chapter_key_amount
-    },
-    { name: I.CHAPTER_2_KEY
-    , code: 245
-    , classification: ItemClassification.progression
-    , groups: {GROUP_TOWER_KEY,GROUP_CHAPTER_KEY}
-    , amount: chapter_key_amount
-    },
-    { name: I.CHAPTER_3_KEY
-    , code: 246
-    , classification: ItemClassification.progression
-    , groups: {GROUP_TOWER_KEY,GROUP_CHAPTER_KEY}
-    , amount: chapter_key_amount
-    },
-    { name: I.CHAPTER_4_KEY
-    , code: 247
-    , classification: ItemClassification.progression
-    , groups: {GROUP_TOWER_KEY,GROUP_CHAPTER_KEY}
-    , amount: chapter_key_amount
-    },
-    { name: I.CHAPTER_5_KEY
-    , code: 248
-    , classification: ItemClassification.progression
-    , groups: {GROUP_TOWER_KEY,GROUP_CHAPTER_KEY}
-    , amount: chapter_key_amount
-    },
-    { name: I.CHAPTER_6_KEY
-    , code: 249
-    , classification: ItemClassification.progression
-    , groups: {GROUP_TOWER_KEY,GROUP_CHAPTER_KEY}
-    , amount: chapter_key_amount
-    },
-    { name: I.CHAPTER_7_KEY
-    , code: 250
-    , classification: ItemClassification.progression
-    , groups: {GROUP_TOWER_KEY,GROUP_CHAPTER_KEY}
-    , amount: chapter_key_amount
-    },
-    { name: I.CHAPTER_8_KEY
-    , code: 251
-    , classification: ItemClassification.progression
-    , groups: {GROUP_TOWER_KEY,GROUP_CHAPTER_KEY}
-    , amount: chapter_key_amount
-    },
-    { name: I.CHAPTER_1_1_KEY
-    , code: 252
-    , classification: ItemClassification.progression
-    , groups: {GROUP_TOWER_KEY, GROUP_SUBCHAPTER_KEY}
-    , amount: subchapter_key_amount
-    },
-    { name: I.CHAPTER_1_2_KEY
-    , code: 253
-    , classification: ItemClassification.progression
-    , groups: {GROUP_TOWER_KEY, GROUP_SUBCHAPTER_KEY}
-    , amount: subchapter_key_amount
-    },
-    { name: I.CHAPTER_1_3_KEY
-    , code: 254
-    , classification: ItemClassification.progression
-    , groups: {GROUP_TOWER_KEY, GROUP_SUBCHAPTER_KEY}
-    , amount: subchapter_key_amount
-    },
-    { name: I.CHAPTER_1_4_KEY
-    , code: 255
-    , classification: ItemClassification.progression
-    , groups: {GROUP_TOWER_KEY, GROUP_SUBCHAPTER_KEY}
-    , amount: subchapter_key_amount
-    },
-    # MOD: hopefully item ids aren't a single byte
-    { name: I.CHAPTER_2_1_KEY
-    , code: 256
-    , classification: ItemClassification.progression
-    , groups: {GROUP_TOWER_KEY, GROUP_SUBCHAPTER_KEY}
-    , amount: subchapter_key_amount
-    },
-    { name: I.CHAPTER_2_2_KEY
-    , code: 257
-    , classification: ItemClassification.progression
-    , groups: {GROUP_TOWER_KEY, GROUP_SUBCHAPTER_KEY}
-    , amount: subchapter_key_amount
-    },
-    { name: I.CHAPTER_2_3_KEY
-    , code: 258
-    , classification: ItemClassification.progression
-    , groups: {GROUP_TOWER_KEY, GROUP_SUBCHAPTER_KEY}
-    , amount: subchapter_key_amount
-    },
-    { name: I.CHAPTER_2_4_KEY
-    , code: 259
-    , classification: ItemClassification.progression
-    , groups: {GROUP_TOWER_KEY, GROUP_SUBCHAPTER_KEY}
-    , amount: subchapter_key_amount
-    },
-    { name: I.CHAPTER_3_1_KEY
-    , code: 260
-    , classification: ItemClassification.progression
-    , groups: {GROUP_TOWER_KEY, GROUP_SUBCHAPTER_KEY}
-    , amount: subchapter_key_amount
-    },
-    { name: I.CHAPTER_3_2_KEY
-    , code: 261
-    , classification: ItemClassification.progression
-    , groups: {GROUP_TOWER_KEY, GROUP_SUBCHAPTER_KEY}
-    , amount: subchapter_key_amount
-    },
-    { name: I.CHAPTER_3_3_KEY
-    , code: 262
-    , classification: ItemClassification.progression
-    , groups: {GROUP_TOWER_KEY, GROUP_SUBCHAPTER_KEY}
-    , amount: subchapter_key_amount
-    },
-    { name: I.CHAPTER_3_4_KEY
-    , code: 263
-    , classification: ItemClassification.progression
-    , groups: {GROUP_TOWER_KEY, GROUP_SUBCHAPTER_KEY}
-    , amount: subchapter_key_amount
-    },
-    { name: I.CHAPTER_4_1_KEY
-    , code: 264
-    , classification: ItemClassification.progression
-    , groups: {GROUP_TOWER_KEY, GROUP_SUBCHAPTER_KEY}
-    , amount: subchapter_key_amount
-    },
-    { name: I.CHAPTER_4_2_KEY
-    , code: 265
-    , classification: ItemClassification.progression
-    , groups: {GROUP_TOWER_KEY, GROUP_SUBCHAPTER_KEY}
-    , amount: subchapter_key_amount
-    },
-    { name: I.CHAPTER_4_3_KEY
-    , code: 266
-    , classification: ItemClassification.progression
-    , groups: {GROUP_TOWER_KEY, GROUP_SUBCHAPTER_KEY}
-    , amount: subchapter_key_amount
-    },
-    { name: I.CHAPTER_4_4_KEY
-    , code: 267
-    , classification: ItemClassification.progression
-    , groups: {GROUP_TOWER_KEY, GROUP_SUBCHAPTER_KEY}
-    , amount: subchapter_key_amount
-    },
-    { name: I.CHAPTER_5_1_KEY
-    , code: 268
-    , classification: ItemClassification.progression
-    , groups: {GROUP_TOWER_KEY, GROUP_SUBCHAPTER_KEY}
-    , amount: subchapter_key_amount
-    },
-    { name: I.CHAPTER_5_2_KEY
-    , code: 269
-    , classification: ItemClassification.progression
-    , groups: {GROUP_TOWER_KEY, GROUP_SUBCHAPTER_KEY}
-    , amount: subchapter_key_amount
-    },
-    { name: I.CHAPTER_5_3_KEY
-    , code: 270
-    , classification: ItemClassification.progression
-    , groups: {GROUP_TOWER_KEY, GROUP_SUBCHAPTER_KEY}
-    , amount: subchapter_key_amount
-    },
-    { name: I.CHAPTER_5_4_KEY
-    , code: 271
-    , classification: ItemClassification.progression
-    , groups: {GROUP_TOWER_KEY, GROUP_SUBCHAPTER_KEY}
-    , amount: subchapter_key_amount
-    },
-    { name: I.CHAPTER_6_1_KEY
-    , code: 272
-    , classification: ItemClassification.progression
-    , groups: {GROUP_TOWER_KEY, GROUP_SUBCHAPTER_KEY}
-    , amount: subchapter_key_amount
-    },
-    { name: I.CHAPTER_6_2_KEY
-    , code: 273
-    , classification: ItemClassification.progression
-    , groups: {GROUP_TOWER_KEY, GROUP_SUBCHAPTER_KEY}
-    , amount: subchapter_key_amount
-    },
-    { name: I.CHAPTER_6_3_KEY
-    , code: 274
-    , classification: ItemClassification.progression
-    , groups: {GROUP_TOWER_KEY, GROUP_SUBCHAPTER_KEY}
-    , amount: subchapter_key_amount
-    },
-    { name: I.CHAPTER_6_4_KEY
-    , code: 275
-    , classification: ItemClassification.progression
-    , groups: {GROUP_TOWER_KEY, GROUP_SUBCHAPTER_KEY}
-    , amount: subchapter_key_amount
-    },
-    { name: I.CHAPTER_7_1_KEY
-    , code: 276
-    , classification: ItemClassification.progression
-    , groups: {GROUP_TOWER_KEY, GROUP_SUBCHAPTER_KEY}
-    , amount: subchapter_key_amount
-    },
-    { name: I.CHAPTER_7_2_KEY
-    , code: 277
-    , classification: ItemClassification.progression
-    , groups: {GROUP_TOWER_KEY, GROUP_SUBCHAPTER_KEY}
-    , amount: subchapter_key_amount
-    },
-    { name: I.CHAPTER_7_3_KEY
-    , code: 278
-    , classification: ItemClassification.progression
-    , groups: {GROUP_TOWER_KEY, GROUP_SUBCHAPTER_KEY}
-    , amount: subchapter_key_amount
-    },
-    { name: I.CHAPTER_7_4_KEY
-    , code: 279
-    , classification: ItemClassification.progression
-    , groups: {GROUP_TOWER_KEY, GROUP_SUBCHAPTER_KEY}
-    , amount: subchapter_key_amount
-    },
-    { name: I.CHAPTER_8_1_KEY
-    , code: 280
-    , classification: ItemClassification.progression
-    , groups: {GROUP_TOWER_KEY, GROUP_SUBCHAPTER_KEY}
-    , amount: subchapter_key_amount
-    },
-    { name: I.CHAPTER_8_2_KEY
-    , code: 281
-    , classification: ItemClassification.progression
-    , groups: {GROUP_TOWER_KEY, GROUP_SUBCHAPTER_KEY}
-    , amount: subchapter_key_amount
-    },
-    { name: I.CHAPTER_8_3_KEY
-    , code: 282
-    , classification: ItemClassification.progression
-    , groups: {GROUP_TOWER_KEY, GROUP_SUBCHAPTER_KEY}
-    , amount: subchapter_key_amount
-    },
-    { name: I.CHAPTER_8_4_KEY
-    , code: 283
-    , classification: ItemClassification.progression
-    , groups: {GROUP_TOWER_KEY, GROUP_SUBCHAPTER_KEY}
-    , amount: subchapter_key_amount
-    },
-    { name: I.SLOW_CURSYA_TRAP
-    , code: 284
-    , classification: ItemClassification.trap
-    , groups: {GROUP_CURSYA_TRAP}
-    },
-    { name: I.HEAVY_CURSYA_TRAP
-    , code: 285
-    , classification: ItemClassification.trap
-    , groups: {GROUP_CURSYA_TRAP}
-    },
-    { name: I.REVERSYA_CURSYA_TRAP
-    , code: 286
-    , classification: ItemClassification.trap
-    , groups: {GROUP_CURSYA_TRAP}
-    },
-    { name: I.TECH_CURSYA_TRAP
-    , code: 287
-    , classification: ItemClassification.trap
-    , groups: {GROUP_CURSYA_TRAP}
-    },
-    { name: I.BACK_CURSYA_TRAP
-    , code: 288
-    , classification: ItemClassification.trap
-    , groups: {GROUP_CURSYA_TRAP}
-    },
-    # MOD: I couldn't find maps in the item id list, not sure where they belong
+    #region Unused items
+    # { name: "Pointer Finger", code: 232 },
+    # { name: "Card Bag", code: 233 },
+    #endreion
+    #region Fleep Maps
     # { name: I.MAP_1
-    # , code: 289
+    # , code: 234
     # , classification: ItemClassification.progression
     # , amount: maps_amount
     # , groups: {GROUP_MAP}
     # },
     # { name: I.MAP_2
-    # , code: 290
+    # , code: 235
     # , classification: ItemClassification.progression
     # , amount: maps_amount
     # , groups: {GROUP_MAP}
     # },
     # { name: I.MAP_3
-    # , code: 291
+    # , code: 236
     # , classification: ItemClassification.progression
     # , amount: maps_amount
     # , groups: {GROUP_MAP}
     # },
     # { name: I.MAP_4
-    # , code: 292
+    # , code: 237
     # , classification: ItemClassification.progression
     # , amount: maps_amount
     # , groups: {GROUP_MAP}
     # },
     # { name: I.MAP_5
-    # , code: 293
+    # , code: 238
     # , classification: ItemClassification.progression
     # , amount: maps_amount
     # , groups: {GROUP_MAP}
     # },
     # { name: I.MAP_6
-    # , code: 294
+    # , code: 239
     # , classification: ItemClassification.progression
     # , amount: maps_amount
     # , groups: {GROUP_MAP}
     # },
     # { name: I.MAP_7
-    # , code: 295
+    # , code: 240
     # , classification: ItemClassification.progression
     # , amount: maps_amount
     # , groups: {GROUP_MAP}
     # },
     # { name: I.MAP_8
-    # , code: 296
+    # , code: 241
     # , classification: ItemClassification.progression
     # , amount: maps_amount
     # , groups: {GROUP_MAP}
     # },
     # { name: I.MAP_9
-    # , code: 297
+    # , code: 242
     # , classification: ItemClassification.progression
     # , amount: maps_amount
     # , groups: {GROUP_MAP}
     # },
     # { name: I.MAP_10
-    # , code: 298
+    # , code: 243
     # , classification: ItemClassification.progression
     # , amount: maps_amount
     # , groups: {GROUP_MAP}
     # },
     # { name: I.MAP_11
-    # , code: 299
+    # , code: 244
     # , classification: ItemClassification.progression
     # , amount: maps_amount
     # , groups: {GROUP_MAP}
     # },
     # { name: I.MAP_12
-    # , code: 300
+    # , code: 245
     # , classification: ItemClassification.progression
     # , amount: maps_amount
     # , groups: {GROUP_MAP}
     # },
     # { name: I.MAP_13
-    # , code: 301
+    # , code: 246
     # , classification: ItemClassification.progression
     # , amount: maps_amount
     # , groups: {GROUP_MAP}
     # },
     # { name: I.MAP_14
-    # , code: 302
+    # , code: 247
     # , classification: ItemClassification.progression
     # , amount: maps_amount
     # , groups: {GROUP_MAP}
     # },
     # { name: I.MAP_15
-    # , code: 303
+    # , code: 248
     # , classification: ItemClassification.progression
     # , amount: maps_amount
     # , groups: {GROUP_MAP}
     # },
     # { name: I.MAP_16
-    # , code: 304
+    # , code: 249
     # , classification: ItemClassification.progression
     # , amount: maps_amount
     # , groups: {GROUP_MAP}
     # },
     # { name: I.MAP_17
-    # , code: 305
+    # , code: 250
     # , classification: ItemClassification.progression
     # , amount: maps_amount
     # , groups: {GROUP_MAP}
     # },
     # { name: I.MAP_18
-    # , code: 306
+    # , code: 251
     # , classification: ItemClassification.progression
     # , amount: maps_amount
     # , groups: {GROUP_MAP}
     # },
     # { name: I.MAP_19
-    # , code: 307
+    # , code: 252
     # , classification: ItemClassification.progression
     # , amount: maps_amount
     # , groups: {GROUP_MAP}
     # },
     # { name: I.MAP_20
-    # , code: 308
+    # , code: 253
     # , classification: ItemClassification.progression
     # , amount: maps_amount
     # , groups: {GROUP_MAP}
     # },
     # { name: I.MAP_21
-    # , code: 309
+    # , code: 254
     # , classification: ItemClassification.progression
     # , amount: maps_amount
     # , groups: {GROUP_MAP}
     # },
     # { name: I.MAP_22
-    # , code: 310
+    # , code: 255
     # , classification: ItemClassification.progression
     # , amount: maps_amount
     # , groups: {GROUP_MAP}
     # },
     # { name: I.MAP_23
-    # , code: 311
+    # , code: 256
     # , classification: ItemClassification.progression
     # , amount: maps_amount
     # , groups: {GROUP_MAP}
     # },
     # { name: I.MAP_24
-    # , code: 312
+    # , code: 257
     # , classification: ItemClassification.progression
     # , amount: maps_amount
     # , groups: {GROUP_MAP}
     # },
     # { name: I.MAP_25
-    # , code: 313
+    # , code: 258
     # , classification: ItemClassification.progression
     # , amount: maps_amount
     # , groups: {GROUP_MAP}
     # },
     # { name: I.MAP_26
-    # , code: 314
+    # , code: 259
     # , classification: ItemClassification.progression
     # , amount: maps_amount
     # , groups: {GROUP_MAP}
     # },
     # { name: I.MAP_27
-    # , code: 315
+    # , code: 260
     # , classification: ItemClassification.progression
     # , amount: maps_amount
     # , groups: {GROUP_MAP}
     # },
     # { name: I.MAP_28
-    # , code: 316
+    # , code: 261
     # , classification: ItemClassification.progression
     # , amount: maps_amount
     # , groups: {GROUP_MAP}
     # },
     # { name: I.MAP_29
-    # , code: 317
+    # , code: 262
     # , classification: ItemClassification.progression
     # , amount: maps_amount
     # , groups: {GROUP_MAP}
     # },
     # { name: I.MAP_30
-    # , code: 318
+    # , code: 263
     # , classification: ItemClassification.progression
     # , amount: maps_amount
     # , groups: {GROUP_MAP}
     # },
     # { name: I.MAP_31
-    # , code: 319
+    # , code: 264
     # , classification: ItemClassification.progression
     # , amount: maps_amount
     # , groups: {GROUP_MAP}
     # },
     # { name: I.MAP_32
-    # , code: 320
+    # , code: 265
     # , classification: ItemClassification.progression
     # , amount: maps_amount
     # , groups: {GROUP_MAP}
     # },
     # { name: I.MAP_33
-    # , code: 321
+    # , code: 266
     # , classification: ItemClassification.progression
     # , amount: maps_amount
     # , groups: {GROUP_MAP}
     # },
     # { name: I.MAP_34
-    # , code: 322
+    # , code: 267
     # , classification: ItemClassification.progression
     # , amount: maps_amount
     # , groups: {GROUP_MAP}
     # },
     # { name: I.MAP_35
-    # , code: 323
+    # , code: 268
     # , classification: ItemClassification.progression
     # , amount: maps_amount
     # , groups: {GROUP_MAP}
     # },
     # { name: I.MAP_36
-    # , code: 324
+    # , code: 269
     # , classification: ItemClassification.progression
     # , amount: maps_amount
     # , groups: {GROUP_MAP}
     # },
     # { name: I.MAP_37
-    # , code: 325
+    # , code: 270
     # , classification: ItemClassification.progression
     # , amount: maps_amount
     # , groups: {GROUP_MAP}
     # },
     # { name: I.MAP_38
-    # , code: 326
+    # , code: 271
     # , classification: ItemClassification.progression
     # , amount: maps_amount
     # , groups: {GROUP_MAP}
     # },
     # { name: I.MAP_39
-    # , code: 327
+    # , code: 272
     # , classification: ItemClassification.progression
     # , amount: maps_amount
     # , groups: {GROUP_MAP}
     # },
     # { name: I.MAP_40
-    # , code: 328
+    # , code: 273
     # , classification: ItemClassification.progression
     # , amount: maps_amount
     # , groups: {GROUP_MAP}
     # },
     # { name: I.MAP_41
-    # , code: 329
+    # , code: 274
     # , classification: ItemClassification.progression
     # , amount: maps_amount
     # , groups: {GROUP_MAP}
     # },
     # { name: I.MAP_42
-    # , code: 330
+    # , code: 275
     # , classification: ItemClassification.progression
     # , amount: maps_amount
     # , groups: {GROUP_MAP}
     # },
     # { name: I.MAP_43
-    # , code: 331
+    # , code: 276
     # , classification: ItemClassification.progression
     # , amount: maps_amount
     # , groups: {GROUP_MAP}
     # },
     # { name: I.MAP_44
-    # , code: 332
+    # , code: 277
     # , classification: ItemClassification.progression
     # , amount: maps_amount
     # , groups: {GROUP_MAP}
     # },
     # { name: I.MAP_45
-    # , code: 333
+    # , code: 278
     # , classification: ItemClassification.progression
     # , amount: maps_amount
     # , groups: {GROUP_MAP}
     # },
     # { name: I.MAP_46
-    # , code: 334
+    # , code: 279
     # , classification: ItemClassification.progression
     # , amount: maps_amount
     # , groups: {GROUP_MAP}
     # },
     # { name: I.MAP_47
-    # , code: 335
+    # , code: 280
     # , classification: ItemClassification.progression
     # , amount: maps_amount
     # , groups: {GROUP_MAP}
     # },
     # { name: I.MAP_48
-    # , code: 336
+    # , code: 281
     # , classification: ItemClassification.progression
     # , amount: maps_amount
     # , groups: {GROUP_MAP}
     # },
+    #endregion
+    #region Card Items
+    { name: I.CATCH_CARD_GOOMBA
+    , code: 282
+    , groups: {GROUP_CATCH_CARD}
+    },
+    { name: I.CATCH_CARD_DARK_GOOMBA
+    , code: 283
+    , groups: {GROUP_CATCH_CARD}
+    },
+    { name: I.CATCH_CARD_SPIKED_GOOMBA
+    , code: 284
+    , groups: {GROUP_CATCH_CARD}
+    },
+    { name: I.CATCH_CARD_DARK_SPIKED_GOOMBA
+    , code: 285
+    , groups: {GROUP_CATCH_CARD}
+    },
+    { name: I.CATCH_CARD_PARAGOOMBA
+    , code: 286
+    , groups: {GROUP_CATCH_CARD}
+    },
+    { name: I.CATCH_CARD_DARK_PARAGOOMBA
+    , code: 287
+    , groups: {GROUP_CATCH_CARD}
+    },
+    { name: I.CATCH_CARD_GLOOMBA
+    , code: 288
+    , groups: {GROUP_CATCH_CARD}
+    },
+    { name: I.CATCH_CARD_HEADBONK_GOOMBA
+    , code: 289
+    , groups: {GROUP_CATCH_CARD}
+    },
+    { name: I.CATCH_CARD_DARK_HEADBONK_GOOMBA
+    , code: 290
+    , groups: {GROUP_CATCH_CARD}
+    },
+    { name: I.CATCH_CARD_KOOPA_TROOPA
+    , code: 291
+    , groups: {GROUP_CATCH_CARD}
+    },
+    { name: I.CATCH_CARD_MEGA_KOOPA
+    , code: 292
+    , groups: {GROUP_CATCH_CARD}
+    },
+    { name: I.CATCH_CARD_DARK_KOOPA
+    , code: 293
+    , groups: {GROUP_CATCH_CARD}
+    },
+    { name: I.CATCH_CARD_KOOPATROL
+    , code: 294
+    , groups: {GROUP_CATCH_CARD}
+    },
+    { name: I.CATCH_CARD_DARK_KOOPATROL
+    , code: 295
+    , groups: {GROUP_CATCH_CARD}
+    },
+    { name: I.CATCH_CARD_PARATROOPA
+    , code: 296
+    , groups: {GROUP_CATCH_CARD}
+    },
+    { name: I.CATCH_CARD_DARK_PARATROOPA
+    , code: 297
+    , groups: {GROUP_CATCH_CARD}
+    },
+    { name: I.CATCH_CARD_BUZZY_BEETLE
+    , code: 298
+    , groups: {GROUP_CATCH_CARD}
+    },
+    { name: I.CATCH_CARD_SPIKE_TOP
+    , code: 299
+    , groups: {GROUP_CATCH_CARD}
+    },
+    { name: I.CATCH_CARD_DARK_SPIKE_TOP
+    , code: 300
+    , groups: {GROUP_CATCH_CARD}
+    },
+    { name: I.CATCH_CARD_PARABUZZY
+    , code: 301
+    , groups: {GROUP_CATCH_CARD}
+    },
+    { name: I.CATCH_CARD_SPIKY_PARABUZZY
+    , code: 302
+    , groups: {GROUP_CATCH_CARD}
+    },
+    { name: I.CATCH_CARD_STONE_BUZZY
+    , code: 303
+    , groups: {GROUP_CATCH_CARD}
+    },
+    { name: I.CATCH_CARD_DARK_STONE_BUZZY
+    , code: 304
+    , groups: {GROUP_CATCH_CARD}
+    },
+    { name: I.CATCH_CARD_SPINY
+    , code: 305
+    , groups: {GROUP_CATCH_CARD}
+    },
+    { name: I.CATCH_CARD_DARK_SPINY
+    , code: 306
+    , groups: {GROUP_CATCH_CARD}
+    },
+    { name: I.CATCH_CARD_LAKITU
+    , code: 307
+    , groups: {GROUP_CATCH_CARD}
+    },
+    { name: I.CATCH_CARD_DULL_BONES
+    , code: 308
+    , groups: {GROUP_CATCH_CARD}
+    },
+    { name: I.CATCH_CARD_DARK_DULL_BONES
+    , code: 309
+    , groups: {GROUP_CATCH_CARD}
+    },
+    { name: I.CATCH_CARD_DRY_BONES
+    , code: 310
+    , groups: {GROUP_CATCH_CARD}
+    },
+    { name: I.CATCH_CARD_HAMMER_BRO
+    , code: 311
+    , groups: {GROUP_CATCH_CARD}
+    },
+    { name: I.CATCH_CARD_DARK_HAMMER_BRO
+    , code: 312
+    , groups: {GROUP_CATCH_CARD}
+    },
+    { name: I.CATCH_CARD_BOOMERANG_BRO
+    , code: 313
+    , groups: {GROUP_CATCH_CARD}
+    },
+    { name: I.CATCH_CARD_DARK_BOOMERANG_BRO
+    , code: 314
+    , groups: {GROUP_CATCH_CARD}
+    },
+    { name: I.CATCH_CARD_FIRE_BRO
+    , code: 315
+    , groups: {GROUP_CATCH_CARD}
+    },
+    { name: I.CATCH_CARD_DARK_FIRE_BRO
+    , code: 316
+    , groups: {GROUP_CATCH_CARD}
+    },
+    { name: I.CATCH_CARD_MAGIKOOPA
+    , code: 317
+    , groups: {GROUP_CATCH_CARD}
+    },
+    { name: I.CATCH_CARD_DARK_MAGIKOOPA
+    , code: 318
+    , groups: {GROUP_CATCH_CARD}
+    },
+    { name: I.CATCH_CARD_KOOPA_STRIKER
+    , code: 319
+    , groups: {GROUP_CATCH_CARD}
+    },
+    { name: I.CATCH_CARD_TOOPA_STRIKER
+    , code: 320
+    , groups: {GROUP_CATCH_CARD}
+    },
+    { name: I.CATCH_CARD_SOOPA_STRIKER
+    , code: 321
+    , groups: {GROUP_CATCH_CARD}
+    },
+    { name: I.CATCH_CARD_DARK_STRIKER
+    , code: 322
+    , groups: {GROUP_CATCH_CARD}
+    },
+    { name: I.CATCH_CARD_CLUBBA
+    , code: 323
+    , groups: {GROUP_CATCH_CARD}
+    },
+    { name: I.CATCH_CARD_DARK_CLUBBA
+    , code: 324
+    , groups: {GROUP_CATCH_CARD}
+    },
+    { name: I.CATCH_CARD_SQUIGLET
+    , code: 325
+    , groups: {GROUP_CATCH_CARD}
+    },
+    { name: I.CATCH_CARD_SQUIG
+    , code: 326
+    , groups: {GROUP_CATCH_CARD}
+    },
+    { name: I.CATCH_CARD_SQUOG
+    , code: 327
+    , groups: {GROUP_CATCH_CARD}
+    },
+    { name: I.CATCH_CARD_SQUOINKER
+    , code: 328
+    , groups: {GROUP_CATCH_CARD}
+    },
+    { name: I.CATCH_CARD_DARK_SQUIGLET
+    , code: 329
+    , groups: {GROUP_CATCH_CARD}
+    },
+    { name: I.CATCH_CARD_SPROING_OING
+    , code: 330
+    , groups: {GROUP_CATCH_CARD}
+    },
+    { name: I.CATCH_CARD_BOING_OING
+    , code: 331
+    , groups: {GROUP_CATCH_CARD}
+    },
+    { name: I.CATCH_CARD_ZOING_OING
+    , code: 332
+    , groups: {GROUP_CATCH_CARD}
+    },
+    { name: I.CATCH_CARD_DARK_SPROING_OING
+    , code: 333
+    , groups: {GROUP_CATCH_CARD}
+    },
+    { name: I.CATCH_CARD_BOOMBOXER
+    , code: 334
+    , groups: {GROUP_CATCH_CARD}
+    },
+    { name: I.CATCH_CARD_BEEPBOXER
+    , code: 335
+    , groups: {GROUP_CATCH_CARD}
+    },
+    { name: I.CATCH_CARD_BLASTBOXER
+    , code: 336
+    , groups: {GROUP_CATCH_CARD}
+    },
+    { name: I.CATCH_CARD_DARK_BOOMBOXER
+    , code: 337
+    , groups: {GROUP_CATCH_CARD}
+    },
+    { name: I.CATCH_CARD_PIRANHA_PLANT
+    , code: 338
+    , groups: {GROUP_CATCH_CARD}
+    },
+    { name: I.CATCH_CARD_PUTRID_PIRANHA
+    , code: 339
+    , groups: {GROUP_CATCH_CARD}
+    },
+    { name: I.CATCH_CARD_FROST_PIRANHA
+    , code: 340
+    , groups: {GROUP_CATCH_CARD}
+    },
+    { name: I.CATCH_CARD_CRAZEE_DAYZEE
+    , code: 341
+    , groups: {GROUP_CATCH_CARD}
+    },
+    { name: I.CATCH_CARD_AMAZY_DAYZEE
+    , code: 342
+    , groups: {GROUP_CATCH_CARD}
+    },
+    { name: I.CATCH_CARD_DARK_DAYZEE
+    , code: 343
+    , groups: {GROUP_CATCH_CARD}
+    },
+    { name: I.CATCH_CARD_FUZZY
+    , code: 344
+    , groups: {GROUP_CATCH_CARD}
+    },
+    { name: I.CATCH_CARD_PINK_FUZZY
+    , code: 345
+    , groups: {GROUP_CATCH_CARD}
+    },
+    { name: I.CATCH_CARD_DARK_FUZZY
+    , code: 346
+    , groups: {GROUP_CATCH_CARD}
+    },
+    { name: I.CATCH_CARD_POKEY
+    , code: 347
+    , groups: {GROUP_CATCH_CARD}
+    },
+    { name: I.CATCH_CARD_POISON_POKEY
+    , code: 348
+    , groups: {GROUP_CATCH_CARD}
+    },
+    { name: I.CATCH_CARD_DARK_POKEY
+    , code: 349
+    , groups: {GROUP_CATCH_CARD}
+    },
+    { name: I.CATCH_CARD_CHEEP_CHEEP
+    , code: 350
+    , groups: {GROUP_CATCH_CARD}
+    },
+    { name: I.CATCH_CARD_BLOOPER
+    , code: 351
+    , groups: {GROUP_CATCH_CARD}
+    },
+    { name: I.CATCH_CARD_BITTACUDA
+    , code: 352
+    , groups: {GROUP_CATCH_CARD}
+    },
+    { name: I.CATCH_CARD_JAWBUS
+    , code: 353
+    , groups: {GROUP_CATCH_CARD}
+    },
+    { name: I.CATCH_CARD_RAWBUS
+    , code: 354
+    , groups: {GROUP_CATCH_CARD}
+    },
+    { name: I.CATCH_CARD_DARK_JAWBUS
+    , code: 355
+    , groups: {GROUP_CATCH_CARD}
+    },
+    { name: I.CATCH_CARD_GAWBUS
+    , code: 356
+    , groups: {GROUP_CATCH_CARD}
+    },
+    { name: I.CATCH_CARD_SPANIA
+    , code: 357
+    , groups: {GROUP_CATCH_CARD}
+    },
+    { name: I.CATCH_CARD_DARK_SPANIA
+    , code: 358
+    , groups: {GROUP_CATCH_CARD}
+    },
+    { name: I.CATCH_CARD_CURSYA
+    , code: 359
+    , groups: {GROUP_CATCH_CARD}
+    },
+    { name: I.CATCH_CARD_BACK_CURSYA
+    , code: 360
+    , groups: {GROUP_CATCH_CARD}
+    },
+    { name: I.CATCH_CARD_TECH_CURSYA
+    , code: 361
+    , groups: {GROUP_CATCH_CARD}
+    },
+    { name: I.CATCH_CARD_HEAVY_CURSYA
+    , code: 362
+    , groups: {GROUP_CATCH_CARD}
+    },
+    { name: I.CATCH_CARD_REVERSYA_CURSYA
+    , code: 363
+    , groups: {GROUP_CATCH_CARD}
+    },
+    { name: I.CATCH_CARD_DARK_CURSYA
+    , code: 364
+    , groups: {GROUP_CATCH_CARD}
+    },
+    { name: I.CATCH_CARD_DARK_TECH_CURSYA
+    , code: 365
+    , groups: {GROUP_CATCH_CARD}
+    },
+    { name: I.CATCH_CARD_DARK_HEAVY_CURSYA
+    , code: 366
+    , groups: {GROUP_CATCH_CARD}
+    },
+    { name: I.CATCH_CARD_DARK_REVERSYA_CURSYA
+    , code: 367
+    , groups: {GROUP_CATCH_CARD}
+    },
+    { name: I.CATCH_CARD_SWOOPER
+    , code: 368
+    , groups: {GROUP_CATCH_CARD}
+    },
+    { name: I.CATCH_CARD_CHERBIL
+    , code: 369
+    , groups: {GROUP_CATCH_CARD}
+    },
+    { name: I.CATCH_CARD_ICE_CHERBIL
+    , code: 370
+    , groups: {GROUP_CATCH_CARD}
+    },
+    { name: I.CATCH_CARD_POISON_CHERBIL
+    , code: 371
+    , groups: {GROUP_CATCH_CARD}
+    },
+    { name: I.CATCH_CARD_DARK_CHERBIL
+    , code: 372
+    , groups: {GROUP_CATCH_CARD}
+    },
+    { name: I.CATCH_CARD_BOO
+    , code: 373
+    , groups: {GROUP_CATCH_CARD}
+    },
+    { name: I.CATCH_CARD_DARK_BOO
+    , code: 374
+    , groups: {GROUP_CATCH_CARD}
+    },
+    { name: I.CATCH_CARD_DARK_DARK_BOO
+    , code: 375
+    , groups: {GROUP_CATCH_CARD}
+    },
+    { name: I.CATCH_CARD_ATOMIC_BOO
+    , code: 376
+    , groups: {GROUP_CATCH_CARD}
+    },
+    { name: I.CATCH_CARD_GROWMEBA
+    , code: 377
+    , groups: {GROUP_CATCH_CARD}
+    },
+    { name: I.CATCH_CARD_BLOMEBA
+    , code: 378
+    , groups: {GROUP_CATCH_CARD}
+    },
+    { name: I.CATCH_CARD_CHROMEBA
+    , code: 379
+    , groups: {GROUP_CATCH_CARD}
+    },
+    { name: I.CATCH_CARD_DARK_GROWMEBA
+    , code: 380
+    , groups: {GROUP_CATCH_CARD}
+    },
+    { name: I.CATCH_CARD_MISTER_I
+    , code: 381
+    , groups: {GROUP_CATCH_CARD}
+    },
+    { name: I.CATCH_CARD_RED_I
+    , code: 382
+    , groups: {GROUP_CATCH_CARD}
+    },
+    { name: I.CATCH_CARD_CHAIN_CHOMP
+    , code: 383
+    , groups: {GROUP_CATCH_CARD}
+    },
+    { name: I.CATCH_CARD_RED_CHOMP
+    , code: 384
+    , groups: {GROUP_CATCH_CARD}
+    },
+    { name: I.CATCH_CARD_THE_UNDERCHOMP
+    , code: 385
+    , groups: {GROUP_CATCH_CARD}
+    },
+    { name: I.CATCH_CARD_DARK_CHOMP
+    , code: 386
+    , groups: {GROUP_CATCH_CARD}
+    },
+    { name: I.CATCH_CARD_BALD_CLEFT
+    , code: 387
+    , groups: {GROUP_CATCH_CARD}
+    },
+    { name: I.CATCH_CARD_MOON_CLEFT
+    , code: 388
+    , groups: {GROUP_CATCH_CARD}
+    },
+    { name: I.CATCH_CARD_DARK_CLEFT
+    , code: 389
+    , groups: {GROUP_CATCH_CARD}
+    },
+    { name: I.CATCH_CARD_SHLURP
+    , code: 390
+    , groups: {GROUP_CATCH_CARD}
+    },
+    { name: I.CATCH_CARD_SHLORP
+    , code: 391
+    , groups: {GROUP_CATCH_CARD}
+    },
+    { name: I.CATCH_CARD_DARK_SHLURP
+    , code: 392
+    , groups: {GROUP_CATCH_CARD}
+    },
+    { name: I.CATCH_CARD_THWOMP
+    , code: 393
+    , groups: {GROUP_CATCH_CARD}
+    },
+    { name: I.CATCH_CARD_SPINY_TROMP
+    , code: 394
+    , groups: {GROUP_CATCH_CARD}
+    },
+    { name: I.CATCH_CARD_SPIKY_TROMP
+    , code: 395
+    , groups: {GROUP_CATCH_CARD}
+    },
+    { name: I.CATCH_CARD_BULLET_BILL
+    , code: 396
+    , groups: {GROUP_CATCH_CARD}
+    },
+    { name: I.CATCH_CARD_BILL_BLASTER
+    , code: 397
+    , groups: {GROUP_CATCH_CARD}
+    },
+    { name: I.CATCH_CARD_RUFF_PUFF
+    , code: 398
+    , groups: {GROUP_CATCH_CARD}
+    },
+    { name: I.CATCH_CARD_DARK_RUFF_PUFF
+    , code: 399
+    , groups: {GROUP_CATCH_CARD}
+    },
+    { name: I.CATCH_CARD_LAVA_BUBBLE
+    , code: 400
+    , groups: {GROUP_CATCH_CARD}
+    },
+    { name: I.CATCH_CARD_TILEOID_G
+    , code: 401
+    , groups: {GROUP_CATCH_CARD}
+    },
+    { name: I.CATCH_CARD_TILEOID_B
+    , code: 402
+    , groups: {GROUP_CATCH_CARD}
+    },
+    { name: I.CATCH_CARD_TILEOID_R
+    , code: 403
+    , groups: {GROUP_CATCH_CARD}
+    },
+    { name: I.CATCH_CARD_TILEOID_Y
+    , code: 404
+    , groups: {GROUP_CATCH_CARD}
+    },
+    { name: I.CATCH_CARD_DARK_TILEOID
+    , code: 405
+    , groups: {GROUP_CATCH_CARD}
+    },
+    { name: I.CATCH_CARD_MEOWBOMB
+    , code: 406
+    , groups: {GROUP_CATCH_CARD}
+    },
+    { name: I.CATCH_CARD_PATROL_MEOW
+    , code: 407
+    , groups: {GROUP_CATCH_CARD}
+    },
+    { name: I.CATCH_CARD_AIR_MEOW
+    , code: 408
+    , groups: {GROUP_CATCH_CARD}
+    },
+    { name: I.CATCH_CARD_SURPRISE_MEOW
+    , code: 409
+    , groups: {GROUP_CATCH_CARD}
+    },
+    { name: I.CATCH_CARD_BIG_MEOW
+    , code: 410
+    , groups: {GROUP_CATCH_CARD}
+    },
+    { name: I.CATCH_CARD_MEOWMAID
+    , code: 411
+    , groups: {GROUP_CATCH_CARD}
+    },
+    { name: I.CATCH_CARD_SECURI_MEOW
+    , code: 412
+    , groups: {GROUP_CATCH_CARD}
+    },
+    { name: I.CATCH_CARD_JELLIEN
+    , code: 413
+    , groups: {GROUP_CATCH_CARD}
+    },
+    { name: I.CATCH_CARD_FOTON
+    , code: 414
+    , groups: {GROUP_CATCH_CARD}
+    },
+    { name: I.CATCH_CARD_WARPID
+    , code: 415
+    , groups: {GROUP_CATCH_CARD}
+    },
+    { name: I.CATCH_CARD_EELIGON
+    , code: 416
+    , groups: {GROUP_CATCH_CARD}
+    },
+    { name: I.CATCH_CARD_HOOLIGON
+    , code: 417
+    , groups: {GROUP_CATCH_CARD}
+    },
+    { name: I.CATCH_CARD_DARK_EELIGON
+    , code: 418
+    , groups: {GROUP_CATCH_CARD}
+    },
+    { name: I.CATCH_CARD_LONGATOR
+    , code: 419
+    , groups: {GROUP_CATCH_CARD}
+    },
+    { name: I.CATCH_CARD_LONGADILE
+    , code: 420
+    , groups: {GROUP_CATCH_CARD}
+    },
+    { name: I.CATCH_CARD_DARK_LONGATOR
+    , code: 421
+    , groups: {GROUP_CATCH_CARD}
+    },
+    { name: I.CATCH_CARD_BARRIBAD
+    , code: 422
+    , groups: {GROUP_CATCH_CARD}
+    },
+    { name: I.CATCH_CARD_SOBARRIBAD
+    , code: 423
+    , groups: {GROUP_CATCH_CARD}
+    },
+    { name: I.CATCH_CARD_DARK_BARRIBAD
+    , code: 424
+    , groups: {GROUP_CATCH_CARD}
+    },
+    { name: I.CATCH_CARD_PIGARITHM
+    , code: 425
+    , groups: {GROUP_CATCH_CARD}
+    },
+    { name: I.CATCH_CARD_HOGARITHM
+    , code: 426
+    , groups: {GROUP_CATCH_CARD}
+    },
+    { name: I.CATCH_CARD_DARK_PIGARITHM
+    , code: 427
+    , groups: {GROUP_CATCH_CARD}
+    },
+    { name: I.CATCH_CARD_CHOPPA
+    , code: 428
+    , groups: {GROUP_CATCH_CARD}
+    },
+    { name: I.CATCH_CARD_COPTA
+    , code: 429
+    , groups: {GROUP_CATCH_CARD}
+    },
+    { name: I.CATCH_CARD_DARK_CHOPPA
+    , code: 430
+    , groups: {GROUP_CATCH_CARD}
+    },
+    { name: I.CATCH_CARD_MUTH
+    , code: 431
+    , groups: {GROUP_CATCH_CARD}
+    },
+    { name: I.CATCH_CARD_MEGA_MUTH
+    , code: 432
+    , groups: {GROUP_CATCH_CARD}
+    },
+    { name: I.CATCH_CARD_DARK_MUTH
+    , code: 433
+    , groups: {GROUP_CATCH_CARD}
+    },
+    { name: I.CATCH_CARD_FLORO_SAPIEN
+    , code: 434
+    , groups: {GROUP_CATCH_CARD}
+    },
+    { name: I.CATCH_CARD_FLORO_CRAGNIEN
+    , code: 435
+    , groups: {GROUP_CATCH_CARD}
+    },
+    { name: I.CATCH_CARD_NINJOE
+    , code: 436
+    , groups: {GROUP_CATCH_CARD}
+    },
+    { name: I.CATCH_CARD_NINJOHN
+    , code: 437
+    , groups: {GROUP_CATCH_CARD}
+    },
+    { name: I.CATCH_CARD_NINJERRY
+    , code: 438
+    , groups: {GROUP_CATCH_CARD}
+    },
+    { name: I.CATCH_CARD_DARK_NINJOE
+    , code: 439
+    , groups: {GROUP_CATCH_CARD}
+    },
+    { name: I.CATCH_CARD_UNDERHAND
+    , code: 440
+    , groups: {GROUP_CATCH_CARD}
+    },
+    { name: I.CATCH_CARD_SKELLOBIT
+    , code: 441
+    , groups: {GROUP_CATCH_CARD}
+    },
+    { name: I.CATCH_CARD_SPIKY_SKELLOBIT
+    , code: 442
+    , groups: {GROUP_CATCH_CARD}
+    },
+    { name: I.CATCH_CARD_DARK_SKELLOBIT
+    , code: 443
+    , groups: {GROUP_CATCH_CARD}
+    },
+    { name: I.CATCH_CARD_DARK_SPIKY_SKELLOBIT
+    , code: 444
+    , groups: {GROUP_CATCH_CARD}
+    },
+    { name: I.CATCH_CARD_SKELLOBOMBER
+    , code: 445
+    , groups: {GROUP_CATCH_CARD}
+    },
+    { name: I.CATCH_CARD_SKELLOBAIT
+    , code: 446
+    , groups: {GROUP_CATCH_CARD}
+    },
+    { name: I.CATCH_CARD_SPIKY_SKELLOBAIT
+    , code: 447
+    , groups: {GROUP_CATCH_CARD}
+    },
+    { name: I.CATCH_CARD_RED_MAGIBLOT
+    , code: 448
+    , groups: {GROUP_CATCH_CARD}
+    },
+    { name: I.CATCH_CARD_BLUE_MAGIBLOT
+    , code: 449
+    , groups: {GROUP_CATCH_CARD}
+    },
+    { name: I.CATCH_CARD_YELLOW_MAGIBLOT
+    , code: 450
+    , groups: {GROUP_CATCH_CARD}
+    },
+    { name: I.CATCH_CARD_DARK_MAGIBLOT
+    , code: 451
+    , groups: {GROUP_CATCH_CARD}
+    },
+    { name: I.CATCH_CARD_MEGABITE
+    , code: 452
+    , groups: {GROUP_CATCH_CARD}
+    },
+    { name: I.CATCH_CARD_GIGABITE
+    , code: 453
+    , groups: {GROUP_CATCH_CARD}
+    },
+    { name: I.CATCH_CARD_DARK_MEGABITE
+    , code: 454
+    , groups: {GROUP_CATCH_CARD}
+    },
+    { name: I.CATCH_CARD_DARK_MARIO
+    , code: 455
+    , groups: {GROUP_CATCH_CARD}
+    },
+    { name: I.CATCH_CARD_DARK_LUIGI
+    , code: 456
+    , groups: {GROUP_CATCH_CARD}
+    },
+    { name: I.CATCH_CARD_DARK_PEACH
+    , code: 457
+    , groups: {GROUP_CATCH_CARD}
+    },
+    { name: I.CATCH_CARD_DARK_BOWSER
+    , code: 458
+    , groups: {GROUP_CATCH_CARD}
+    },
+    { name: I.CATCH_CARD_ZOMBIE_SHROOM
+    , code: 459
+    , groups: {GROUP_CATCH_CARD}
+    },
+    { name: I.CATCH_CARD_GHOUL_SHROOM
+    , code: 460
+    , groups: {GROUP_CATCH_CARD}
+    },
+    { name: I.CATCH_CARD_FRACKTAIL
+    , code: 461
+    , groups: {GROUP_CATCH_CARD}
+    },
+    { name: I.CATCH_CARD_WRACKTAIL
+    , code: 462
+    , groups: {GROUP_CATCH_CARD}
+    },
+    { name: I.CATCH_CARD_FRACKLE
+    , code: 463
+    , groups: {GROUP_CATCH_CARD}
+    },
+    { name: I.CATCH_CARD_WRACKLE
+    , code: 464
+    , groups: {GROUP_CATCH_CARD}
+    },
+    { name: I.CATCH_CARD_BIG_BLOOPER
+    , code: 465
+    , groups: {GROUP_CATCH_CARD}
+    },
+    { name: I.CATCH_CARD_FRANCIS
+    , code: 466
+    , groups: {GROUP_CATCH_CARD}
+    },
+    { name: I.CATCH_CARD_KING_CROACUS
+    , code: 467
+    , groups: {GROUP_CATCH_CARD}
+    },
+    { name: I.CATCH_CARD_BONECHILL
+    , code: 468
+    , groups: {GROUP_CATCH_CARD}
+    },
+    { name: I.CATCH_CARD_COUNT_BLECK
+    , code: 469
+    , groups: {GROUP_CATCH_CARD}
+    },
+    { name: I.CATCH_CARD_NASTASIA
+    , code: 470
+    , groups: {GROUP_CATCH_CARD}
+    },
+    { name: I.CATCH_CARD_O_CHUNKS
+    , code: 471
+    , groups: {GROUP_CATCH_CARD}
+    },
+    { name: I.CATCH_CARD_MIMI
+    , code: 472
+    , groups: {GROUP_CATCH_CARD}
+    },
+    { name: I.CATCH_CARD_MR_L
+    , code: 473
+    , groups: {GROUP_CATCH_CARD}
+    },
+    { name: I.CATCH_CARD_BROBOT
+    , code: 474
+    , groups: {GROUP_CATCH_CARD}
+    },
+    { name: I.CATCH_CARD_BROBOT_L_TYPE
+    , code: 475
+    , groups: {GROUP_CATCH_CARD}
+    },
+    { name: I.CATCH_CARD_DIMENTIO
+    , code: 476
+    , groups: {GROUP_CATCH_CARD}
+    },
+    { name: I.CATCH_CARD_SUPER_DIMENTIO
+    , code: 477
+    , groups: {GROUP_CATCH_CARD}
+    },
+    { name: I.CATCH_CARD_MERLON
+    , code: 478
+    , groups: {GROUP_CATCH_CARD}
+    },
+    { name: I.CATCH_CARD_NOLREM
+    , code: 479
+    , groups: {GROUP_CATCH_CARD}
+    },
+    { name: I.CATCH_CARD_MERLUVLEE
+    , code: 480
+    , groups: {GROUP_CATCH_CARD}
+    },
+    { name: I.CATCH_CARD_MERLEE
+    , code: 481
+    , groups: {GROUP_CATCH_CARD}
+    },
+    { name: I.CATCH_CARD_BESTOVIUS
+    , code: 482
+    , groups: {GROUP_CATCH_CARD}
+    },
+    { name: I.CATCH_CARD_OLD_MAN_WATCHITT
+    , code: 483
+    , groups: {GROUP_CATCH_CARD}
+    },
+    { name: I.CATCH_CARD_MERLUMINA
+    , code: 484
+    , groups: {GROUP_CATCH_CARD}
+    },
+    { name: I.CATCH_CARD_THE_INTER_NED
+    , code: 485
+    , groups: {GROUP_CATCH_CARD}
+    },
+    { name: I.CATCH_CARD_THE_INTER_CHET
+    , code: 486
+    , groups: {GROUP_CATCH_CARD}
+    },
+    { name: I.CATCH_CARD_WELDERBERG
+    , code: 487
+    , groups: {GROUP_CATCH_CARD}
+    },
+    { name: I.CATCH_CARD_RED_GREEN
+    , code: 488
+    , groups: {GROUP_CATCH_CARD}
+    },
+    { name: I.CATCH_CARD_GNIP
+    , code: 489
+    , groups: {GROUP_CATCH_CARD}
+    },
+    { name: I.CATCH_CARD_GNAW
+    , code: 490
+    , groups: {GROUP_CATCH_CARD}
+    },
+    { name: I.CATCH_CARD_SQUIRPS
+    , code: 491
+    , groups: {GROUP_CATCH_CARD}
+    },
+    { name: I.CATCH_CARD_FLINT_CRAGLEY
+    , code: 492
+    , groups: {GROUP_CATCH_CARD}
+    },
+    { name: I.CATCH_CARD_HORNFELS_MONZO
+    , code: 493
+    , groups: {GROUP_CATCH_CARD}
+    },
+    { name: I.CATCH_CARD_KING_SAMMER
+    , code: 494
+    , groups: {GROUP_CATCH_CARD}
+    },
+    { name: I.CATCH_CARD_SAMMER_GUY
+    , code: 495
+    , groups: {GROUP_CATCH_CARD}
+    },
+    { name: I.CATCH_CARD_SMALL_SAMMER_GUY
+    , code: 496
+    , groups: {GROUP_CATCH_CARD}
+    },
+    { name: I.CATCH_CARD_BIG_SAMMER_GUY
+    , code: 497
+    , groups: {GROUP_CATCH_CARD}
+    },
+    { name: I.CATCH_CARD_LUVBI
+    , code: 498
+    , groups: {GROUP_CATCH_CARD}
+    },
+    { name: I.CATCH_CARD_JAYDES
+    , code: 499
+    , groups: {GROUP_CATCH_CARD}
+    },
+    { name: I.CATCH_CARD_GRAMBI
+    , code: 500
+    , groups: {GROUP_CATCH_CARD}
+    },
+    { name: I.CATCH_CARD_WHACKA
+    , code: 501
+    , groups: {GROUP_CATCH_CARD}
+    },
+    { name: I.CATCH_CARD_MARIO
+    , code: 502
+    , groups: {GROUP_CATCH_CARD}
+    },
+    { name: I.CATCH_CARD_LUIGI
+    , code: 503
+    , groups: {GROUP_CATCH_CARD}
+    },
+    { name: I.CATCH_CARD_PEACH_1
+    , code: 504
+    , groups: {GROUP_CATCH_CARD}
+    },
+    { name: I.CATCH_CARD_PEACH_2
+    , code: 505
+    , groups: {GROUP_CATCH_CARD}
+    },
+    { name: I.CATCH_CARD_PEACH_3
+    , code: 506
+    , groups: {GROUP_CATCH_CARD}
+    },
+    { name: I.CATCH_CARD_BOWSER_1
+    , code: 507
+    , groups: {GROUP_CATCH_CARD}
+    },
+    { name: I.CATCH_CARD_BOWSER_2
+    , code: 508
+    , groups: {GROUP_CATCH_CARD}
+    },
+    { name: I.CATCH_CARD_TIPPI
+    , code: 509
+    , groups: {GROUP_CATCH_CARD}
+    },
+    { name: I.CATCH_CARD_THOREAU
+    , code: 510
+    , groups: {GROUP_CATCH_CARD}
+    },
+    { name: I.CATCH_CARD_BOOMER
+    , code: 511
+    , groups: {GROUP_CATCH_CARD}
+    },
+    { name: I.CATCH_CARD_SLIM
+    , code: 512
+    , groups: {GROUP_CATCH_CARD}
+    },
+    { name: I.CATCH_CARD_THUDLEY
+    , code: 513
+    , groups: {GROUP_CATCH_CARD}
+    },
+    { name: I.CATCH_CARD_CARRIE
+    , code: 514
+    , groups: {GROUP_CATCH_CARD}
+    },
+    { name: I.CATCH_CARD_FLEEP
+    , code: 515
+    , groups: {GROUP_CATCH_CARD}
+    },
+    { name: I.CATCH_CARD_CUDGE
+    , code: 516
+    , groups: {GROUP_CATCH_CARD}
+    },
+    { name: I.CATCH_CARD_DOTTIE
+    , code: 517
+    , groups: {GROUP_CATCH_CARD}
+    },
+    { name: I.CATCH_CARD_BARRY
+    , code: 518
+    , groups: {GROUP_CATCH_CARD}
+    },
+    { name: I.CATCH_CARD_DASHELL
+    , code: 519
+    , groups: {GROUP_CATCH_CARD}
+    },
+    { name: I.CATCH_CARD_PICCOLO
+    , code: 520
+    , groups: {GROUP_CATCH_CARD}
+    },
+    { name: I.CATCH_CARD_TIPTRON
+    , code: 521
+    , groups: {GROUP_CATCH_CARD}
+    },
+    { name: I.CATCH_CARD_GOOMBARIO
+    , code: 522
+    , groups: {GROUP_CATCH_CARD}
+    },
+    { name: I.CATCH_CARD_KOOPER
+    , code: 523
+    , groups: {GROUP_CATCH_CARD}
+    },
+    { name: I.CATCH_CARD_BOMBETTE
+    , code: 524
+    , groups: {GROUP_CATCH_CARD}
+    },
+    { name: I.CATCH_CARD_PARAKARRY
+    , code: 525
+    , groups: {GROUP_CATCH_CARD}
+    },
+    { name: I.CATCH_CARD_BOW
+    , code: 526
+    , groups: {GROUP_CATCH_CARD}
+    },
+    { name: I.CATCH_CARD_WATT
+    , code: 527
+    , groups: {GROUP_CATCH_CARD}
+    },
+    { name: I.CATCH_CARD_SUSHIE
+    , code: 528
+    , groups: {GROUP_CATCH_CARD}
+    },
+    { name: I.CATCH_CARD_LAKILESTER
+    , code: 529
+    , groups: {GROUP_CATCH_CARD}
+    },
+    { name: I.CATCH_CARD_GOOMBELLA
+    , code: 530
+    , groups: {GROUP_CATCH_CARD}
+    },
+    { name: I.CATCH_CARD_KOOPS
+    , code: 531
+    , groups: {GROUP_CATCH_CARD}
+    },
+    { name: I.CATCH_CARD_MADAME_FLURRIE
+    , code: 532
+    , groups: {GROUP_CATCH_CARD}
+    },
+    { name: I.CATCH_CARD_YOSHI
+    , code: 533
+    , groups: {GROUP_CATCH_CARD}
+    },
+    { name: I.CATCH_CARD_VIVIAN
+    , code: 534
+    , groups: {GROUP_CATCH_CARD}
+    },
+    { name: I.CATCH_CARD_ADMIRAL_BOBBERY
+    , code: 535
+    , groups: {GROUP_CATCH_CARD}
+    },
+    { name: I.CATCH_CARD_MS_MOWZ
+    , code: 536
+    , groups: {GROUP_CATCH_CARD}
+    },
+    { name: I.CATCH_CARD_TOAD
+    , code: 537
+    , groups: {GROUP_CATCH_CARD}
+    },
+    #endregion
+    #region AP Items
+    # These items don't exist in-game. They're concepts introduced by the rando.
+    # Start at 0x300 bc apparently the "Action Command" sprites are after the catch cards, no idea where they stop.
+    { name: I.RED_PURE_HEART
+    , code: 768
+    , classification: ItemClassification.progression_skip_balancing
+    , groups: {GROUP_HEART}
+    , amount: heart_amount
+    },
+    { name: I.ORANGE_PURE_HEART
+    , code: 769
+    , classification: ItemClassification.progression_skip_balancing
+    , groups: {GROUP_HEART}
+    , amount: heart_amount
+    },
+    { name: I.YELLOW_PURE_HEART
+    , code: 770
+    , classification: ItemClassification.progression_skip_balancing
+    , groups: {GROUP_HEART}
+    , amount: heart_amount
+    },
+    { name: I.GREEN_PURE_HEART
+    , code: 771
+    , classification: ItemClassification.progression_skip_balancing
+    , groups: {GROUP_HEART}
+    # , amount: heart_amount  # commented to default to 1 until its chapter logic is finished
+    },
+    { name: I.CYAN_PURE_HEART
+    , code: 772
+    , classification: ItemClassification.progression_skip_balancing
+    , groups: {GROUP_HEART}
+    # , amount: heart_amount  # commented to default to 1 until its chapter logic is finished
+    },
+    { name: I.BLUE_PURE_HEART
+    , code: 773
+    , classification: ItemClassification.progression_skip_balancing
+    , groups: {GROUP_HEART}
+    # , amount: heart_amount  # commented to default to 1 until its chapter logic is finished
+    },
+    { name: I.PURPLE_PURE_HEART
+    , code: 774
+    , classification: ItemClassification.progression_skip_balancing
+    , groups: {GROUP_HEART}
+    # , amount: heart_amount  # commented to default to 1 until its chapter logic is finished
+    },
+    { name: I.WHITE_PURE_HEART
+    , code: 775
+    , classification: ItemClassification.progression_skip_balancing
+    , groups: {GROUP_HEART}
+    # , amount: heart_amount  # commented to default to 1 until its chapter logic is finished
+    },
+    { name: I.ABILITY_FLIP
+    , code: 776
+    , classification: ItemClassification.progression
+    , groups: {GROUP_ABILITY}
+    , amount: ability_amount
+    },
+    { name: I.ABILITY_UMBRELLA
+    , code: 777
+    , classification: ItemClassification.progression
+    , groups: {GROUP_ABILITY}
+    , amount: ability_amount
+    },
+    { name: I.ABILITY_FIRE
+    , code: 778
+    , classification: ItemClassification.progression
+    , groups: {GROUP_ABILITY}
+    , amount: ability_amount
+    },
+    { name: I.ABILITY_SUPER_JUMP
+    , code: 779
+    , classification: ItemClassification.progression
+    , groups: {GROUP_ABILITY}
+    , amount: ability_amount
+    },
+    { name: I.CHAPTER_1_KEY
+    , code: 780
+    , classification: ItemClassification.progression
+    , groups: {GROUP_TOWER_KEY,GROUP_CHAPTER_KEY}
+    , amount: chapter_key_amount
+    },
+    { name: I.CHAPTER_2_KEY
+    , code: 781
+    , classification: ItemClassification.progression
+    , groups: {GROUP_TOWER_KEY,GROUP_CHAPTER_KEY}
+    , amount: chapter_key_amount
+    },
+    { name: I.CHAPTER_3_KEY
+    , code: 782
+    , classification: ItemClassification.progression
+    , groups: {GROUP_TOWER_KEY,GROUP_CHAPTER_KEY}
+    , amount: chapter_key_amount
+    },
+    { name: I.CHAPTER_4_KEY
+    , code: 783
+    , classification: ItemClassification.progression
+    , groups: {GROUP_TOWER_KEY,GROUP_CHAPTER_KEY}
+    , amount: chapter_key_amount
+    },
+    { name: I.CHAPTER_5_KEY
+    , code: 784
+    , classification: ItemClassification.progression
+    , groups: {GROUP_TOWER_KEY,GROUP_CHAPTER_KEY}
+    , amount: chapter_key_amount
+    },
+    { name: I.CHAPTER_6_KEY
+    , code: 785
+    , classification: ItemClassification.progression
+    , groups: {GROUP_TOWER_KEY,GROUP_CHAPTER_KEY}
+    , amount: chapter_key_amount
+    },
+    { name: I.CHAPTER_7_KEY
+    , code: 786
+    , classification: ItemClassification.progression
+    , groups: {GROUP_TOWER_KEY,GROUP_CHAPTER_KEY}
+    , amount: chapter_key_amount
+    },
+    { name: I.CHAPTER_8_KEY
+    , code: 787
+    , classification: ItemClassification.progression
+    , groups: {GROUP_TOWER_KEY,GROUP_CHAPTER_KEY}
+    , amount: chapter_key_amount
+    },
+    { name: I.CHAPTER_1_1_KEY
+    , code: 788
+    , classification: ItemClassification.progression
+    , groups: {GROUP_TOWER_KEY, GROUP_SUBCHAPTER_KEY}
+    , amount: subchapter_key_amount
+    },
+    { name: I.CHAPTER_1_2_KEY
+    , code: 789
+    , classification: ItemClassification.progression
+    , groups: {GROUP_TOWER_KEY, GROUP_SUBCHAPTER_KEY}
+    , amount: subchapter_key_amount
+    },
+    { name: I.CHAPTER_1_3_KEY
+    , code: 790
+    , classification: ItemClassification.progression
+    , groups: {GROUP_TOWER_KEY, GROUP_SUBCHAPTER_KEY}
+    , amount: subchapter_key_amount
+    },
+    { name: I.CHAPTER_1_4_KEY
+    , code: 791
+    , classification: ItemClassification.progression
+    , groups: {GROUP_TOWER_KEY, GROUP_SUBCHAPTER_KEY}
+    , amount: subchapter_key_amount
+    },
+    { name: I.CHAPTER_2_1_KEY
+    , code: 792
+    , classification: ItemClassification.progression
+    , groups: {GROUP_TOWER_KEY, GROUP_SUBCHAPTER_KEY}
+    , amount: subchapter_key_amount
+    },
+    { name: I.CHAPTER_2_2_KEY
+    , code: 793
+    , classification: ItemClassification.progression
+    , groups: {GROUP_TOWER_KEY, GROUP_SUBCHAPTER_KEY}
+    , amount: subchapter_key_amount
+    },
+    { name: I.CHAPTER_2_3_KEY
+    , code: 794
+    , classification: ItemClassification.progression
+    , groups: {GROUP_TOWER_KEY, GROUP_SUBCHAPTER_KEY}
+    , amount: subchapter_key_amount
+    },
+    { name: I.CHAPTER_2_4_KEY
+    , code: 795
+    , classification: ItemClassification.progression
+    , groups: {GROUP_TOWER_KEY, GROUP_SUBCHAPTER_KEY}
+    , amount: subchapter_key_amount
+    },
+    { name: I.CHAPTER_3_1_KEY
+    , code: 796
+    , classification: ItemClassification.progression
+    , groups: {GROUP_TOWER_KEY, GROUP_SUBCHAPTER_KEY}
+    , amount: subchapter_key_amount
+    },
+    { name: I.CHAPTER_3_2_KEY
+    , code: 797
+    , classification: ItemClassification.progression
+    , groups: {GROUP_TOWER_KEY, GROUP_SUBCHAPTER_KEY}
+    , amount: subchapter_key_amount
+    },
+    { name: I.CHAPTER_3_3_KEY
+    , code: 798
+    , classification: ItemClassification.progression
+    , groups: {GROUP_TOWER_KEY, GROUP_SUBCHAPTER_KEY}
+    , amount: subchapter_key_amount
+    },
+    { name: I.CHAPTER_3_4_KEY
+    , code: 799
+    , classification: ItemClassification.progression
+    , groups: {GROUP_TOWER_KEY, GROUP_SUBCHAPTER_KEY}
+    , amount: subchapter_key_amount
+    },
+    { name: I.CHAPTER_4_1_KEY
+    , code: 800
+    , classification: ItemClassification.progression
+    , groups: {GROUP_TOWER_KEY, GROUP_SUBCHAPTER_KEY}
+    , amount: subchapter_key_amount
+    },
+    { name: I.CHAPTER_4_2_KEY
+    , code: 801
+    , classification: ItemClassification.progression
+    , groups: {GROUP_TOWER_KEY, GROUP_SUBCHAPTER_KEY}
+    , amount: subchapter_key_amount
+    },
+    { name: I.CHAPTER_4_3_KEY
+    , code: 802
+    , classification: ItemClassification.progression
+    , groups: {GROUP_TOWER_KEY, GROUP_SUBCHAPTER_KEY}
+    , amount: subchapter_key_amount
+    },
+    { name: I.CHAPTER_4_4_KEY
+    , code: 803
+    , classification: ItemClassification.progression
+    , groups: {GROUP_TOWER_KEY, GROUP_SUBCHAPTER_KEY}
+    , amount: subchapter_key_amount
+    },
+    { name: I.CHAPTER_5_1_KEY
+    , code: 804
+    , classification: ItemClassification.progression
+    , groups: {GROUP_TOWER_KEY, GROUP_SUBCHAPTER_KEY}
+    , amount: subchapter_key_amount
+    },
+    { name: I.CHAPTER_5_2_KEY
+    , code: 805
+    , classification: ItemClassification.progression
+    , groups: {GROUP_TOWER_KEY, GROUP_SUBCHAPTER_KEY}
+    , amount: subchapter_key_amount
+    },
+    { name: I.CHAPTER_5_3_KEY
+    , code: 806
+    , classification: ItemClassification.progression
+    , groups: {GROUP_TOWER_KEY, GROUP_SUBCHAPTER_KEY}
+    , amount: subchapter_key_amount
+    },
+    { name: I.CHAPTER_5_4_KEY
+    , code: 807
+    , classification: ItemClassification.progression
+    , groups: {GROUP_TOWER_KEY, GROUP_SUBCHAPTER_KEY}
+    , amount: subchapter_key_amount
+    },
+    { name: I.CHAPTER_6_1_KEY
+    , code: 808
+    , classification: ItemClassification.progression
+    , groups: {GROUP_TOWER_KEY, GROUP_SUBCHAPTER_KEY}
+    , amount: subchapter_key_amount
+    },
+    { name: I.CHAPTER_6_2_KEY
+    , code: 809
+    , classification: ItemClassification.progression
+    , groups: {GROUP_TOWER_KEY, GROUP_SUBCHAPTER_KEY}
+    , amount: subchapter_key_amount
+    },
+    { name: I.CHAPTER_6_3_KEY
+    , code: 810
+    , classification: ItemClassification.progression
+    , groups: {GROUP_TOWER_KEY, GROUP_SUBCHAPTER_KEY}
+    , amount: subchapter_key_amount
+    },
+    { name: I.CHAPTER_6_4_KEY
+    , code: 811
+    , classification: ItemClassification.progression
+    , groups: {GROUP_TOWER_KEY, GROUP_SUBCHAPTER_KEY}
+    , amount: subchapter_key_amount
+    },
+    { name: I.CHAPTER_7_1_KEY
+    , code: 812
+    , classification: ItemClassification.progression
+    , groups: {GROUP_TOWER_KEY, GROUP_SUBCHAPTER_KEY}
+    , amount: subchapter_key_amount
+    },
+    { name: I.CHAPTER_7_2_KEY
+    , code: 813
+    , classification: ItemClassification.progression
+    , groups: {GROUP_TOWER_KEY, GROUP_SUBCHAPTER_KEY}
+    , amount: subchapter_key_amount
+    },
+    { name: I.CHAPTER_7_3_KEY
+    , code: 814
+    , classification: ItemClassification.progression
+    , groups: {GROUP_TOWER_KEY, GROUP_SUBCHAPTER_KEY}
+    , amount: subchapter_key_amount
+    },
+    { name: I.CHAPTER_7_4_KEY
+    , code: 815
+    , classification: ItemClassification.progression
+    , groups: {GROUP_TOWER_KEY, GROUP_SUBCHAPTER_KEY}
+    , amount: subchapter_key_amount
+    },
+    { name: I.CHAPTER_8_1_KEY
+    , code: 816
+    , classification: ItemClassification.progression
+    , groups: {GROUP_TOWER_KEY, GROUP_SUBCHAPTER_KEY}
+    , amount: subchapter_key_amount
+    },
+    { name: I.CHAPTER_8_2_KEY
+    , code: 817
+    , classification: ItemClassification.progression
+    , groups: {GROUP_TOWER_KEY, GROUP_SUBCHAPTER_KEY}
+    , amount: subchapter_key_amount
+    },
+    { name: I.CHAPTER_8_3_KEY
+    , code: 818
+    , classification: ItemClassification.progression
+    , groups: {GROUP_TOWER_KEY, GROUP_SUBCHAPTER_KEY}
+    , amount: subchapter_key_amount
+    },
+    { name: I.CHAPTER_8_4_KEY
+    , code: 819
+    , classification: ItemClassification.progression
+    , groups: {GROUP_TOWER_KEY, GROUP_SUBCHAPTER_KEY}
+    , amount: subchapter_key_amount
+    },
+    { name: I.SLOW_CURSYA_TRAP
+    , code: 820
+    , classification: ItemClassification.trap
+    , groups: {GROUP_CURSYA_TRAP}
+    },
+    { name: I.HEAVY_CURSYA_TRAP
+    , code: 821
+    , classification: ItemClassification.trap
+    , groups: {GROUP_CURSYA_TRAP}
+    },
+    { name: I.REVERSYA_CURSYA_TRAP
+    , code: 822
+    , classification: ItemClassification.trap
+    , groups: {GROUP_CURSYA_TRAP}
+    },
+    { name: I.TECH_CURSYA_TRAP
+    , code: 823
+    , classification: ItemClassification.trap
+    , groups: {GROUP_CURSYA_TRAP}
+    },
+    { name: I.BACK_CURSYA_TRAP
+    , code: 824
+    , classification: ItemClassification.trap
+    , groups: {GROUP_CURSYA_TRAP}
+    },
     #endregion
 ]  # fmt: skip
 

@@ -114,13 +114,33 @@ class HasChapterKey(Rule["SuperPaperMarioWorld"], game=GAME):
     chapter_key: I
     subchapter_key: I
 
+    _OPEN_SUBCHAPTER_KEYS: typing.ClassVar[list[I]] = [
+        I.CHAPTER_1_1_KEY,
+        I.CHAPTER_2_1_KEY,
+        I.CHAPTER_3_1_KEY,
+        I.CHAPTER_4_1_KEY,
+        I.CHAPTER_5_1_KEY,
+        I.CHAPTER_6_1_KEY,
+        I.CHAPTER_7_1_KEY,
+        I.CHAPTER_8_1_KEY,
+    ]
+
     def _instantiate(self, world: "SuperPaperMarioWorld") -> Rule.Resolved:
         # if world.options.chapter_door_access == ChapterDoorAccess.option_subchapters_locked:
         #     return Has(self.chapter_key.value).resolve(world)
         # if world.options.chapter_door_access == ChapterDoorAccess.option_chapter_locked:
         #     return Has(self.subchapter_key.value).resolve(world)
-        if world.options.chapter_door_access == ChapterDoorAccess.option_open:
+        if world.options.chapter_door_access == ChapterDoorAccess.option_subchapters_open:
             return True_().resolve(world)
+        if world.options.chapter_door_access == ChapterDoorAccess.option_chapters_open:
+            # In this mode the subchapter keys are event items, except for X-1 keys, they're implied access.
+            if self.subchapter_key in self._OPEN_SUBCHAPTER_KEYS:
+                return True_().resolve(world)
+            return Has(self.subchapter_key).resolve(world)
+        # if world.options.chapter_door_access == ChapterDoorAccess.option_chapter_locked:
+        #     return Has(self.chapter_key).resolve(world)
+        # if world.options.chapter_door_access == ChapterDoorAccess.option_subchapter_locked:
+        #     return Has(self.subchapter_key).resolve(world)
         raise NotImplementedError(f"Unknown chapter_door_access option: {world.options.chapter_door_access}")
 
 

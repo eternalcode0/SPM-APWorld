@@ -40,7 +40,12 @@ class ChapterDoorAccess(Choice):
     """
     Do Chapter Keys lock access to specific chapters or subchapters?
 
-    **Open:** Chapter Keys are not placed in the pool, every chapter is unlocked from the start.
+    **Chapters Open:** Chapter Keys are not placed in the pool, every chapter (X-1) is unlocked from the start.
+        Subchapters (X-2, X-3, X-4) must be completed in linear order similar to the vanilla game. You can revisit any
+        subchapter you've already been to without playing through the earlier subchapters.
+
+    **Subchapters Open:** Chapter Keys are not placed in the pool.
+        The chapter doors at each tower can be used to access any subchapter as if the game has already been completed.
 
     **Chapter Locked:** Chapter Keys unlock all subchapters of a given chapter.
         They will be named without their subchapter number, Ex. Chapter 1 Key
@@ -52,11 +57,12 @@ class ChapterDoorAccess(Choice):
     display_name = "Chapter Door Access"
     internal_name = "chapter_door_access"
 
-    option_open = 0
-    # option_chapter_locked = 1
-    # option_subchapters_locked = 2
-    # option_closed = 3  # no chapters accessible, some kind of pit only goal maybe?
-    default = option_open
+    option_chapters_open = 0
+    option_subchapters_open = 1
+    # option_chapter_locked = 2
+    # option_subchapters_locked = 3
+    # option_closed = 4  # no chapters accessible, some kind of pit only goal maybe?
+    default = option_subchapters_open
 
 
 class ShufflePureHearts(Toggle):

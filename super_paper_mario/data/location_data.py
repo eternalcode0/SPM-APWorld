@@ -60,8 +60,7 @@ def pure_heart(opt: SuperPaperMarioOptions) -> RT:
 
 
 def star_block(opt: SuperPaperMarioOptions) -> RT:
-    return RT.VANILLA_EVENT
-    # return RT.RANDOM if opt.chapter_door_access == ChapterDoorAccess.option_subchapters_locked else RT.VANILLA_EVENT
+    return RT.DISABLED if opt.chapter_door_access == ChapterDoorAccess.option_subchapters_open else RT.VANILLA_EVENT
 
 
 def shop(opt: SuperPaperMarioOptions) -> RT:
@@ -1188,7 +1187,6 @@ LOCATION_LIST_DICT: list[dict[str, Any]] = [
     , var: GSWF(604)
     , item: I.CATCH_CARD_KOOPA_TROOPA
     , region: R.HE105
-    , setting: star_block
     },
     { name: L.C11_OPEN_ITEM_ABOVE_BESTOVIUS_HOUSE
     , code: 127
@@ -1399,7 +1397,6 @@ LOCATION_LIST_DICT: list[dict[str, Any]] = [
     , var: GSWF(732)
     , item: I.CATCH_CARD_SHLURP
     , region: R.MI104
-    , setting: star_block
     },
     { name: L.C21_RIGHT_CHEST_BEFORE_STAR_BLOCK
     , code: 155
@@ -1407,13 +1404,12 @@ LOCATION_LIST_DICT: list[dict[str, Any]] = [
     , var: GSWF(733)
     , item: I.CATCH_CARD_SWOOPER
     , region: R.MI104
-    , setting: star_block
     },
     { name: L.C21_STAR_BLOCK
     , code: 156
     , rom: 0
     , var: GSW(0, 76)
-    , item: I.CHAPTER_2_3_KEY
+    , item: I.CHAPTER_2_2_KEY
     , region: R.MI104
     , setting: star_block
     },
@@ -2312,147 +2308,171 @@ LOCATION_LIST_DICT: list[dict[str, Any]] = [
     # , item: None
     # , region: None
     # },
+    { name: L.CHAPTER_8_1_END
+    , code: 274
+    , rom: None
+    , var: None
+    , item: I.CHAPTER_8_2_KEY
+    , region: R.LS101
+    , setting: star_block
+    },
     #endregion
     #region 8-2
     # { name: L.C82_LEFT_CHEST_ABOVE_MERLON_ROOM
-    # , code: 274
-    # , rom: None
-    # , var: None
-    # , item: None
-    # , region: None
-    # },
-    # { name: L.C82_MIDDLE_CHEST_ABOVE_MERLON_ROOM
     # , code: 275
     # , rom: None
     # , var: None
     # , item: None
     # , region: None
     # },
-    # { name: L.C82_RIGHT_CHEST_ABOVE_MERLON_ROOM
+    # { name: L.C82_MIDDLE_CHEST_ABOVE_MERLON_ROOM
     # , code: 276
     # , rom: None
     # , var: None
     # , item: None
     # , region: None
     # },
-    # { name: L.C82_OPEN_ITEM_BEHIND_5TH_PIPE
+    # { name: L.C82_RIGHT_CHEST_ABOVE_MERLON_ROOM
     # , code: 277
     # , rom: None
     # , var: None
     # , item: None
     # , region: None
     # },
-    # { name: L.C82_CHEST_IN_CURSYA_ROOM
+    # { name: L.C82_OPEN_ITEM_BEHIND_5TH_PIPE
     # , code: 278
     # , rom: None
     # , var: None
     # , item: None
     # , region: None
     # },
-    # { name: L.C82_FIRST_HUNG_ITEM
+    # { name: L.C82_CHEST_IN_CURSYA_ROOM
     # , code: 279
     # , rom: None
     # , var: None
     # , item: None
     # , region: None
     # },
-    # { name: L.C82_SECOND_HUNG_ITEM
+    # { name: L.C82_FIRST_HUNG_ITEM
     # , code: 280
     # , rom: None
     # , var: None
     # , item: None
     # , region: None
     # },
-    # { name: L.C82_THIRD_HUNG_ITEM
+    # { name: L.C82_SECOND_HUNG_ITEM
     # , code: 281
     # , rom: None
     # , var: None
     # , item: None
     # , region: None
     # },
-    # { name: L.C82_DEFEAT_THE_CHROMEBA
+    # { name: L.C82_THIRD_HUNG_ITEM
     # , code: 282
     # , rom: None
     # , var: None
     # , item: None
     # , region: None
     # },
-    # { name: L.C82_MERLEES_THUNDER_RAGE
+    # { name: L.C82_DEFEAT_THE_CHROMEBA
     # , code: 283
     # , rom: None
     # , var: None
     # , item: None
     # , region: None
     # },
-    #endregion
-    #region 8-3
-    # { name: L.C83_RIGHT_CHEST_BEHIND_FIRST_HALL_OF_MIRRORS
+    # { name: L.C82_MERLEES_THUNDER_RAGE
     # , code: 284
     # , rom: None
     # , var: None
     # , item: None
     # , region: None
     # },
-    # { name: L.C83_LEFT_CHEST_BEHIND_FIRST_HALL_OF_MIRRORS
-    # , code: 285
-    # , rom: None
-    # , var: None
-    # , item: None
-    # , region: None
-    # },
-    # { name: L.C83_CHEST_AFTER_BLOCK_PUZZLE
+    { name: L.CHAPTER_8_2_END
+    , code: 285
+    , rom: None
+    , var: None
+    , item: I.CHAPTER_8_3_KEY
+    , region: R.LS201
+    , setting: star_block
+    },
+    #endregion
+    #region 8-3
+    # { name: L.C83_RIGHT_CHEST_BEHIND_FIRST_HALL_OF_MIRRORS
     # , code: 286
     # , rom: None
     # , var: None
     # , item: None
     # , region: None
     # },
-    # { name: L.C83_RIGHT_CHEST_BEHIND_SECOND_HALL_OF_MIRRORS
+    # { name: L.C83_LEFT_CHEST_BEHIND_FIRST_HALL_OF_MIRRORS
     # , code: 287
     # , rom: None
     # , var: None
     # , item: None
     # , region: None
     # },
-    # { name: L.C83_LEFT_CHEST_BEHIND_SECOND_HALL_OF_MIRRORS
+    # { name: L.C83_CHEST_AFTER_BLOCK_PUZZLE
     # , code: 288
     # , rom: None
     # , var: None
     # , item: None
     # , region: None
     # },
-    #endregion
-    #region 8-4
-    # { name: L.C84_CHEST_AFTER_TINY_PASSAGE
+    # { name: L.C83_RIGHT_CHEST_BEHIND_SECOND_HALL_OF_MIRRORS
     # , code: 289
     # , rom: None
     # , var: None
     # , item: None
     # , region: None
     # },
-    # { name: L.C84_CHEST_IN_FIRST_3_D_HALLWAYS
+    # { name: L.C83_LEFT_CHEST_BEHIND_SECOND_HALL_OF_MIRRORS
     # , code: 290
     # , rom: None
     # , var: None
     # , item: None
     # , region: None
     # },
-    # { name: L.C84_CHEST_IN_SECOND_3_D_HALLWAYS
-    # , code: 291
-    # , rom: None
-    # , var: None
-    # , item: None
-    # , region: None
-    # },
-    # { name: L.C84_CHEST_IN_THIRD_3_D_HALLWAYS
+    { name: L.CHAPTER_8_3_END
+    , code: 291
+    , rom: None
+    , var: None
+    , item: I.CHAPTER_8_4_KEY
+    , region: R.LS301
+    , setting: star_block
+    },
+    #endregion
+    #region 8-4
+    # { name: L.C84_CHEST_AFTER_TINY_PASSAGE
     # , code: 292
     # , rom: None
     # , var: None
     # , item: None
     # , region: None
     # },
+    # { name: L.C84_CHEST_IN_FIRST_3_D_HALLWAYS
+    # , code: 293
+    # , rom: None
+    # , var: None
+    # , item: None
+    # , region: None
+    # },
+    # { name: L.C84_CHEST_IN_SECOND_3_D_HALLWAYS
+    # , code: 294
+    # , rom: None
+    # , var: None
+    # , item: None
+    # , region: None
+    # },
+    # { name: L.C84_CHEST_IN_THIRD_3_D_HALLWAYS
+    # , code: 295
+    # , rom: None
+    # , var: None
+    # , item: None
+    # , region: None
+    # },
     { name: L.CHAPTER_8_4_END
-    , code: 293
+    , code: 296
     , rom: None
     , var: GSW(0, 416)
     , item: E.VICTORY
@@ -2462,7 +2482,7 @@ LOCATION_LIST_DICT: list[dict[str, Any]] = [
     #endregion
     #region Flamm / Treasure Maps
     # { name: L.FLAMM_ITEM_1
-    # , code: 294
+    # , code: 297
     # , rom: None
     # , var: None
     # , item: I.MAP_1
@@ -2470,7 +2490,7 @@ LOCATION_LIST_DICT: list[dict[str, Any]] = [
     # , setting: flamm
     # },
     # { name: L.FLAMM_ITEM_2
-    # , code: 295
+    # , code: 298
     # , rom: None
     # , var: None
     # , item: I.MAP_2
@@ -2478,7 +2498,7 @@ LOCATION_LIST_DICT: list[dict[str, Any]] = [
     # , setting: flamm
     # },
     # { name: L.FLAMM_ITEM_3
-    # , code: 296
+    # , code: 299
     # , rom: None
     # , var: None
     # , item: I.MAP_3
@@ -2486,7 +2506,7 @@ LOCATION_LIST_DICT: list[dict[str, Any]] = [
     # , setting: flamm
     # },
     # { name: L.FLAMM_ITEM_4
-    # , code: 297
+    # , code: 300
     # , rom: None
     # , var: None
     # , item: I.MAP_4
@@ -2494,7 +2514,7 @@ LOCATION_LIST_DICT: list[dict[str, Any]] = [
     # , setting: flamm
     # },
     # { name: L.FLAMM_ITEM_5
-    # , code: 298
+    # , code: 301
     # , rom: None
     # , var: None
     # , item: I.MAP_5
@@ -2502,7 +2522,7 @@ LOCATION_LIST_DICT: list[dict[str, Any]] = [
     # , setting: flamm
     # },
     # { name: L.FLAMM_ITEM_6
-    # , code: 299
+    # , code: 302
     # , rom: None
     # , var: None
     # , item: I.MAP_6
@@ -2510,7 +2530,7 @@ LOCATION_LIST_DICT: list[dict[str, Any]] = [
     # , setting: flamm
     # },
     # { name: L.FLAMM_ITEM_7
-    # , code: 300
+    # , code: 303
     # , rom: None
     # , var: None
     # , item: I.MAP_7
@@ -2518,7 +2538,7 @@ LOCATION_LIST_DICT: list[dict[str, Any]] = [
     # , setting: flamm
     # },
     # { name: L.FLAMM_ITEM_8
-    # , code: 301
+    # , code: 304
     # , rom: None
     # , var: None
     # , item: I.MAP_8
@@ -2526,7 +2546,7 @@ LOCATION_LIST_DICT: list[dict[str, Any]] = [
     # , setting: flamm
     # },
     # { name: L.FLAMM_ITEM_9
-    # , code: 302
+    # , code: 305
     # , rom: None
     # , var: None
     # , item: I.MAP_9
@@ -2534,7 +2554,7 @@ LOCATION_LIST_DICT: list[dict[str, Any]] = [
     # , setting: flamm
     # },
     # { name: L.FLAMM_ITEM_10
-    # , code: 303
+    # , code: 306
     # , rom: None
     # , var: None
     # , item: I.MAP_10
@@ -2542,7 +2562,7 @@ LOCATION_LIST_DICT: list[dict[str, Any]] = [
     # , setting: flamm
     # },
     # { name: L.FLAMM_ITEM_11
-    # , code: 304
+    # , code: 307
     # , rom: None
     # , var: None
     # , item: I.MAP_11
@@ -2550,7 +2570,7 @@ LOCATION_LIST_DICT: list[dict[str, Any]] = [
     # , setting: flamm
     # },
     # { name: L.FLAMM_ITEM_12
-    # , code: 305
+    # , code: 308
     # , rom: None
     # , var: None
     # , item: I.MAP_12
@@ -2558,7 +2578,7 @@ LOCATION_LIST_DICT: list[dict[str, Any]] = [
     # , setting: flamm
     # },
     # { name: L.FLAMM_ITEM_13
-    # , code: 306
+    # , code: 309
     # , rom: None
     # , var: None
     # , item: I.MAP_13
@@ -2566,7 +2586,7 @@ LOCATION_LIST_DICT: list[dict[str, Any]] = [
     # , setting: flamm
     # },
     # { name: L.FLAMM_ITEM_14
-    # , code: 307
+    # , code: 310
     # , rom: None
     # , var: None
     # , item: I.MAP_14
@@ -2574,7 +2594,7 @@ LOCATION_LIST_DICT: list[dict[str, Any]] = [
     # , setting: flamm
     # },
     # { name: L.FLAMM_ITEM_15
-    # , code: 308
+    # , code: 311
     # , rom: None
     # , var: None
     # , item: I.MAP_15
@@ -2582,7 +2602,7 @@ LOCATION_LIST_DICT: list[dict[str, Any]] = [
     # , setting: flamm
     # },
     # { name: L.FLAMM_ITEM_16
-    # , code: 309
+    # , code: 312
     # , rom: None
     # , var: None
     # , item: I.MAP_16
@@ -2590,7 +2610,7 @@ LOCATION_LIST_DICT: list[dict[str, Any]] = [
     # , setting: flamm
     # },
     # { name: L.FLAMM_ITEM_17
-    # , code: 310
+    # , code: 313
     # , rom: None
     # , var: None
     # , item: I.MAP_17
@@ -2598,7 +2618,7 @@ LOCATION_LIST_DICT: list[dict[str, Any]] = [
     # , setting: flamm
     # },
     # { name: L.FLAMM_ITEM_18
-    # , code: 311
+    # , code: 314
     # , rom: None
     # , var: None
     # , item: I.MAP_18
@@ -2606,7 +2626,7 @@ LOCATION_LIST_DICT: list[dict[str, Any]] = [
     # , setting: flamm
     # },
     # { name: L.FLAMM_ITEM_19
-    # , code: 312
+    # , code: 315
     # , rom: None
     # , var: None
     # , item: I.MAP_19
@@ -2614,7 +2634,7 @@ LOCATION_LIST_DICT: list[dict[str, Any]] = [
     # , setting: flamm
     # },
     # { name: L.FLAMM_ITEM_20
-    # , code: 313
+    # , code: 316
     # , rom: None
     # , var: None
     # , item: I.MAP_20
@@ -2622,7 +2642,7 @@ LOCATION_LIST_DICT: list[dict[str, Any]] = [
     # , setting: flamm
     # },
     # { name: L.FLAMM_ITEM_21
-    # , code: 314
+    # , code: 317
     # , rom: None
     # , var: None
     # , item: I.MAP_21
@@ -2630,7 +2650,7 @@ LOCATION_LIST_DICT: list[dict[str, Any]] = [
     # , setting: flamm
     # },
     # { name: L.FLAMM_ITEM_22
-    # , code: 315
+    # , code: 318
     # , rom: None
     # , var: None
     # , item: I.MAP_22
@@ -2638,7 +2658,7 @@ LOCATION_LIST_DICT: list[dict[str, Any]] = [
     # , setting: flamm
     # },
     # { name: L.FLAMM_ITEM_23
-    # , code: 316
+    # , code: 319
     # , rom: None
     # , var: None
     # , item: I.MAP_23
@@ -2646,7 +2666,7 @@ LOCATION_LIST_DICT: list[dict[str, Any]] = [
     # , setting: flamm
     # },
     # { name: L.FLAMM_ITEM_24
-    # , code: 317
+    # , code: 320
     # , rom: None
     # , var: None
     # , item: I.MAP_24
@@ -2654,7 +2674,7 @@ LOCATION_LIST_DICT: list[dict[str, Any]] = [
     # , setting: flamm
     # },
     # { name: L.FLAMM_ITEM_25
-    # , code: 318
+    # , code: 321
     # , rom: None
     # , var: None
     # , item: I.MAP_25
@@ -2662,7 +2682,7 @@ LOCATION_LIST_DICT: list[dict[str, Any]] = [
     # , setting: flamm
     # },
     # { name: L.FLAMM_ITEM_26
-    # , code: 319
+    # , code: 322
     # , rom: None
     # , var: None
     # , item: I.MAP_26
@@ -2670,7 +2690,7 @@ LOCATION_LIST_DICT: list[dict[str, Any]] = [
     # , setting: flamm
     # },
     # { name: L.FLAMM_ITEM_27
-    # , code: 320
+    # , code: 323
     # , rom: None
     # , var: None
     # , item: I.MAP_27
@@ -2678,7 +2698,7 @@ LOCATION_LIST_DICT: list[dict[str, Any]] = [
     # , setting: flamm
     # },
     # { name: L.FLAMM_ITEM_28
-    # , code: 321
+    # , code: 324
     # , rom: None
     # , var: None
     # , item: I.MAP_28
@@ -2686,7 +2706,7 @@ LOCATION_LIST_DICT: list[dict[str, Any]] = [
     # , setting: flamm
     # },
     # { name: L.FLAMM_ITEM_29
-    # , code: 322
+    # , code: 325
     # , rom: None
     # , var: None
     # , item: I.MAP_29
@@ -2694,7 +2714,7 @@ LOCATION_LIST_DICT: list[dict[str, Any]] = [
     # , setting: flamm
     # },
     # { name: L.FLAMM_ITEM_30
-    # , code: 323
+    # , code: 326
     # , rom: None
     # , var: None
     # , item: I.MAP_30
@@ -2702,7 +2722,7 @@ LOCATION_LIST_DICT: list[dict[str, Any]] = [
     # , setting: flamm
     # },
     # { name: L.FLAMM_ITEM_31
-    # , code: 324
+    # , code: 327
     # , rom: None
     # , var: None
     # , item: I.MAP_31
@@ -2710,7 +2730,7 @@ LOCATION_LIST_DICT: list[dict[str, Any]] = [
     # , setting: flamm
     # },
     # { name: L.FLAMM_ITEM_32
-    # , code: 325
+    # , code: 328
     # , rom: None
     # , var: None
     # , item: I.MAP_32
@@ -2718,7 +2738,7 @@ LOCATION_LIST_DICT: list[dict[str, Any]] = [
     # , setting: flamm
     # },
     # { name: L.FLAMM_ITEM_33
-    # , code: 326
+    # , code: 329
     # , rom: None
     # , var: None
     # , item: I.MAP_33
@@ -2726,7 +2746,7 @@ LOCATION_LIST_DICT: list[dict[str, Any]] = [
     # , setting: flamm
     # },
     # { name: L.FLAMM_ITEM_34
-    # , code: 327
+    # , code: 330
     # , rom: None
     # , var: None
     # , item: I.MAP_34
@@ -2734,7 +2754,7 @@ LOCATION_LIST_DICT: list[dict[str, Any]] = [
     # , setting: flamm
     # },
     # { name: L.FLAMM_ITEM_35
-    # , code: 328
+    # , code: 331
     # , rom: None
     # , var: None
     # , item: I.MAP_35
@@ -2742,7 +2762,7 @@ LOCATION_LIST_DICT: list[dict[str, Any]] = [
     # , setting: flamm
     # },
     # { name: L.FLAMM_ITEM_36
-    # , code: 329
+    # , code: 332
     # , rom: None
     # , var: None
     # , item: I.MAP_36
@@ -2750,7 +2770,7 @@ LOCATION_LIST_DICT: list[dict[str, Any]] = [
     # , setting: flamm
     # },
     # { name: L.FLAMM_ITEM_37
-    # , code: 330
+    # , code: 333
     # , rom: None
     # , var: None
     # , item: I.MAP_37
@@ -2758,7 +2778,7 @@ LOCATION_LIST_DICT: list[dict[str, Any]] = [
     # , setting: flamm
     # },
     # { name: L.FLAMM_ITEM_38
-    # , code: 331
+    # , code: 334
     # , rom: None
     # , var: None
     # , item: I.MAP_38
@@ -2766,7 +2786,7 @@ LOCATION_LIST_DICT: list[dict[str, Any]] = [
     # , setting: flamm
     # },
     # { name: L.FLAMM_ITEM_39
-    # , code: 332
+    # , code: 335
     # , rom: None
     # , var: None
     # , item: I.MAP_39
@@ -2774,7 +2794,7 @@ LOCATION_LIST_DICT: list[dict[str, Any]] = [
     # , setting: flamm
     # },
     # { name: L.FLAMM_ITEM_40
-    # , code: 333
+    # , code: 336
     # , rom: None
     # , var: None
     # , item: I.MAP_40
@@ -2782,7 +2802,7 @@ LOCATION_LIST_DICT: list[dict[str, Any]] = [
     # , setting: flamm
     # },
     # { name: L.FLAMM_ITEM_41
-    # , code: 334
+    # , code: 337
     # , rom: None
     # , var: None
     # , item: I.MAP_41
@@ -2790,7 +2810,7 @@ LOCATION_LIST_DICT: list[dict[str, Any]] = [
     # , setting: flamm
     # },
     # { name: L.FLAMM_ITEM_42
-    # , code: 335
+    # , code: 338
     # , rom: None
     # , var: None
     # , item: I.MAP_42
@@ -2798,7 +2818,7 @@ LOCATION_LIST_DICT: list[dict[str, Any]] = [
     # , setting: flamm
     # },
     # { name: L.FLAMM_ITEM_43
-    # , code: 336
+    # , code: 339
     # , rom: None
     # , var: None
     # , item: I.MAP_43
@@ -2806,7 +2826,7 @@ LOCATION_LIST_DICT: list[dict[str, Any]] = [
     # , setting: flamm
     # },
     # { name: L.FLAMM_ITEM_44
-    # , code: 337
+    # , code: 340
     # , rom: None
     # , var: None
     # , item: I.MAP_44
@@ -2814,7 +2834,7 @@ LOCATION_LIST_DICT: list[dict[str, Any]] = [
     # , setting: flamm
     # },
     # { name: L.FLAMM_ITEM_45
-    # , code: 338
+    # , code: 341
     # , rom: None
     # , var: None
     # , item: I.MAP_45
@@ -2822,7 +2842,7 @@ LOCATION_LIST_DICT: list[dict[str, Any]] = [
     # , setting: flamm
     # },
     # { name: L.FLAMM_ITEM_46
-    # , code: 339
+    # , code: 342
     # , rom: None
     # , var: None
     # , item: I.MAP_46
@@ -2830,7 +2850,7 @@ LOCATION_LIST_DICT: list[dict[str, Any]] = [
     # , setting: flamm
     # },
     # { name: L.FLAMM_ITEM_47
-    # , code: 340
+    # , code: 343
     # , rom: None
     # , var: None
     # , item: I.MAP_47
@@ -2838,7 +2858,7 @@ LOCATION_LIST_DICT: list[dict[str, Any]] = [
     # , setting: flamm
     # },
     # { name: L.FLAMM_ITEM_48
-    # , code: 341
+    # , code: 344
     # , rom: None
     # , var: None
     # , item: I.MAP_48
@@ -2846,7 +2866,7 @@ LOCATION_LIST_DICT: list[dict[str, Any]] = [
     # , setting: flamm
     # },
     # { name: L.FLEEP_MAP_REVEAL_01
-    # , code: 342
+    # , code: 345
     # , rom: None
     # , var: None
     # , item: I.GOLD_BAR
@@ -2854,7 +2874,7 @@ LOCATION_LIST_DICT: list[dict[str, Any]] = [
     # , setting: treasure_spot
     # },
     # { name: L.FLEEP_MAP_REVEAL_02
-    # , code: 343
+    # , code: 346
     # , rom: None
     # , var: None
     # , item: I.CATCH_CARD_WELDERBERG
@@ -2862,7 +2882,7 @@ LOCATION_LIST_DICT: list[dict[str, Any]] = [
     # , setting: treasure_spot
     # },
     # { name: L.FLEEP_MAP_REVEAL_03
-    # , code: 344
+    # , code: 347
     # , rom: None
     # , var: None
     # , item: I.ULTRA_SHROOM_SHAKE
@@ -2870,7 +2890,7 @@ LOCATION_LIST_DICT: list[dict[str, Any]] = [
     # , setting: treasure_spot
     # },
     # { name: L.FLEEP_MAP_REVEAL_04
-    # , code: 345
+    # , code: 348
     # , rom: None
     # , var: None
     # , item: I.CATCH_CARD_KING_SAMMER
@@ -2878,7 +2898,7 @@ LOCATION_LIST_DICT: list[dict[str, Any]] = [
     # , setting: treasure_spot
     # },
     # { name: L.FLEEP_MAP_REVEAL_05
-    # , code: 346
+    # , code: 349
     # , rom: None
     # , var: None
     # , item: I.CATCH_CARD_O_CHUNKS
@@ -2886,7 +2906,7 @@ LOCATION_LIST_DICT: list[dict[str, Any]] = [
     # , setting: treasure_spot
     # },
     # # { name: L.FLEEP_MAP_REVEAL_06
-    # # , code: 347
+    # # , code: 350
     # # , rom: None
     # # , var: None
     # # , item: I.CATCH_CARD_BESTOVIUS
@@ -2894,7 +2914,7 @@ LOCATION_LIST_DICT: list[dict[str, Any]] = [
     # # , setting: treasure_spot
     # # },
     # # { name: L.FLEEP_MAP_REVEAL_07
-    # # , code: 348
+    # # , code: 351
     # # , rom: None
     # # , var: None
     # # , item: I.GOLDEN_LEAF
@@ -2902,7 +2922,7 @@ LOCATION_LIST_DICT: list[dict[str, Any]] = [
     # # , setting: treasure_spot
     # # },
     # # { name: L.FLEEP_MAP_REVEAL_08
-    # # , code: 349
+    # # , code: 352
     # # , rom: None
     # # , var: None
     # # , item: I.CATCH_CARD_BROBOT_L_TYPE
@@ -2910,7 +2930,7 @@ LOCATION_LIST_DICT: list[dict[str, Any]] = [
     # # , setting: treasure_spot
     # # },
     # # { name: L.FLEEP_MAP_REVEAL_09
-    # # , code: 350
+    # # , code: 353
     # # , rom: None
     # # , var: None
     # # , item: I.GOLD_BAR_X3
@@ -2918,7 +2938,7 @@ LOCATION_LIST_DICT: list[dict[str, Any]] = [
     # # , setting: treasure_spot
     # # },
     # # { name: L.FLEEP_MAP_REVEAL_10
-    # # , code: 351
+    # # , code: 354
     # # , rom: None
     # # , var: None
     # # , item: I.CATCH_CARD_FRACKTAIL
@@ -2926,7 +2946,7 @@ LOCATION_LIST_DICT: list[dict[str, Any]] = [
     # # , setting: treasure_spot
     # # },
     # # { name: L.FLEEP_MAP_REVEAL_11
-    # # , code: 352
+    # # , code: 355
     # # , rom: None
     # # , var: None
     # # , item: I.CATCH_CARD_MERLUMINA
@@ -2934,7 +2954,7 @@ LOCATION_LIST_DICT: list[dict[str, Any]] = [
     # # , setting: treasure_spot
     # # },
     # # { name: L.FLEEP_MAP_REVEAL_12
-    # # , code: 353
+    # # , code: 356
     # # , rom: None
     # # , var: None
     # # , item: I.SHOOTING_STAR
@@ -2942,7 +2962,7 @@ LOCATION_LIST_DICT: list[dict[str, Any]] = [
     # # , setting: treasure_spot
     # # },
     # # { name: L.FLEEP_MAP_REVEAL_13
-    # # , code: 354
+    # # , code: 357
     # # , rom: None
     # # , var: None
     # # , item: I.CATCH_CARD_SP
@@ -2950,7 +2970,7 @@ LOCATION_LIST_DICT: list[dict[str, Any]] = [
     # # , setting: treasure_spot
     # # },
     # # { name: L.FLEEP_MAP_REVEAL_14
-    # # , code: 355
+    # # , code: 358
     # # , rom: None
     # # , var: None
     # # , item: I.CATCH_CARD_GNIP
@@ -2958,7 +2978,7 @@ LOCATION_LIST_DICT: list[dict[str, Any]] = [
     # # , setting: treasure_spot
     # # },
     # { name: L.FLEEP_MAP_REVEAL_15
-    # , code: 356
+    # , code: 359
     # , rom: None
     # , var: None
     # , item: I.CATCH_CARD_MIMI
@@ -2966,7 +2986,7 @@ LOCATION_LIST_DICT: list[dict[str, Any]] = [
     # , setting: treasure_spot
     # },
     # { name: L.FLEEP_MAP_REVEAL_16
-    # , code: 357
+    # , code: 360
     # , rom: None
     # , var: None
     # , item: I.GOLD_BAR_X3
@@ -2974,7 +2994,7 @@ LOCATION_LIST_DICT: list[dict[str, Any]] = [
     # , setting: treasure_spot
     # },
     # { name: L.FLEEP_MAP_REVEAL_17
-    # , code: 358
+    # , code: 361
     # , rom: None
     # , var: None
     # , item: I.DRIED_SHROOM
@@ -2982,7 +3002,7 @@ LOCATION_LIST_DICT: list[dict[str, Any]] = [
     # , setting: treasure_spot
     # },
     # # { name: L.FLEEP_MAP_REVEAL_18
-    # # , code: 359
+    # # , code: 362
     # # , rom: None
     # # , var: None
     # # , item: I.CATCH_CARD_BACK_CURSYA
@@ -2990,7 +3010,7 @@ LOCATION_LIST_DICT: list[dict[str, Any]] = [
     # # , setting: treasure_spot
     # # },
     # # { name: L.FLEEP_MAP_REVEAL_19
-    # # , code: 360
+    # # , code: 363
     # # , rom: None
     # # , var: None
     # # , item: I.ULTRA_SHROOM_SHAKE
@@ -2998,7 +3018,7 @@ LOCATION_LIST_DICT: list[dict[str, Any]] = [
     # # , setting: treasure_spot
     # # },
     # # { name: L.FLEEP_MAP_REVEAL_20
-    # # , code: 361
+    # # , code: 364
     # # , rom: None
     # # , var: None
     # # , item: I.CATCH_CARD_BIG_BLOOPER
@@ -3006,7 +3026,7 @@ LOCATION_LIST_DICT: list[dict[str, Any]] = [
     # # , setting: treasure_spot
     # # },
     # # { name: L.FLEEP_MAP_REVEAL_21
-    # # , code: 362
+    # # , code: 365
     # # , rom: None
     # # , var: None
     # # , item: I.POWER_PLUS
@@ -3014,7 +3034,7 @@ LOCATION_LIST_DICT: list[dict[str, Any]] = [
     # # , setting: treasure_spot
     # # },
     # # { name: L.FLEEP_MAP_REVEAL_22
-    # # , code: 363
+    # # , code: 366
     # # , rom: None
     # # , var: None
     # # , item: I.CATCH_CARD_DIMENTIO
@@ -3022,7 +3042,7 @@ LOCATION_LIST_DICT: list[dict[str, Any]] = [
     # # , setting: treasure_spot
     # # },
     # # { name: L.FLEEP_MAP_REVEAL_23
-    # # , code: 364
+    # # , code: 367
     # # , rom: None
     # # , var: None
     # # , item: I.CATCH_CARD_TIPTRON
@@ -3030,7 +3050,7 @@ LOCATION_LIST_DICT: list[dict[str, Any]] = [
     # # , setting: treasure_spot
     # # },
     # # { name: L.FLEEP_MAP_REVEAL_24
-    # # , code: 365
+    # # , code: 368
     # # , rom: None
     # # , var: None
     # # , item: I.CATCH_CARD_FRANCIS
@@ -3038,7 +3058,7 @@ LOCATION_LIST_DICT: list[dict[str, Any]] = [
     # # , setting: treasure_spot
     # # },
     # # { name: L.FLEEP_MAP_REVEAL_25
-    # # , code: 366
+    # # , code: 369
     # # , rom: None
     # # , var: None
     # # , item: I.CATCH_CARD_SQUIRPS
@@ -3046,7 +3066,7 @@ LOCATION_LIST_DICT: list[dict[str, Any]] = [
     # # , setting: treasure_spot
     # # },
     # # { name: L.FLEEP_MAP_REVEAL_26
-    # # , code: 367
+    # # , code: 370
     # # , rom: None
     # # , var: None
     # # , item: I.CATCH_CARD_HOOLIGON
@@ -3054,7 +3074,7 @@ LOCATION_LIST_DICT: list[dict[str, Any]] = [
     # # , setting: treasure_spot
     # # },
     # # { name: L.FLEEP_MAP_REVEAL_27
-    # # , code: 368
+    # # , code: 371
     # # , rom: None
     # # , var: None
     # # , item: I.CATCH_CARD_MR_L
@@ -3062,7 +3082,7 @@ LOCATION_LIST_DICT: list[dict[str, Any]] = [
     # # , setting: treasure_spot
     # # },
     # # { name: L.FLEEP_MAP_REVEAL_28
-    # # , code: 369
+    # # , code: 372
     # # , rom: None
     # # , var: None
     # # , item: I.CATCH_CARD_BROBOT
@@ -3070,7 +3090,7 @@ LOCATION_LIST_DICT: list[dict[str, Any]] = [
     # # , setting: treasure_spot
     # # },
     # # { name: L.FLEEP_MAP_REVEAL_29
-    # # , code: 370
+    # # , code: 373
     # # , rom: None
     # # , var: None
     # # , item: I.CATCH_CARD_MUTH
@@ -3078,7 +3098,7 @@ LOCATION_LIST_DICT: list[dict[str, Any]] = [
     # # , setting: treasure_spot
     # # },
     # # { name: L.FLEEP_MAP_REVEAL_30
-    # # , code: 371
+    # # , code: 374
     # # , rom: None
     # # , var: None
     # # , item: I.CATCH_CARD_FLINT_CRAGLEY
@@ -3086,7 +3106,7 @@ LOCATION_LIST_DICT: list[dict[str, Any]] = [
     # # , setting: treasure_spot
     # # },
     # # { name: L.FLEEP_MAP_REVEAL_31
-    # # , code: 372
+    # # , code: 375
     # # , rom: None
     # # , var: None
     # # , item: I.FIRE_BURST
@@ -3094,7 +3114,7 @@ LOCATION_LIST_DICT: list[dict[str, Any]] = [
     # # , setting: treasure_spot
     # # },
     # # { name: L.FLEEP_MAP_REVEAL_32
-    # # , code: 373
+    # # , code: 376
     # # , rom: None
     # # , var: None
     # # , item: I.FIRE_BURST
@@ -3102,7 +3122,7 @@ LOCATION_LIST_DICT: list[dict[str, Any]] = [
     # # , setting: treasure_spot
     # # },
     # # { name: L.FLEEP_MAP_REVEAL_33
-    # # , code: 374
+    # # , code: 377
     # # , rom: None
     # # , var: None
     # # , item: I.ULTRA_SHROOM_SHAKE
@@ -3110,7 +3130,7 @@ LOCATION_LIST_DICT: list[dict[str, Any]] = [
     # # , setting: treasure_spot
     # # },
     # # { name: L.FLEEP_MAP_REVEAL_34
-    # # , code: 375
+    # # , code: 378
     # # , rom: None
     # # , var: None
     # # , item: I.SHOOTING_STAR
@@ -3118,7 +3138,7 @@ LOCATION_LIST_DICT: list[dict[str, Any]] = [
     # # , setting: treasure_spot
     # # },
     # # { name: L.FLEEP_MAP_REVEAL_35
-    # # , code: 376
+    # # , code: 379
     # # , rom: None
     # # , var: None
     # # , item: I.CATCH_CARD_HORNFELS_MONZO
@@ -3126,7 +3146,7 @@ LOCATION_LIST_DICT: list[dict[str, Any]] = [
     # # , setting: treasure_spot
     # # },
     # # { name: L.FLEEP_MAP_REVEAL_36
-    # # , code: 377
+    # # , code: 380
     # # , rom: None
     # # , var: None
     # # , item: I.POISON_SHROOM
@@ -3134,7 +3154,7 @@ LOCATION_LIST_DICT: list[dict[str, Any]] = [
     # # , setting: treasure_spot
     # # },
     # # { name: L.FLEEP_MAP_REVEAL_37
-    # # , code: 378
+    # # , code: 381
     # # , rom: None
     # # , var: None
     # # , item: I.CATCH_CARD_KING_CROACUS
@@ -3142,7 +3162,7 @@ LOCATION_LIST_DICT: list[dict[str, Any]] = [
     # # , setting: treasure_spot
     # # },
     # # { name: L.FLEEP_MAP_REVEAL_38
-    # # , code: 379
+    # # , code: 382
     # # , rom: None
     # # , var: None
     # # , item: I.CATCH_CARD_JAYDES
@@ -3150,7 +3170,7 @@ LOCATION_LIST_DICT: list[dict[str, Any]] = [
     # # , setting: treasure_spot
     # # },
     # # { name: L.FLEEP_MAP_REVEAL_39
-    # # , code: 380
+    # # , code: 383
     # # , rom: None
     # # , var: None
     # # , item: I.CATCH_CARD_UNDERHAND
@@ -3158,7 +3178,7 @@ LOCATION_LIST_DICT: list[dict[str, Any]] = [
     # # , setting: treasure_spot
     # # },
     # # { name: L.FLEEP_MAP_REVEAL_40
-    # # , code: 381
+    # # , code: 384
     # # , rom: None
     # # , var: None
     # # , item: I.TRIAL_STEW
@@ -3166,7 +3186,7 @@ LOCATION_LIST_DICT: list[dict[str, Any]] = [
     # # , setting: treasure_spot
     # # },
     # # { name: L.FLEEP_MAP_REVEAL_41
-    # # , code: 382
+    # # , code: 385
     # # , rom: None
     # # , var: None
     # # , item: I.CATCH_CARD_THE_UNDERCHOMP
@@ -3174,7 +3194,7 @@ LOCATION_LIST_DICT: list[dict[str, Any]] = [
     # # , setting: treasure_spot
     # # },
     # # { name: L.FLEEP_MAP_REVEAL_42
-    # # , code: 383
+    # # , code: 386
     # # , rom: None
     # # , var: None
     # # , item: I.GOLD_BAR_X3
@@ -3182,7 +3202,7 @@ LOCATION_LIST_DICT: list[dict[str, Any]] = [
     # # , setting: treasure_spot
     # # },
     # # { name: L.FLEEP_MAP_REVEAL_43
-    # # , code: 384
+    # # , code: 387
     # # , rom: None
     # # , var: None
     # # , item: I.CATCH_CARD_GRAMBI
@@ -3190,7 +3210,7 @@ LOCATION_LIST_DICT: list[dict[str, Any]] = [
     # # , setting: treasure_spot
     # # },
     # # { name: L.FLEEP_MAP_REVEAL_44
-    # # , code: 385
+    # # , code: 388
     # # , rom: None
     # # , var: None
     # # , item: I.CATCH_CARD_LUVBI
@@ -3198,7 +3218,7 @@ LOCATION_LIST_DICT: list[dict[str, Any]] = [
     # # , setting: treasure_spot
     # # },
     # # { name: L.FLEEP_MAP_REVEAL_45
-    # # , code: 386
+    # # , code: 389
     # # , rom: None
     # # , var: None
     # # , item: I.CATCH_CARD_BONECHILL
@@ -3206,7 +3226,7 @@ LOCATION_LIST_DICT: list[dict[str, Any]] = [
     # # , setting: treasure_spot
     # # },
     # # { name: L.FLEEP_MAP_REVEAL_46
-    # # , code: 387
+    # # , code: 390
     # # , rom: None
     # # , var: None
     # # , item: I.CATCH_CARD_NASTASIA
@@ -3214,7 +3234,7 @@ LOCATION_LIST_DICT: list[dict[str, Any]] = [
     # # , setting: treasure_spot
     # # },
     # # { name: L.FLEEP_MAP_REVEAL_47
-    # # , code: 388
+    # # , code: 391
     # # , rom: None
     # # , var: None
     # # , item: I.CATCH_CARD_SUPER_DIMENTIO
@@ -3222,7 +3242,7 @@ LOCATION_LIST_DICT: list[dict[str, Any]] = [
     # # , setting: treasure_spot
     # # },
     # # { name: L.FLEEP_MAP_REVEAL_48
-    # # , code: 389
+    # # , code: 392
     # # , rom: None
     # # , var: None
     # # , item: I.CATCH_CARD_COUNT_BLECK

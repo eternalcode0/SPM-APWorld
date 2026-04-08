@@ -2,6 +2,7 @@ from enum import IntEnum, auto
 
 GAME = "Super Paper Mario"
 
+
 class RandomizationType(IntEnum):
     DISABLED = auto()
     """The check is not added to the multiworld in any way"""
@@ -12,8 +13,8 @@ class RandomizationType(IntEnum):
     """
     VANILLA_EVENT = auto()
     """
-    The location has its vanilla item but is only added to the multiworld via an event.
-    Good for story progression or checks that don't make sense as an item such as unlocking the boat or royal stickers.
+    The location has its vanilla item but is only added to the multiworld via region.add_event.
+    Good for story progression or checks.
     """
     SHUFFLED = auto()
     """
