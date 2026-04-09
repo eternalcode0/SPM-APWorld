@@ -16,7 +16,9 @@ class ItemData:
     name: I
     code: int = field(compare=False, hash=False)
     """A unique id among all other SPM items. Should match the id given to the rom. Short value"""
-    classification: Callable[[SuperPaperMarioOptions], ItemClassification] | ItemClassification = field(compare=False)
+    classification: Callable[[SuperPaperMarioOptions], ItemClassification] | ItemClassification = field(
+        compare=False, default=ItemClassification.filler
+    )
     """What item classification should this be?"""
     amount: Callable[["SuperPaperMarioWorld"], int] | int = field(default=1, compare=False)
     """How many of the item should be in the pool? positive/zero/None only.
