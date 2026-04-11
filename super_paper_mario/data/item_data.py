@@ -1,14 +1,12 @@
 from collections.abc import Callable
 from dataclasses import dataclass, field
-from typing import TYPE_CHECKING, Any
+from typing import Any
 
 from BaseClasses import ItemClassification
 
 from ..names.item_names import ItemName as I
-from ..options import ChapterDoorAccess, SuperPaperMarioOptions
-
-if TYPE_CHECKING:
-    from .. import SuperPaperMarioWorld
+from ..options import SuperPaperMarioOptions
+from ..types import SPMWorldBase
 
 
 @dataclass(frozen=True)
@@ -20,7 +18,7 @@ class ItemData:
         compare=False, default=ItemClassification.filler
     )
     """What item classification should this be?"""
-    amount: Callable[["SuperPaperMarioWorld"], int] | int = field(default=1, compare=False)
+    amount: Callable[[SPMWorldBase], int] | int = field(default=1, compare=False)
     """How many of the item should be in the pool? positive/zero/None only.
     None will handle as if it's a filler item"""
     groups: frozenset[str] = field(compare=False, default=frozenset())
@@ -62,30 +60,30 @@ GROUP_C8_ITEMS = "Chapter 8 Items"
 
 
 # Amounts
-def heart_amount(world: "SuperPaperMarioWorld") -> int:
+def heart_amount(world: SPMWorldBase) -> int:
     return 1 if world.options.shuffle_pure_hearts else 0  # else pure hearts are placed via RT.VANILLA_WORLD
 
 
-def fetch_amount(world: "SuperPaperMarioWorld") -> int:
+def fetch_amount(world: SPMWorldBase) -> int:
     return 1 if world.options.trading_quest else 0
 
 
-def chapter_key_amount(world: "SuperPaperMarioWorld") -> int:
+def chapter_key_amount(world: SPMWorldBase) -> int:
     return 0
     # return 1 if world.options.chapter_door_access.value == ChapterDoorAccess.option_chapter_locked else 0
 
 
-def subchapter_key_amount(world: "SuperPaperMarioWorld") -> int:
+def subchapter_key_amount(world: SPMWorldBase) -> int:
     return 0
     # return 1 if world.options.chapter_door_access.value == ChapterDoorAccess.option_subchapters_locked else 0
 
 
-def ability_amount(world: "SuperPaperMarioWorld") -> int:
+def ability_amount(world: SPMWorldBase) -> int:
     return 1 if world.options.ability_shuffle else 0
 
 
-# def maps_amount(world: "SuperPaperMarioWorld") -> int:
-#     return 1 if world.options.treasure_maps.map_items_in_pool else 0
+def maps_amount(world: SPMWorldBase) -> int:
+    return 1 if world.options.treasure_maps.map_items_in_pool else 0
 
 
 ITEM_LIST_DICT: list[dict[str, Any]] = [
@@ -1169,108 +1167,108 @@ ITEM_LIST_DICT: list[dict[str, Any]] = [
     # { name: "Card Bag", code: 233 },
     #endreion
     #region Fleep Maps
-    # { name: I.MAP_1
-    # , code: 234
-    # , classification: ItemClassification.progression
-    # , amount: maps_amount
-    # , groups: {GROUP_MAP}
-    # },
-    # { name: I.MAP_2
-    # , code: 235
-    # , classification: ItemClassification.progression
-    # , amount: maps_amount
-    # , groups: {GROUP_MAP}
-    # },
-    # { name: I.MAP_3
-    # , code: 236
-    # , classification: ItemClassification.progression
-    # , amount: maps_amount
-    # , groups: {GROUP_MAP}
-    # },
-    # { name: I.MAP_4
-    # , code: 237
-    # , classification: ItemClassification.progression
-    # , amount: maps_amount
-    # , groups: {GROUP_MAP}
-    # },
-    # { name: I.MAP_5
-    # , code: 238
-    # , classification: ItemClassification.progression
-    # , amount: maps_amount
-    # , groups: {GROUP_MAP}
-    # },
-    # { name: I.MAP_6
-    # , code: 239
-    # , classification: ItemClassification.progression
-    # , amount: maps_amount
-    # , groups: {GROUP_MAP}
-    # },
-    # { name: I.MAP_7
-    # , code: 240
-    # , classification: ItemClassification.progression
-    # , amount: maps_amount
-    # , groups: {GROUP_MAP}
-    # },
-    # { name: I.MAP_8
-    # , code: 241
-    # , classification: ItemClassification.progression
-    # , amount: maps_amount
-    # , groups: {GROUP_MAP}
-    # },
-    # { name: I.MAP_9
-    # , code: 242
-    # , classification: ItemClassification.progression
-    # , amount: maps_amount
-    # , groups: {GROUP_MAP}
-    # },
-    # { name: I.MAP_10
-    # , code: 243
-    # , classification: ItemClassification.progression
-    # , amount: maps_amount
-    # , groups: {GROUP_MAP}
-    # },
-    # { name: I.MAP_11
-    # , code: 244
-    # , classification: ItemClassification.progression
-    # , amount: maps_amount
-    # , groups: {GROUP_MAP}
-    # },
-    # { name: I.MAP_12
-    # , code: 245
-    # , classification: ItemClassification.progression
-    # , amount: maps_amount
-    # , groups: {GROUP_MAP}
-    # },
-    # { name: I.MAP_13
-    # , code: 246
-    # , classification: ItemClassification.progression
-    # , amount: maps_amount
-    # , groups: {GROUP_MAP}
-    # },
-    # { name: I.MAP_14
-    # , code: 247
-    # , classification: ItemClassification.progression
-    # , amount: maps_amount
-    # , groups: {GROUP_MAP}
-    # },
-    # { name: I.MAP_15
-    # , code: 248
-    # , classification: ItemClassification.progression
-    # , amount: maps_amount
-    # , groups: {GROUP_MAP}
-    # },
-    # { name: I.MAP_16
-    # , code: 249
-    # , classification: ItemClassification.progression
-    # , amount: maps_amount
-    # , groups: {GROUP_MAP}
-    # },
-    # { name: I.MAP_17
-    # , code: 250
-    # , classification: ItemClassification.progression
-    # , amount: maps_amount
-    # , groups: {GROUP_MAP}
-    # },
+    { name: I.MAP_1
+    , code: 234
+    , classification: ItemClassification.progression
+    , amount: maps_amount
+    , groups: {GROUP_MAP}
+    },
+    { name: I.MAP_2
+    , code: 235
+    , classification: ItemClassification.progression
+    , amount: maps_amount
+    , groups: {GROUP_MAP}
+    },
+    { name: I.MAP_3
+    , code: 236
+    , classification: ItemClassification.progression
+    , amount: maps_amount
+    , groups: {GROUP_MAP}
+    },
+    { name: I.MAP_4
+    , code: 237
+    , classification: ItemClassification.progression
+    , amount: maps_amount
+    , groups: {GROUP_MAP}
+    },
+    { name: I.MAP_5
+    , code: 238
+    , classification: ItemClassification.progression
+    , amount: maps_amount
+    , groups: {GROUP_MAP}
+    },
+    { name: I.MAP_6
+    , code: 239
+    , classification: ItemClassification.progression
+    , amount: maps_amount
+    , groups: {GROUP_MAP}
+    },
+    { name: I.MAP_7
+    , code: 240
+    , classification: ItemClassification.progression
+    , amount: maps_amount
+    , groups: {GROUP_MAP}
+    },
+    { name: I.MAP_8
+    , code: 241
+    , classification: ItemClassification.progression
+    , amount: maps_amount
+    , groups: {GROUP_MAP}
+    },
+    { name: I.MAP_9
+    , code: 242
+    , classification: ItemClassification.progression
+    , amount: maps_amount
+    , groups: {GROUP_MAP}
+    },
+    { name: I.MAP_10
+    , code: 243
+    , classification: ItemClassification.progression
+    , amount: maps_amount
+    , groups: {GROUP_MAP}
+    },
+    { name: I.MAP_11
+    , code: 244
+    , classification: ItemClassification.progression
+    , amount: maps_amount
+    , groups: {GROUP_MAP}
+    },
+    { name: I.MAP_12
+    , code: 245
+    , classification: ItemClassification.progression
+    , amount: maps_amount
+    , groups: {GROUP_MAP}
+    },
+    { name: I.MAP_13
+    , code: 246
+    , classification: ItemClassification.progression
+    , amount: maps_amount
+    , groups: {GROUP_MAP}
+    },
+    { name: I.MAP_14
+    , code: 247
+    , classification: ItemClassification.progression
+    , amount: maps_amount
+    , groups: {GROUP_MAP}
+    },
+    { name: I.MAP_15
+    , code: 248
+    , classification: ItemClassification.progression
+    , amount: maps_amount
+    , groups: {GROUP_MAP}
+    },
+    { name: I.MAP_16
+    , code: 249
+    , classification: ItemClassification.progression
+    , amount: maps_amount
+    , groups: {GROUP_MAP}
+    },
+    { name: I.MAP_17
+    , code: 250
+    , classification: ItemClassification.progression
+    , amount: maps_amount
+    , groups: {GROUP_MAP}
+    },
     # { name: I.MAP_18
     # , code: 251
     # , classification: ItemClassification.progression

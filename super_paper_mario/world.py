@@ -1,54 +1,30 @@
 import logging
-from typing import Any, ClassVar, TextIO
+from typing import Any, TextIO
 
-from BaseClasses import Item, ItemClassification, Region
+from BaseClasses import Item, ItemClassification, Location, Region
 from Options import Option, Visibility
-from settings import Group, UserFilePath
-from worlds.AutoWorld import WebWorld, World
 
 from . import items, patch, rules
-from .data import GAME
-from .locations import LOCATION_GROUP_MAP, LOCATION_NAME_TO_ID, SPMLocation, create_all_locations, get_location_map
+from .locations import LOCATION_GROUP_MAP, LOCATION_NAME_TO_ID, create_all_locations, get_location_map
 from .names import ItemName, LocationName, RegionName
-from .options import FlopsidePitAccess, PitAccess, SuperPaperMarioOptions
+from .options import FlopsidePitAccess, PitAccess
 from .regions import create_regions, get_region_map
-from .web_world import SuperPaperMarioWebWorld
+from .types import GAME, SPMWorldBase
 
 logger = logging.getLogger(__name__)
-
-
-class SuperPaperMarioSettings(Group):
-    class DolphinPath(UserFilePath):
-        """The location of the Dolphin you want to auto launch patched ROMs with"""
-
-        is_exe = True
-        description = "Dolphin Executable"
-
-    class RomFile(UserFilePath):
-        """File name of the Super Paper Mario US0 rom"""
-
-        copy_to = "SuperPaperMario-US0.wbfs"
-        description = "Super Paper Mario US0 ROM File"
-
-    dolphin_path: DolphinPath = DolphinPath(None)
-    rom_file: RomFile = RomFile(RomFile.copy_to)
-    rom_start: bool = True
 
 
 # TODO: Explore using CachedRuleBuilderWorld.
 # Last test when rules were just flip/flopside & chapter 1, the fuzzer was slower with the following settings:
 # python fuzz.py -g super_paper_mario -j 8 -r 100 -m fuzz.meta.yaml -n 10
-class SuperPaperMarioWorld(World):
+class SuperPaperMarioWorld(SPMWorldBase):
     """Super Paper Mario is a 2007 action role-playing game developed by Intelligent Systems and published by Nintendo
     for the Wii. The game follows Mario, Peach, Bowser, and Luigi as they attempt to collect Pure Hearts and stop Count
     Bleck and his minions from destroying the universe."""
 
-    # Generic AP World stuffs
-    settings: ClassVar[SuperPaperMarioSettings]
-    options_dataclass = SuperPaperMarioOptions
-    options: SuperPaperMarioOptions
-    web: ClassVar[WebWorld] = SuperPaperMarioWebWorld()
     game = GAME
+
+    # Generic AP World stuffs
     item_name_to_id = items.ITEM_NAME_TO_ID
     location_name_to_id = LOCATION_NAME_TO_ID
     origin_region_name = RegionName.MAC02_L_TOWER
@@ -57,7 +33,7 @@ class SuperPaperMarioWorld(World):
 
     # SPM specific stuffs
     rm: dict[RegionName, Region]
-    lm: dict[LocationName, SPMLocation]
+    lm: dict[LocationName, Location]
     slot_data = {}
     disabled_locations: set[str] = set()
     filler_options: dict[ItemName, int] = {}
@@ -218,7 +194,6 @@ class SuperPaperMarioWorld(World):
             show_entrance_names=True,
             regions_to_highlight=set(state.reachable_regions[self.player]),
         )
-        pass
 
     # endregion
 

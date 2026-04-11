@@ -17,7 +17,6 @@ from entrance_rando import randomize_entrances as er_randomize_entrances
 from Options import Toggle
 from rule_builder.rules import False_, Has, HasAll, HasAny, HasGroupUnique, OptionFilter, Rule, True_
 
-from .data import GAME
 from .names import EventName as E
 from .names import ItemName as I
 from .names import LocationName as L
@@ -30,6 +29,7 @@ from .options import (
     ObscureTricks,
     ShuffleAbilities,
 )
+from .types import GAME
 
 if typing.TYPE_CHECKING:
     from . import SuperPaperMarioWorld
@@ -1697,6 +1697,9 @@ LOCATION_RULES = [
     { loc: L.C11_SECOND_OPEN_ITEM_INSIDE_BESTOVIUS_ROOM
     , rule: RuleHolder.can_flip
     },
+    { loc: L.FLEEP_MAP_REVEAL_06
+    , rule: CanFleepTreasureSpot(I.MAP_6)
+    },
     #endregion
     #region Chapter 1-2
     { loc: L.C12_CHEST_IN_SHORTCUT
@@ -1712,6 +1715,12 @@ LOCATION_RULES = [
     { loc: L.C12_OPEN_ITEM_BEHIND_GREENS_BED
     , rule: RuleHolder.can_flip
     },
+    { loc: L.FLEEP_MAP_REVEAL_07
+    , rule: CanFleepTreasureSpot(I.MAP_7)
+    },
+    { loc: L.FLEEP_MAP_REVEAL_08
+    , rule: CanFleepTreasureSpot(I.MAP_8)
+    },
     #endregion
     #region Chapter 1-3
     { loc: L.C13_OPEN_ITEM_BEHIND_ROCK_IN_FIRST_ROOM
@@ -1722,6 +1731,12 @@ LOCATION_RULES = [
     },
     { loc: L.C13_OPEN_ITEM_BEHIND_ROCK_IN_SIXTH_ROOM
     , rule: RuleHolder.can_flip
+    },
+    { loc: L.FLEEP_MAP_REVEAL_09
+    , rule: CanFleepTreasureSpot(I.MAP_9)
+    },
+    { loc: L.FLEEP_MAP_REVEAL_10
+    , rule: CanFleepTreasureSpot(I.MAP_10)
     },
     #endregion
     #region Chapter 1-4
@@ -1738,6 +1753,9 @@ LOCATION_RULES = [
     },
     { loc: L.C14_OPEN_KEY_BEHIND_BLOCKS
     , rule: RuleHolder.can_flip
+    },
+    { loc: L.FLEEP_MAP_REVEAL_11
+    , rule: CanFleepTreasureSpot(I.MAP_11)
     },
     #endregion
     #region Chapter 2-1
@@ -1756,6 +1774,9 @@ LOCATION_RULES = [
     { loc: E.SWITCH_GLOAM_VALLEY_BACKGROUND
     , rule: RuleHolder.can_float | Has(I.PIXL_DASHELL)
     },
+    { loc: L.FLEEP_MAP_REVEAL_12
+    , rule: CanFleepTreasureSpot(I.MAP_12)
+    },
     #endregion
     #region Chapter 2-2
     { loc: L.C22_CHEST_ON_ROOF
@@ -1763,6 +1784,12 @@ LOCATION_RULES = [
     },
     { loc: L.C22_CHEST_ABOVE_SPIKE_ROOF
     , rule: RuleHolder.can_flip & (HasAny(I.PIXL_BOOMER, I.PIXL_CUDGE) | RuleHolder.can_fire)
+    },
+    { loc: L.FLEEP_MAP_REVEAL_13
+    , rule: CanFleepTreasureSpot(I.MAP_13)
+    },
+    { loc: L.FLEEP_MAP_REVEAL_14
+    , rule: CanFleepTreasureSpot(I.MAP_14)
     },
     #endregion
     #region Chapter 2-3
@@ -1774,6 +1801,9 @@ LOCATION_RULES = [
     },
     { loc: L.C23_STAR_BLOCK
     , rule: Has(E.OPEN_THE_RUBEE_VAULT)
+    },
+    { loc: L.FLEEP_MAP_REVEAL_15
+    , rule: CanFleepTreasureSpot(I.MAP_15)
     },
     #endregion
     #region Chapter 2-4

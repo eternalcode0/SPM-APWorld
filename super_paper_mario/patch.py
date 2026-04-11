@@ -2,16 +2,11 @@ import json
 import os
 import random
 import shutil
-from typing import TYPE_CHECKING
 
 from settings import get_settings
 from worlds.Files import APPatchExtension, APProcedurePatch, AutoPatchExtensionRegister
 
-from .data import GAME
-from .wit import WIT
-
-if TYPE_CHECKING:
-    from . import SuperPaperMarioWorld
+from .types import GAME, SPMWorldBase
 
 TMP_EXTRACT = "temp_spm"
 
@@ -54,14 +49,14 @@ class SPMPatchExtension(APPatchExtension):
     @staticmethod
     def patch_iso(spmpp: SPMProcedurePatch):
         options = json.loads(spmpp.get_file("options.json").decode("UTF-8"))
-        WIT.unpack_iso(get_settings()["super_paper_mario.world_options"].rom_file, TMP_EXTRACT)
+        # WIT.unpack_iso(get_settings()["super_paper_mario.world_options"].rom_file, TMP_EXTRACT)
         if options["randomize_enemies"]:
             SPMPatchExtension.randomize_enemies()
         if options["randomize_music"]:
             SPMPatchExtension.randomize_music()
         if options["practice_codes"]:
             SPMPatchExtension.apply_practice_codes()
-        WIT.pack_iso(TMP_EXTRACT, spmpp.file_path)
+        # WIT.pack_iso(TMP_EXTRACT, spmpp.file_path)
         shutil.rmtree(TMP_EXTRACT)
 
     @staticmethod
@@ -114,7 +109,7 @@ class SPMPatchExtension(APPatchExtension):
         )
 
 
-def output_patch(world: "SuperPaperMarioWorld", output_directory: str):
+def output_patch(world: SPMWorldBase, output_directory: str):
     options_dict = {
         "randomize_enemies": world.options.randomize_enemies.value,
         "randomize_music": world.options.randomize_music.value,

@@ -1,13 +1,9 @@
-from typing import TYPE_CHECKING
-
 from BaseClasses import ItemClassification, Location
 
 from . import items
-from .data import GAME, RandomizationType, location_data
+from .data import location_data
 from .names import ItemName, LocationName
-
-if TYPE_CHECKING:
-    from .world import SuperPaperMarioWorld
+from .types import RandomizationType, SPMLocation, SPMWorldBase
 
 BASE_LOCATION_ID = 4_998_000
 
@@ -22,15 +18,11 @@ LOCATION_GROUP_MAP = {
 }
 
 
-class SPMLocation(Location):
-    game = GAME
-
-
 def get_location_names_with_ids(location_names: list[LocationName]) -> dict[str, int]:
     return {location_name: LOCATION_NAME_TO_ID[location_name] for location_name in location_names}
 
 
-def create_all_locations(world: "SuperPaperMarioWorld") -> dict[ItemName, int]:
+def create_all_locations(world: SPMWorldBase) -> dict[ItemName, int]:
     # This also returns the filler weights
     filler: dict[ItemName, int] = {}
     region_map = world.rm
@@ -67,7 +59,7 @@ def create_all_locations(world: "SuperPaperMarioWorld") -> dict[ItemName, int]:
 
 
 def get_location_map(
-    world: "SuperPaperMarioWorld", location_names: list[LocationName] | None = None
+    world: SPMWorldBase, location_names: list[LocationName] | None = None
 ) -> dict[LocationName, Location]:
     if location_names is None or len(location_names) == 0:
         location_names = list(LocationName)

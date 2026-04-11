@@ -10,33 +10,21 @@ class LocationName(StrEnum):
     FLIPSIDE_MERLONS_GIFT = "Flipside Tower - Merlon's Gift"
     FLIPSIDE_3F_CHEST_IN_PICCOLO_BLOCK = "Flipside 3F - Chest in Piccolo block"
     FLIPSIDE_3F_EAT_A_SPICY_SOUP = "Flipside 3F - Give Peach Spicy Soup"
-    FLIPSIDE_3F_CHEST_AFTER_INVISIBLE_BLOCKS = (
-        "Flipside 3F - Chest after invisible blocks"
-    )
+    FLIPSIDE_3F_CHEST_AFTER_INVISIBLE_BLOCKS = "Flipside 3F - Chest after invisible blocks"
     FLIPSIDE_3F_FISHBOWL = "Flipside 3F - Talk to the kid"
-    FLIPSIDE_1F_OUTSKIRTS_LEFT_CHEST_IN_HOLE = (
-        "Flipside 1F Outskirts - Left chest in hole"
-    )
-    FLIPSIDE_1F_OUTSKIRTS_RIGHT_CHEST_IN_HOLE = (
-        "Flipside 1F Outskirts - Right chest in hole"
-    )
-    FLIPSIDE_B1_OUTSKIRTS_CHEST_BEHIND_PILLAR = (
-        "Flipside B1 Outskirts - Chest behind pillar"
-    )
+    FLIPSIDE_1F_OUTSKIRTS_LEFT_CHEST_IN_HOLE = "Flipside 1F Outskirts - Left chest in hole"
+    FLIPSIDE_1F_OUTSKIRTS_RIGHT_CHEST_IN_HOLE = "Flipside 1F Outskirts - Right chest in hole"
+    FLIPSIDE_B1_OUTSKIRTS_CHEST_BEHIND_PILLAR = "Flipside B1 Outskirts - Chest behind pillar"
     FLIPSIDE_B2_CHEST_AFTER_PIPE = "Flipside B2 - Chest after pipe"
     FLIPSIDE_B1_FREE_FISH = "Flipside B1 - Free Captain Gills"
     FLIPSIDE_B1_3D_CHEST = "Flipside B1 - 3D Chest near left side water"
     FLOPSIDE_B2_CHEST_AFTER_PIPE = "Flopside B2 - Chest after pipe"
     FLOPSIDE_3F_CHEST_IN_PICCOLO_BLOCK = "Flopside 3F - Chest in Piccolo block"
-    FLOPSIDE_3F_CHEST_AFTER_INVISIBLE_BLOCKS = (
-        "Flopside 3F - Chest after invisible blocks"
-    )
+    FLOPSIDE_3F_CHEST_AFTER_INVISIBLE_BLOCKS = "Flopside 3F - Chest after invisible blocks"
     FLOPSIDE_B2_CHASM_CHEST = "Flopside B2 Chasm - Chest"
     FLOPSIDE_B1_BEVERAGARIUM_CHEST1 = "Flopside B1 Beveragarium - Chest 1"
     FLOPSIDE_B1_BEVERAGARIUM_CHEST2 = "Flopside B1 Beveragarium - Chest 2"
-    FLOPSIDE_B1_OUTSKIRT_CHEST_BEHIND_PILLAR = (
-        "Flopside B1 Outskirt - Chest Behind Pillar"
-    )
+    FLOPSIDE_B1_OUTSKIRT_CHEST_BEHIND_PILLAR = "Flopside B1 Outskirt - Chest Behind Pillar"
 
     # Heart Pillars
     FLIPSIDE_HEART_PILLAR_RED = "Flipside 3F - Red Heart Pillar"
@@ -149,15 +137,9 @@ class LocationName(StrEnum):
 
     # region Chapter 1
     C11_OPEN_ITEM_ABOVE_BESTOVIUS_HOUSE = "1-1 - Open item above Bestovius' House"
-    C11_OPEN_ITEM_INSIDE_BESTOVIUS_HOUSE_HALLWAY = (
-        "1-1 - Open item inside Bestovius' House hallway"
-    )
-    C11_FIRST_OPEN_ITEM_INSIDE_BESTOVIUS_ROOM = (
-        "1-1 - First open item inside Bestovius' Room"
-    )
-    C11_SECOND_OPEN_ITEM_INSIDE_BESTOVIUS_ROOM = (
-        "1-1 - Second open item inside Bestovius' Room"
-    )
+    C11_OPEN_ITEM_INSIDE_BESTOVIUS_HOUSE_HALLWAY = "1-1 - Open item inside Bestovius' House hallway"
+    C11_FIRST_OPEN_ITEM_INSIDE_BESTOVIUS_ROOM = "1-1 - First open item inside Bestovius' Room"
+    C11_SECOND_OPEN_ITEM_INSIDE_BESTOVIUS_ROOM = "1-1 - Second open item inside Bestovius' Room"
     C11_TALK_TO_BESTOVIUS = "1-1 - Talk to Bestovius"
     C11_CHEST_INSIDE_FIRST_PIPE = "1-1 - Chest inside first pipe"
     C11_OPEN_ITEM_BEHIND_PIPE = "1-1 - Open item behind pipe"
@@ -165,22 +147,14 @@ class LocationName(StrEnum):
     C11_STAR_BLOCK = "1-1 - Star Block"
 
     C12_CHEST_IN_SHORTCUT = "1-2 - Chest in shortcut"
-    C12_OPEN_ITEM_ON_TOP_OF_WATCHITTS_HOUSE = (
-        "1-2 - Open item on top of Watchitt's house"
-    )
+    C12_OPEN_ITEM_ON_TOP_OF_WATCHITTS_HOUSE = "1-2 - Open item on top of Watchitt's house"
     C12_OPEN_ITEM_BEHIND_GREENS_BED = "1-2 - Open item behind Green's bed"
     C12_THOREAU_CHEST = "1-2 - Thoreau chest"
     C12_STAR_BLOCK = "1-2 - Star Block"
 
-    C13_OPEN_ITEM_BEHIND_ROCK_IN_FIRST_ROOM = (
-        "1-3 - Open item behind rock in red palm tree room"
-    )
-    C13_OPEN_ITEM_BEHIND_ROCK_IN_SECOND_ROOM = (
-        "1-3 - Open item behind rock in rock arrow room"
-    )
-    C13_OPEN_ITEM_BEHIND_ROCK_IN_SIXTH_ROOM = (
-        "1-3 - Open item behind rock in yellow platform room"
-    )
+    C13_OPEN_ITEM_BEHIND_ROCK_IN_FIRST_ROOM = "1-3 - Open item behind rock in red palm tree room"
+    C13_OPEN_ITEM_BEHIND_ROCK_IN_SECOND_ROOM = "1-3 - Open item behind rock in rock arrow room"
+    C13_OPEN_ITEM_BEHIND_ROCK_IN_SIXTH_ROOM = "1-3 - Open item behind rock in yellow platform room"
     C13_STAR_BLOCK = "1-3 - Star Block"
 
     C14_CHEST_IN_SECOND_ROOM = "1-4 - Chest in second room"
@@ -215,9 +189,7 @@ class LocationName(StrEnum):
     # endregion
 
     # region Chapter 3
-    C31_TALK_TO_BARRY_AFTER_DEFEATING_FRANCIS = (
-        "3-1 - Talk to Barry after defeating Francis"
-    )
+    C31_TALK_TO_BARRY_AFTER_DEFEATING_FRANCIS = "3-1 - Talk to Barry after defeating Francis"
     C31_CHEST_IN_WARP_ZONE_RIGHT_PIPE = "3-1 - Chest in warp zone right pipe"
     C31_OPEN_ITEM_IN_BACKGROUND = "3-1 - Open item in background"
     C31_CHEST_IN_BACKGROUND_PIPE = "3-1 - Chest in background pipe"
@@ -248,17 +220,13 @@ class LocationName(StrEnum):
 
     C42_FLIP_THE_DIMENSIONAL_RIFT = "4-2 - Flip the dimensional rift"
     C42_OPEN_ITEM_IN_CHASM_3_D = "4-2 - Open item in chasm 3D"
-    C42_OPEN_ITEM_BEHIND_PIPE_NEAR_BLAPPYS_HOUSE = (
-        "4-2 - Open item behind pipe near Blappy's house"
-    )
+    C42_OPEN_ITEM_BEHIND_PIPE_NEAR_BLAPPYS_HOUSE = "4-2 - Open item behind pipe near Blappy's house"
     C42_TALK_TO_BLAPPY = "4-2 - Talk to Blappy"
     C42_FLEEP = "4-2 - Fleep"
     C42_STAR_BLOCK = "4-2 - Star Block"
 
     C43_OPEN_ITEM_BEHIND_FIRST_BLOCKS = "4-3 - Open item behind first blocks"
-    C43_OPEN_ITEM_BEHIND_BLOCKS_IN_MANY_WORMHOLE_ROOM = (
-        "4-3 - Open item behind blocks in many wormhole room"
-    )
+    C43_OPEN_ITEM_BEHIND_BLOCKS_IN_MANY_WORMHOLE_ROOM = "4-3 - Open item behind blocks in many wormhole room"
     C43_VISIBLE_OPEN_ITEM_IN_BLOCKS = "4-3 - Visible open item in blocks"
     C43_STAR_BLOCK = "4-3 - Star Block"
 
@@ -316,9 +284,7 @@ class LocationName(StrEnum):
     # region Chapter 7
     C71_CHEST_AFTER_GIGABYTE = "7-1 - Chest after Gigabyte"
     C71_OPEN_ITEM_ABOVE_PIPE = "7-1 - Open item above pipe"
-    C71_GIVE_THE_PETRIFIED_PURE_HEART_TO_JAYDES = (
-        "7-1 - Give the Petrified Pure Heart to Jaydes"
-    )
+    C71_GIVE_THE_PETRIFIED_PURE_HEART_TO_JAYDES = "7-1 - Give the Petrified Pure Heart to Jaydes"
     C71_LUIGI = "7-1 - Luigi"
     C71_HIDDEN_OPEN_ITEM_NEAR_LUIGI = "7-1 - Hidden open item near Luigi"
     C71_HIDDEN_CHEST_IN_LUIGI_S_ROOM = "7-1 - Hidden chest in Luigi's room"
@@ -326,9 +292,7 @@ class LocationName(StrEnum):
 
     C72_CHEST_IN_FIRST_DARK_ROOM = "7-2 - Chest in first dark room"
     C72_DEFEAT_BOWSER = "7-2 - Defeat Bowser"
-    C72_TALK_TO_HAGRA_AND_GET_THE_BOOK_FROM_THE_D_MAN = (
-        "7-2 - Talk to Hagra and get the book from the D-Man"
-    )
+    C72_TALK_TO_HAGRA_AND_GET_THE_BOOK_FROM_THE_D_MAN = "7-2 - Talk to Hagra and get the book from the D-Man"
     C72_BRING_THE_DIET_BOOK_TO_HAGRA = "7-2 - Bring the Diet Book to Hagra"
     C72_STAR_BLOCK = "7-2 - Star Block"
 
@@ -357,12 +321,8 @@ class LocationName(StrEnum):
     # endregion
 
     # region Chapter 8
-    C81_RIGHT_CHEST_ABOVE_PEACH_CUTSCENE_START = (
-        "8-1 - Right chest above Peach cutscene start"
-    )
-    C81_LEFT_CHEST_ABOVE_PEACH_CUTSCENE_START = (
-        "8-1 - Left chest above Peach cutscene start"
-    )
+    C81_RIGHT_CHEST_ABOVE_PEACH_CUTSCENE_START = "8-1 - Right chest above Peach cutscene start"
+    C81_LEFT_CHEST_ABOVE_PEACH_CUTSCENE_START = "8-1 - Left chest above Peach cutscene start"
     C81_CHEST_IN_SOOPA_STRIKER_HALLWAY = "8-1 - Chest in Soopa Striker hallway"
 
     C82_LEFT_CHEST_ABOVE_MERLON_ROOM = "8-2 - Left chest above Merlon room"
@@ -376,19 +336,11 @@ class LocationName(StrEnum):
     C82_DEFEAT_THE_CHROMEBA = "8-2 - Defeat the Chromeba"
     C82_MERLEES_THUNDER_RAGE = "8-2 - Merlee's Thunder Rage"
 
-    C83_RIGHT_CHEST_BEHIND_FIRST_HALL_OF_MIRRORS = (
-        "8-3 - Right chest behind first hall of mirrors"
-    )
-    C83_LEFT_CHEST_BEHIND_FIRST_HALL_OF_MIRRORS = (
-        "8-3 - Left chest behind first hall of mirrors"
-    )
+    C83_RIGHT_CHEST_BEHIND_FIRST_HALL_OF_MIRRORS = "8-3 - Right chest behind first hall of mirrors"
+    C83_LEFT_CHEST_BEHIND_FIRST_HALL_OF_MIRRORS = "8-3 - Left chest behind first hall of mirrors"
     C83_CHEST_AFTER_BLOCK_PUZZLE = "8-3 - Chest after block puzzle"
-    C83_RIGHT_CHEST_BEHIND_SECOND_HALL_OF_MIRRORS = (
-        "8-3 - Right chest behind second hall of mirrors"
-    )
-    C83_LEFT_CHEST_BEHIND_SECOND_HALL_OF_MIRRORS = (
-        "8-3 - Left chest behind second hall of mirrors"
-    )
+    C83_RIGHT_CHEST_BEHIND_SECOND_HALL_OF_MIRRORS = "8-3 - Right chest behind second hall of mirrors"
+    C83_LEFT_CHEST_BEHIND_SECOND_HALL_OF_MIRRORS = "8-3 - Left chest behind second hall of mirrors"
 
     C84_CHEST_AFTER_TINY_PASSAGE = "8-4 - Chest after tiny passage"
     C84_CHEST_IN_FIRST_3_D_HALLWAYS = "8-4 - Chest in first 3D hallways"
@@ -397,54 +349,54 @@ class LocationName(StrEnum):
     # endregion
 
     # Fleep Maps
-    FLEEP_MAP_REVEAL_01 = "Flipside 3F - Map #01 - Grass between the lightposts"
-    FLEEP_MAP_REVEAL_02 = "Mirror Hall - Map #02 - Top of Merlumina's portrait"
-    FLEEP_MAP_REVEAL_03 = "Flipside B1 - Map #03 - Outside Itty Bits between two windows"
-    FLEEP_MAP_REVEAL_04 = "Flipside Arcade - Map #04 - On the Signboard's Crosshair"
-    FLEEP_MAP_REVEAL_05 = "Flopside 3F - Map #05"
-    FLEEP_MAP_REVEAL_06 = "1-1 - Map #06"
-    FLEEP_MAP_REVEAL_07 = "1-2 - Map #07"
-    FLEEP_MAP_REVEAL_08 = "1-2 - Map #08"
-    FLEEP_MAP_REVEAL_09 = "1-3 - Map #09"
-    FLEEP_MAP_REVEAL_10 = "1-3 - Map #10"
-    FLEEP_MAP_REVEAL_11 = "1-4 - Map #11"
-    FLEEP_MAP_REVEAL_12 = "2-1 - Map #12"
-    FLEEP_MAP_REVEAL_13 = "2-2 - Map #13"
-    FLEEP_MAP_REVEAL_14 = "2-2 - Map #14"
-    FLEEP_MAP_REVEAL_15 = "2-3 - Map #15 - Mimi Poster"
-    FLEEP_MAP_REVEAL_16 = "2-4 - Map #16 - Cross beam of staircase supports"
-    FLEEP_MAP_REVEAL_17 = "2-4 - Map #17 - Women's Bathroom Mirror"
-    FLEEP_MAP_REVEAL_18 = "3-1 - Map #18"
-    FLEEP_MAP_REVEAL_19 = "3-1 - Map #19"
-    FLEEP_MAP_REVEAL_20 = "3-2 - Map #20"
-    FLEEP_MAP_REVEAL_21 = "3-2 - Map #21"
-    FLEEP_MAP_REVEAL_22 = "3-3 - Map #22"
-    FLEEP_MAP_REVEAL_23 = "3-4 - Map #23"
-    FLEEP_MAP_REVEAL_24 = "3-4 - Map #24"
-    FLEEP_MAP_REVEAL_25 = "4-2 - Map #25"
-    FLEEP_MAP_REVEAL_26 = "4-2 - Map #26"
-    FLEEP_MAP_REVEAL_27 = "4-3 - Map #27"
-    FLEEP_MAP_REVEAL_28 = "4-4 - Map #28"
-    FLEEP_MAP_REVEAL_29 = "4-4 - Map #29"
-    FLEEP_MAP_REVEAL_30 = "5-1 - Map #30"
-    FLEEP_MAP_REVEAL_31 = "5-1 - Map #31"
-    FLEEP_MAP_REVEAL_32 = "5-2 - Map #32"
-    FLEEP_MAP_REVEAL_33 = "5-2 - Map #33"
-    FLEEP_MAP_REVEAL_34 = "5-3 - Map #34"
-    FLEEP_MAP_REVEAL_35 = "5-3 - Map #35"
-    FLEEP_MAP_REVEAL_36 = "5-4 - Map #36"
-    FLEEP_MAP_REVEAL_37 = "5-4 - Map #37"
-    FLEEP_MAP_REVEAL_38 = "7-1 - Map #38"
-    FLEEP_MAP_REVEAL_39 = "7-1 - Map #39"
-    FLEEP_MAP_REVEAL_40 = "7-2 - Map #40"
-    FLEEP_MAP_REVEAL_41 = "7-2 - Map #41"
-    FLEEP_MAP_REVEAL_42 = "7-3 - Map #42"
-    FLEEP_MAP_REVEAL_43 = "7-4 - Map #43"
-    FLEEP_MAP_REVEAL_44 = "7-4 - Map #44"
-    FLEEP_MAP_REVEAL_45 = "7-4 - Map #45"
-    FLEEP_MAP_REVEAL_46 = "8-1 - Map #46"
-    FLEEP_MAP_REVEAL_47 = "8-3 - Map #47"
-    FLEEP_MAP_REVEAL_48 = "8-4 - Map #48"
+    FLEEP_MAP_REVEAL_01 = "Flipside 3F - Fleep #01 - Grass between the lightposts"
+    FLEEP_MAP_REVEAL_02 = "Mirror Hall - Fleep #02 - Top of Merlumina's portrait"
+    FLEEP_MAP_REVEAL_03 = "Flipside B1 - Fleep #03 - Outside Itty Bits between two windows"
+    FLEEP_MAP_REVEAL_04 = "Flipside Arcade - Fleep #04 - On the Signboard's Crosshair"
+    FLEEP_MAP_REVEAL_05 = "Flopside 3F - Fleep #05"
+    FLEEP_MAP_REVEAL_06 = "1-1 - Fleep #06 - Bestovius' House Window"
+    FLEEP_MAP_REVEAL_07 = "1-2 - Fleep #07 - Mountain Platform near Paratroopas"
+    FLEEP_MAP_REVEAL_08 = "1-2 - Fleep #08 - Green Apple picture in Green's House"
+    FLEEP_MAP_REVEAL_09 = "1-3 - Fleep #09 - Arrow rock"
+    FLEEP_MAP_REVEAL_10 = "1-3 - Fleep #10 - Second Yold Signpost"
+    FLEEP_MAP_REVEAL_11 = "1-4 - Fleep #11 - Mural between the 2nd and 3rd pillars"
+    FLEEP_MAP_REVEAL_12 = "2-1 - Fleep #12 - 7-point star closest to Star Block"
+    FLEEP_MAP_REVEAL_13 = "2-2 - Fleep #13 - Right-side window outside mansion"
+    FLEEP_MAP_REVEAL_14 = "2-2 - Fleep #14 - Painting by staircase"
+    FLEEP_MAP_REVEAL_15 = "2-3 - Fleep #15 - Mimi Poster"
+    FLEEP_MAP_REVEAL_16 = "2-4 - Fleep #16 - Cross beam of staircase supports"
+    FLEEP_MAP_REVEAL_17 = "2-4 - Fleep #17 - Women's Bathroom Mirror"
+    FLEEP_MAP_REVEAL_18 = "3-1 - Fleep #18"
+    FLEEP_MAP_REVEAL_19 = "3-1 - Fleep #19"
+    FLEEP_MAP_REVEAL_20 = "3-2 - Fleep #20"
+    FLEEP_MAP_REVEAL_21 = "3-2 - Fleep #21"
+    FLEEP_MAP_REVEAL_22 = "3-3 - Fleep #22"
+    FLEEP_MAP_REVEAL_23 = "3-4 - Fleep #23"
+    FLEEP_MAP_REVEAL_24 = "3-4 - Fleep #24"
+    FLEEP_MAP_REVEAL_25 = "4-2 - Fleep #25"
+    FLEEP_MAP_REVEAL_26 = "4-2 - Fleep #26"
+    FLEEP_MAP_REVEAL_27 = "4-3 - Fleep #27"
+    FLEEP_MAP_REVEAL_28 = "4-4 - Fleep #28"
+    FLEEP_MAP_REVEAL_29 = "4-4 - Fleep #29"
+    FLEEP_MAP_REVEAL_30 = "5-1 - Fleep #30"
+    FLEEP_MAP_REVEAL_31 = "5-1 - Fleep #31"
+    FLEEP_MAP_REVEAL_32 = "5-2 - Fleep #32"
+    FLEEP_MAP_REVEAL_33 = "5-2 - Fleep #33"
+    FLEEP_MAP_REVEAL_34 = "5-3 - Fleep #34"
+    FLEEP_MAP_REVEAL_35 = "5-3 - Fleep #35"
+    FLEEP_MAP_REVEAL_36 = "5-4 - Fleep #36"
+    FLEEP_MAP_REVEAL_37 = "5-4 - Fleep #37"
+    FLEEP_MAP_REVEAL_38 = "7-1 - Fleep #38"
+    FLEEP_MAP_REVEAL_39 = "7-1 - Fleep #39"
+    FLEEP_MAP_REVEAL_40 = "7-2 - Fleep #40"
+    FLEEP_MAP_REVEAL_41 = "7-2 - Fleep #41"
+    FLEEP_MAP_REVEAL_42 = "7-3 - Fleep #42"
+    FLEEP_MAP_REVEAL_43 = "7-4 - Fleep #43"
+    FLEEP_MAP_REVEAL_44 = "7-4 - Fleep #44"
+    FLEEP_MAP_REVEAL_45 = "7-4 - Fleep #45"
+    FLEEP_MAP_REVEAL_46 = "8-1 - Fleep #46"
+    FLEEP_MAP_REVEAL_47 = "8-3 - Fleep #47"
+    FLEEP_MAP_REVEAL_48 = "8-4 - Fleep #48"
 
     FLAMM_ITEM_1 = "Flopside B1 - Flamm Item #01"
     FLAMM_ITEM_2 = "Flopside B1 - Flamm Item #02"
@@ -496,9 +448,7 @@ class LocationName(StrEnum):
     FLAMM_ITEM_48 = "Flopside B1 - Flamm Item #48"
 
     # Piccolo fetch quest
-    PICCOLO_FETCH_WATCHITT_1 = (
-        "1-2 - Talk to Watchitt after talking to Merlee, Merluvlee and Bestovius"
-    )
+    PICCOLO_FETCH_WATCHITT_1 = "1-2 - Talk to Watchitt after talking to Merlee, Merluvlee and Bestovius"
     PICCOLO_FETCH_MERLUMINA = "1-4 - Ask Merlumina to sign the Paper"
     PICCOLO_FETCH_WATCHITT_2 = "1-2 - Give the Autograph to Watchitt"
     PICCOLO_FETCH_BESTOVIUS = "1-1 - Bring the You-Know-What to Bestovius"

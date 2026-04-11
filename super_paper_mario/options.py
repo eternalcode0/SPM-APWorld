@@ -438,7 +438,7 @@ class SuperPaperMarioOptions(PerGameCommonOptions):
     shuffle_pure_hearts: ShufflePureHearts
     # Location Shuffle
     trading_quest: TradingQuest
-    # treasure_maps: TreasureMaps
+    treasure_maps: TreasureMaps
     # Pit of 100 Trials
     flipside_pit_access: FlipsidePitAccess
     # flipside_pit_logic: FlipsidePitLogic

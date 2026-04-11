@@ -4,6 +4,7 @@ import traceback
 from typing import TYPE_CHECKING, ClassVar
 
 import dolphin_memory_engine as dme
+
 import Patch
 import settings
 import Utils
@@ -15,10 +16,9 @@ from CommonClient import (
     server_loop,
 )
 
-from .data import GAME
 from .data.location_data import LOCATION_DATA
-from .flags import StorageType
 from .locations import BASE_LOCATION_ID
+from .types import GAME, StorageType
 
 if TYPE_CHECKING:
     import kvui

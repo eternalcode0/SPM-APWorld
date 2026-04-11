@@ -1,14 +1,8 @@
-from __future__ import annotations
-
-from typing import TYPE_CHECKING
-
 from .data.item_data import ItemData
 from .data.location_data import LocationData
 from .names import ItemName
 from .options import SuperPaperMarioOptions
-
-if TYPE_CHECKING:
-    from .world import SuperPaperMarioWorld
+from .types import SPMWorldBase
 
 
 class SPMFillPlan:
@@ -19,7 +13,7 @@ class SPMFillPlan:
     perform basic fill operations like placing locked items
     """
 
-    world: SuperPaperMarioWorld
+    world: SPMWorldBase
     options: SuperPaperMarioOptions
 
     # Item related variables
@@ -29,9 +23,9 @@ class SPMFillPlan:
     # World related variables
     static_world_locations = set[LocationData]
 
-    def __init__(self, world: SuperPaperMarioWorld):
+    def __init__(self, world: SPMWorldBase):
         self.world = world
         self.options = world.options
 
-    def plan(world: SuperPaperMarioWorld):
+    def plan(world: SPMWorldBase):
         pass

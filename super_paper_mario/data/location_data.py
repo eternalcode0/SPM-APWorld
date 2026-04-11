@@ -2,13 +2,13 @@ from collections.abc import Callable
 from dataclasses import dataclass
 from typing import Any
 
-from ..flags import GSW, GSWF, ScriptVariable
 from ..names.event_names import EventName as E
 from ..names.item_names import ItemName as I
 from ..names.location_names import LocationName as L
 from ..names.region_names import RegionName as R
 from ..options import ChapterDoorAccess, FlopsidePitAccess, PitAccess, SuperPaperMarioOptions
-from . import RandomizationType as RT  # noqa: N817
+from ..types import GSW, GSWF, ScriptVariable
+from ..types import RandomizationType as RT  # noqa: N817
 
 
 @dataclass
@@ -79,18 +79,18 @@ def flopside_pit(opt: SuperPaperMarioOptions) -> RT:
     return RT.DISABLED if opt.flopside_pit_access == FlopsidePitAccess.option_closed else RT.RANDOM
 
 
-# def flamm(opt: SuperPaperMarioOptions) -> RT:
-#     return (
-#         RT.DISABLED
-#         if opt.treasure_maps.flamm_disabled
-#         else RT.VANILLA_WORLD
-#         if opt.treasure_maps.flamm_vanilla
-#         else RT.RANDOM
-#     )
+def flamm(opt: SuperPaperMarioOptions) -> RT:
+    return (
+        RT.DISABLED
+        if opt.treasure_maps.flamm_disabled
+        else RT.VANILLA_WORLD
+        if opt.treasure_maps.flamm_vanilla
+        else RT.RANDOM
+    )
 
 
-# def treasure_spot(opt: SuperPaperMarioOptions) -> RT:
-#     return RT.DISABLED if opt.treasure_maps.treasures_disabled else RT.RANDOM
+def treasure_spot(opt: SuperPaperMarioOptions) -> RT:
+    return RT.DISABLED if opt.treasure_maps.treasures_disabled else RT.RANDOM
 
 
 ###
@@ -2481,142 +2481,143 @@ LOCATION_LIST_DICT: list[dict[str, Any]] = [
     },
     #endregion
     #region Flamm / Treasure Maps
-    # { name: L.FLAMM_ITEM_1
-    # , code: 297
-    # , rom: None
-    # , var: None
-    # , item: I.MAP_1
-    # , region: R.MAC14_LEFT
-    # , setting: flamm
-    # },
-    # { name: L.FLAMM_ITEM_2
-    # , code: 298
-    # , rom: None
-    # , var: None
-    # , item: I.MAP_2
-    # , region: R.MAC14_LEFT
-    # , setting: flamm
-    # },
-    # { name: L.FLAMM_ITEM_3
-    # , code: 299
-    # , rom: None
-    # , var: None
-    # , item: I.MAP_3
-    # , region: R.MAC14_LEFT
-    # , setting: flamm
-    # },
-    # { name: L.FLAMM_ITEM_4
-    # , code: 300
-    # , rom: None
-    # , var: None
-    # , item: I.MAP_4
-    # , region: R.MAC14_LEFT
-    # , setting: flamm
-    # },
-    # { name: L.FLAMM_ITEM_5
-    # , code: 301
-    # , rom: None
-    # , var: None
-    # , item: I.MAP_5
-    # , region: R.MAC14_LEFT
-    # , setting: flamm
-    # },
-    # { name: L.FLAMM_ITEM_6
-    # , code: 302
-    # , rom: None
-    # , var: None
-    # , item: I.MAP_6
-    # , region: R.MAC14_LEFT
-    # , setting: flamm
-    # },
-    # { name: L.FLAMM_ITEM_7
-    # , code: 303
-    # , rom: None
-    # , var: None
-    # , item: I.MAP_7
-    # , region: R.MAC14_LEFT
-    # , setting: flamm
-    # },
-    # { name: L.FLAMM_ITEM_8
-    # , code: 304
-    # , rom: None
-    # , var: None
-    # , item: I.MAP_8
-    # , region: R.MAC14_LEFT
-    # , setting: flamm
-    # },
-    # { name: L.FLAMM_ITEM_9
-    # , code: 305
-    # , rom: None
-    # , var: None
-    # , item: I.MAP_9
-    # , region: R.MAC14_LEFT
-    # , setting: flamm
-    # },
-    # { name: L.FLAMM_ITEM_10
-    # , code: 306
-    # , rom: None
-    # , var: None
-    # , item: I.MAP_10
-    # , region: R.MAC14_LEFT
-    # , setting: flamm
-    # },
-    # { name: L.FLAMM_ITEM_11
-    # , code: 307
-    # , rom: None
-    # , var: None
-    # , item: I.MAP_11
-    # , region: R.MAC14_LEFT
-    # , setting: flamm
-    # },
-    # { name: L.FLAMM_ITEM_12
-    # , code: 308
-    # , rom: None
-    # , var: None
-    # , item: I.MAP_12
-    # , region: R.MAC14_LEFT
-    # , setting: flamm
-    # },
-    # { name: L.FLAMM_ITEM_13
-    # , code: 309
-    # , rom: None
-    # , var: None
-    # , item: I.MAP_13
-    # , region: R.MAC14_LEFT
-    # , setting: flamm
-    # },
-    # { name: L.FLAMM_ITEM_14
-    # , code: 310
-    # , rom: None
-    # , var: None
-    # , item: I.MAP_14
-    # , region: R.MAC14_LEFT
-    # , setting: flamm
-    # },
-    # { name: L.FLAMM_ITEM_15
-    # , code: 311
-    # , rom: None
-    # , var: None
-    # , item: I.MAP_15
-    # , region: R.MAC14_LEFT
-    # , setting: flamm
-    # },
-    # { name: L.FLAMM_ITEM_16
-    # , code: 312
-    # , rom: None
-    # , var: None
-    # , item: I.MAP_16
-    # , region: R.MAC14_LEFT
-    # , setting: flamm
-    # },
-    # { name: L.FLAMM_ITEM_17
-    # , code: 313
-    # , rom: None
-    # , var: None
-    # , item: I.MAP_17
-    # , region: R.MAC14_LEFT
-    # , setting: flamm
-    # },
+    #MOD: Consider changing Flamm's shop to sell all items for x number of coins, 20?
+    { name: L.FLAMM_ITEM_1
+    , code: 297
+    , rom: None
+    , var: None
+    , item: I.MAP_1
+    , region: R.MAC14_LEFT
+    , setting: flamm
+    },
+    { name: L.FLAMM_ITEM_2
+    , code: 298
+    , rom: None
+    , var: None
+    , item: I.MAP_2
+    , region: R.MAC14_LEFT
+    , setting: flamm
+    },
+    { name: L.FLAMM_ITEM_3
+    , code: 299
+    , rom: None
+    , var: None
+    , item: I.MAP_3
+    , region: R.MAC14_LEFT
+    , setting: flamm
+    },
+    { name: L.FLAMM_ITEM_4
+    , code: 300
+    , rom: None
+    , var: None
+    , item: I.MAP_4
+    , region: R.MAC14_LEFT
+    , setting: flamm
+    },
+    { name: L.FLAMM_ITEM_5
+    , code: 301
+    , rom: None
+    , var: None
+    , item: I.MAP_5
+    , region: R.MAC14_LEFT
+    , setting: flamm
+    },
+    { name: L.FLAMM_ITEM_6
+    , code: 302
+    , rom: None
+    , var: None
+    , item: I.MAP_6
+    , region: R.MAC14_LEFT
+    , setting: flamm
+    },
+    { name: L.FLAMM_ITEM_7
+    , code: 303
+    , rom: None
+    , var: None
+    , item: I.MAP_7
+    , region: R.MAC14_LEFT
+    , setting: flamm
+    },
+    { name: L.FLAMM_ITEM_8
+    , code: 304
+    , rom: None
+    , var: None
+    , item: I.MAP_8
+    , region: R.MAC14_LEFT
+    , setting: flamm
+    },
+    { name: L.FLAMM_ITEM_9
+    , code: 305
+    , rom: None
+    , var: None
+    , item: I.MAP_9
+    , region: R.MAC14_LEFT
+    , setting: flamm
+    },
+    { name: L.FLAMM_ITEM_10
+    , code: 306
+    , rom: None
+    , var: None
+    , item: I.MAP_10
+    , region: R.MAC14_LEFT
+    , setting: flamm
+    },
+    { name: L.FLAMM_ITEM_11
+    , code: 307
+    , rom: None
+    , var: None
+    , item: I.MAP_11
+    , region: R.MAC14_LEFT
+    , setting: flamm
+    },
+    { name: L.FLAMM_ITEM_12
+    , code: 308
+    , rom: None
+    , var: None
+    , item: I.MAP_12
+    , region: R.MAC14_LEFT
+    , setting: flamm
+    },
+    { name: L.FLAMM_ITEM_13
+    , code: 309
+    , rom: None
+    , var: None
+    , item: I.MAP_13
+    , region: R.MAC14_LEFT
+    , setting: flamm
+    },
+    { name: L.FLAMM_ITEM_14
+    , code: 310
+    , rom: None
+    , var: None
+    , item: I.MAP_14
+    , region: R.MAC14_LEFT
+    , setting: flamm
+    },
+    { name: L.FLAMM_ITEM_15
+    , code: 311
+    , rom: None
+    , var: None
+    , item: I.MAP_15
+    , region: R.MAC14_LEFT
+    , setting: flamm
+    },
+    { name: L.FLAMM_ITEM_16
+    , code: 312
+    , rom: None
+    , var: None
+    , item: I.MAP_16
+    , region: R.MAC14_LEFT
+    , setting: flamm
+    },
+    { name: L.FLAMM_ITEM_17
+    , code: 313
+    , rom: None
+    , var: None
+    , item: I.MAP_17
+    , region: R.MAC14_LEFT
+    , setting: flamm
+    },
     # { name: L.FLAMM_ITEM_18
     # , code: 314
     # , rom: None
@@ -2865,390 +2866,390 @@ LOCATION_LIST_DICT: list[dict[str, Any]] = [
     # , region: R.MAC14_LEFT
     # , setting: flamm
     # },
-    # { name: L.FLEEP_MAP_REVEAL_01
-    # , code: 345
+    { name: L.FLEEP_MAP_REVEAL_01
+    , code: 345
+    , rom: None
+    , var: None
+    , item: I.GOLD_BAR
+    , region: R.MAC01_LAYER1
+    , setting: treasure_spot
+    },
+    { name: L.FLEEP_MAP_REVEAL_02
+    , code: 346
+    , rom: None
+    , var: None
+    , item: I.CATCH_CARD_WELDERBERG
+    , region: R.MAC03_LAYER1
+    , setting: treasure_spot
+    },
+    { name: L.FLEEP_MAP_REVEAL_03
+    , code: 347
+    , rom: None
+    , var: None
+    , item: I.ULTRA_SHROOM_SHAKE
+    , region: R.MAC04_LAYER1
+    , setting: treasure_spot
+    },
+    { name: L.FLEEP_MAP_REVEAL_04
+    , code: 348
+    , rom: None
+    , var: None
+    , item: I.CATCH_CARD_KING_SAMMER
+    , region: R.MAC30
+    , setting: treasure_spot
+    },
+    { name: L.FLEEP_MAP_REVEAL_05
+    , code: 349
+    , rom: None
+    , var: None
+    , item: I.CATCH_CARD_O_CHUNKS
+    , region: R.MAC11_LAYER1
+    , setting: treasure_spot
+    },
+    { name: L.FLEEP_MAP_REVEAL_06
+    , code: 350
+    , rom: None
+    , var: None
+    , item: I.CATCH_CARD_BESTOVIUS
+    , region: R.HE101
+    , setting: treasure_spot
+    },
+    { name: L.FLEEP_MAP_REVEAL_07
+    , code: 351
+    , rom: None
+    , var: None
+    , item: I.GOLDEN_LEAF
+    , region: R.HE201
+    , setting: treasure_spot
+    },
+    { name: L.FLEEP_MAP_REVEAL_08
+    , code: 352
+    , rom: None
+    , var: None
+    , item: I.CATCH_CARD_BROBOT_L_TYPE
+    , region: R.HE205
+    , setting: treasure_spot
+    },
+    { name: L.FLEEP_MAP_REVEAL_09
+    , code: 353
+    , rom: None
+    , var: None
+    , item: I.GOLD_BAR_X3
+    , region: R.HE302
+    , setting: treasure_spot
+    },
+    { name: L.FLEEP_MAP_REVEAL_10
+    , code: 354
+    , rom: None
+    , var: None
+    , item: I.CATCH_CARD_FRACKTAIL
+    , region: R.HE307
+    , setting: treasure_spot
+    },
+    { name: L.FLEEP_MAP_REVEAL_11
+    , code: 355
+    , rom: None
+    , var: None
+    , item: I.CATCH_CARD_MERLUMINA
+    , region: R.HE411
+    , setting: treasure_spot
+    },
+    { name: L.FLEEP_MAP_REVEAL_12
+    , code: 356
+    , rom: None
+    , var: None
+    , item: I.SHOOTING_STAR
+    , region: R.MI104
+    , setting: treasure_spot
+    },
+    { name: L.FLEEP_MAP_REVEAL_13
+    , code: 357
+    , rom: None
+    , var: None
+    , item: I.CATCH_CARD_SP
+    , region: R.MI201
+    , setting: treasure_spot
+    },
+    { name: L.FLEEP_MAP_REVEAL_14
+    , code: 358
+    , rom: None
+    , var: None
+    , item: I.CATCH_CARD_GNIP
+    , region: R.MI203
+    , setting: treasure_spot
+    },
+    { name: L.FLEEP_MAP_REVEAL_15
+    , code: 359
+    , rom: None
+    , var: None
+    , item: I.CATCH_CARD_MIMI
+    , region: R.MI306
+    , setting: treasure_spot
+    },
+    { name: L.FLEEP_MAP_REVEAL_16
+    , code: 360
+    , rom: None
+    , var: None
+    , item: I.GOLD_BAR_X3
+    , region: R.MI401
+    , setting: treasure_spot
+    },
+    { name: L.FLEEP_MAP_REVEAL_17
+    , code: 361
+    , rom: None
+    , var: None
+    , item: I.DRIED_SHROOM
+    , region: R.MI414
+    , setting: treasure_spot
+    },
+    # { name: L.FLEEP_MAP_REVEAL_18
+    # , code: 362
     # , rom: None
     # , var: None
-    # , item: I.GOLD_BAR
-    # , region: R.MAC01_LAYER1
+    # , item: I.CATCH_CARD_BACK_CURSYA
+    # , region: None
     # , setting: treasure_spot
     # },
-    # { name: L.FLEEP_MAP_REVEAL_02
-    # , code: 346
-    # , rom: None
-    # , var: None
-    # , item: I.CATCH_CARD_WELDERBERG
-    # , region: R.MAC03_LAYER1
-    # , setting: treasure_spot
-    # },
-    # { name: L.FLEEP_MAP_REVEAL_03
-    # , code: 347
+    # { name: L.FLEEP_MAP_REVEAL_19
+    # , code: 363
     # , rom: None
     # , var: None
     # , item: I.ULTRA_SHROOM_SHAKE
-    # , region: R.MAC04_LAYER1
+    # , region: None
     # , setting: treasure_spot
     # },
-    # { name: L.FLEEP_MAP_REVEAL_04
-    # , code: 348
+    # { name: L.FLEEP_MAP_REVEAL_20
+    # , code: 364
     # , rom: None
     # , var: None
-    # , item: I.CATCH_CARD_KING_SAMMER
-    # , region: R.MAC30
+    # , item: I.CATCH_CARD_BIG_BLOOPER
+    # , region: None
     # , setting: treasure_spot
     # },
-    # { name: L.FLEEP_MAP_REVEAL_05
-    # , code: 349
+    # { name: L.FLEEP_MAP_REVEAL_21
+    # , code: 365
     # , rom: None
     # , var: None
-    # , item: I.CATCH_CARD_O_CHUNKS
-    # , region: R.MAC11_LAYER1
+    # , item: I.POWER_PLUS
+    # , region: None
     # , setting: treasure_spot
     # },
-    # # { name: L.FLEEP_MAP_REVEAL_06
-    # # , code: 350
-    # # , rom: None
-    # # , var: None
-    # # , item: I.CATCH_CARD_BESTOVIUS
-    # # , region: None
-    # # , setting: treasure_spot
-    # # },
-    # # { name: L.FLEEP_MAP_REVEAL_07
-    # # , code: 351
-    # # , rom: None
-    # # , var: None
-    # # , item: I.GOLDEN_LEAF
-    # # , region: None
-    # # , setting: treasure_spot
-    # # },
-    # # { name: L.FLEEP_MAP_REVEAL_08
-    # # , code: 352
-    # # , rom: None
-    # # , var: None
-    # # , item: I.CATCH_CARD_BROBOT_L_TYPE
-    # # , region: None
-    # # , setting: treasure_spot
-    # # },
-    # # { name: L.FLEEP_MAP_REVEAL_09
-    # # , code: 353
-    # # , rom: None
-    # # , var: None
-    # # , item: I.GOLD_BAR_X3
-    # # , region: None
-    # # , setting: treasure_spot
-    # # },
-    # # { name: L.FLEEP_MAP_REVEAL_10
-    # # , code: 354
-    # # , rom: None
-    # # , var: None
-    # # , item: I.CATCH_CARD_FRACKTAIL
-    # # , region: None
-    # # , setting: treasure_spot
-    # # },
-    # # { name: L.FLEEP_MAP_REVEAL_11
-    # # , code: 355
-    # # , rom: None
-    # # , var: None
-    # # , item: I.CATCH_CARD_MERLUMINA
-    # # , region: None
-    # # , setting: treasure_spot
-    # # },
-    # # { name: L.FLEEP_MAP_REVEAL_12
-    # # , code: 356
-    # # , rom: None
-    # # , var: None
-    # # , item: I.SHOOTING_STAR
-    # # , region: None
-    # # , setting: treasure_spot
-    # # },
-    # # { name: L.FLEEP_MAP_REVEAL_13
-    # # , code: 357
-    # # , rom: None
-    # # , var: None
-    # # , item: I.CATCH_CARD_SP
-    # # , region: None
-    # # , setting: treasure_spot
-    # # },
-    # # { name: L.FLEEP_MAP_REVEAL_14
-    # # , code: 358
-    # # , rom: None
-    # # , var: None
-    # # , item: I.CATCH_CARD_GNIP
-    # # , region: None
-    # # , setting: treasure_spot
-    # # },
-    # { name: L.FLEEP_MAP_REVEAL_15
-    # , code: 359
+    # { name: L.FLEEP_MAP_REVEAL_22
+    # , code: 366
     # , rom: None
     # , var: None
-    # , item: I.CATCH_CARD_MIMI
-    # , region: R.MI306
+    # , item: I.CATCH_CARD_DIMENTIO
+    # , region: None
     # , setting: treasure_spot
     # },
-    # { name: L.FLEEP_MAP_REVEAL_16
-    # , code: 360
+    # { name: L.FLEEP_MAP_REVEAL_23
+    # , code: 367
+    # , rom: None
+    # , var: None
+    # , item: I.CATCH_CARD_TIPTRON
+    # , region: None
+    # , setting: treasure_spot
+    # },
+    # { name: L.FLEEP_MAP_REVEAL_24
+    # , code: 368
+    # , rom: None
+    # , var: None
+    # , item: I.CATCH_CARD_FRANCIS
+    # , region: None
+    # , setting: treasure_spot
+    # },
+    # { name: L.FLEEP_MAP_REVEAL_25
+    # , code: 369
+    # , rom: None
+    # , var: None
+    # , item: I.CATCH_CARD_SQUIRPS
+    # , region: None
+    # , setting: treasure_spot
+    # },
+    # { name: L.FLEEP_MAP_REVEAL_26
+    # , code: 370
+    # , rom: None
+    # , var: None
+    # , item: I.CATCH_CARD_HOOLIGON
+    # , region: None
+    # , setting: treasure_spot
+    # },
+    # { name: L.FLEEP_MAP_REVEAL_27
+    # , code: 371
+    # , rom: None
+    # , var: None
+    # , item: I.CATCH_CARD_MR_L
+    # , region: None
+    # , setting: treasure_spot
+    # },
+    # { name: L.FLEEP_MAP_REVEAL_28
+    # , code: 372
+    # , rom: None
+    # , var: None
+    # , item: I.CATCH_CARD_BROBOT
+    # , region: None
+    # , setting: treasure_spot
+    # },
+    # { name: L.FLEEP_MAP_REVEAL_29
+    # , code: 373
+    # , rom: None
+    # , var: None
+    # , item: I.CATCH_CARD_MUTH
+    # , region: None
+    # , setting: treasure_spot
+    # },
+    # { name: L.FLEEP_MAP_REVEAL_30
+    # , code: 374
+    # , rom: None
+    # , var: None
+    # , item: I.CATCH_CARD_FLINT_CRAGLEY
+    # , region: None
+    # , setting: treasure_spot
+    # },
+    # { name: L.FLEEP_MAP_REVEAL_31
+    # , code: 375
+    # , rom: None
+    # , var: None
+    # , item: I.FIRE_BURST
+    # , region: None
+    # , setting: treasure_spot
+    # },
+    # { name: L.FLEEP_MAP_REVEAL_32
+    # , code: 376
+    # , rom: None
+    # , var: None
+    # , item: I.FIRE_BURST
+    # , region: None
+    # , setting: treasure_spot
+    # },
+    # { name: L.FLEEP_MAP_REVEAL_33
+    # , code: 377
+    # , rom: None
+    # , var: None
+    # , item: I.ULTRA_SHROOM_SHAKE
+    # , region: None
+    # , setting: treasure_spot
+    # },
+    # { name: L.FLEEP_MAP_REVEAL_34
+    # , code: 378
+    # , rom: None
+    # , var: None
+    # , item: I.SHOOTING_STAR
+    # , region: None
+    # , setting: treasure_spot
+    # },
+    # { name: L.FLEEP_MAP_REVEAL_35
+    # , code: 379
+    # , rom: None
+    # , var: None
+    # , item: I.CATCH_CARD_HORNFELS_MONZO
+    # , region: None
+    # , setting: treasure_spot
+    # },
+    # { name: L.FLEEP_MAP_REVEAL_36
+    # , code: 380
+    # , rom: None
+    # , var: None
+    # , item: I.POISON_SHROOM
+    # , region: None
+    # , setting: treasure_spot
+    # },
+    # { name: L.FLEEP_MAP_REVEAL_37
+    # , code: 381
+    # , rom: None
+    # , var: None
+    # , item: I.CATCH_CARD_KING_CROACUS
+    # , region: None
+    # , setting: treasure_spot
+    # },
+    # { name: L.FLEEP_MAP_REVEAL_38
+    # , code: 382
+    # , rom: None
+    # , var: None
+    # , item: I.CATCH_CARD_JAYDES
+    # , region: None
+    # , setting: treasure_spot
+    # },
+    # { name: L.FLEEP_MAP_REVEAL_39
+    # , code: 383
+    # , rom: None
+    # , var: None
+    # , item: I.CATCH_CARD_UNDERHAND
+    # , region: None
+    # , setting: treasure_spot
+    # },
+    # { name: L.FLEEP_MAP_REVEAL_40
+    # , code: 384
+    # , rom: None
+    # , var: None
+    # , item: I.TRIAL_STEW
+    # , region: None
+    # , setting: treasure_spot
+    # },
+    # { name: L.FLEEP_MAP_REVEAL_41
+    # , code: 385
+    # , rom: None
+    # , var: None
+    # , item: I.CATCH_CARD_THE_UNDERCHOMP
+    # , region: None
+    # , setting: treasure_spot
+    # },
+    # { name: L.FLEEP_MAP_REVEAL_42
+    # , code: 386
     # , rom: None
     # , var: None
     # , item: I.GOLD_BAR_X3
-    # , region: R.MI401
+    # , region: None
     # , setting: treasure_spot
     # },
-    # { name: L.FLEEP_MAP_REVEAL_17
-    # , code: 361
+    # { name: L.FLEEP_MAP_REVEAL_43
+    # , code: 387
     # , rom: None
     # , var: None
-    # , item: I.DRIED_SHROOM
-    # , region: R.MI414
+    # , item: I.CATCH_CARD_GRAMBI
+    # , region: None
     # , setting: treasure_spot
     # },
-    # # { name: L.FLEEP_MAP_REVEAL_18
-    # # , code: 362
-    # # , rom: None
-    # # , var: None
-    # # , item: I.CATCH_CARD_BACK_CURSYA
-    # # , region: None
-    # # , setting: treasure_spot
-    # # },
-    # # { name: L.FLEEP_MAP_REVEAL_19
-    # # , code: 363
-    # # , rom: None
-    # # , var: None
-    # # , item: I.ULTRA_SHROOM_SHAKE
-    # # , region: None
-    # # , setting: treasure_spot
-    # # },
-    # # { name: L.FLEEP_MAP_REVEAL_20
-    # # , code: 364
-    # # , rom: None
-    # # , var: None
-    # # , item: I.CATCH_CARD_BIG_BLOOPER
-    # # , region: None
-    # # , setting: treasure_spot
-    # # },
-    # # { name: L.FLEEP_MAP_REVEAL_21
-    # # , code: 365
-    # # , rom: None
-    # # , var: None
-    # # , item: I.POWER_PLUS
-    # # , region: None
-    # # , setting: treasure_spot
-    # # },
-    # # { name: L.FLEEP_MAP_REVEAL_22
-    # # , code: 366
-    # # , rom: None
-    # # , var: None
-    # # , item: I.CATCH_CARD_DIMENTIO
-    # # , region: None
-    # # , setting: treasure_spot
-    # # },
-    # # { name: L.FLEEP_MAP_REVEAL_23
-    # # , code: 367
-    # # , rom: None
-    # # , var: None
-    # # , item: I.CATCH_CARD_TIPTRON
-    # # , region: None
-    # # , setting: treasure_spot
-    # # },
-    # # { name: L.FLEEP_MAP_REVEAL_24
-    # # , code: 368
-    # # , rom: None
-    # # , var: None
-    # # , item: I.CATCH_CARD_FRANCIS
-    # # , region: None
-    # # , setting: treasure_spot
-    # # },
-    # # { name: L.FLEEP_MAP_REVEAL_25
-    # # , code: 369
-    # # , rom: None
-    # # , var: None
-    # # , item: I.CATCH_CARD_SQUIRPS
-    # # , region: None
-    # # , setting: treasure_spot
-    # # },
-    # # { name: L.FLEEP_MAP_REVEAL_26
-    # # , code: 370
-    # # , rom: None
-    # # , var: None
-    # # , item: I.CATCH_CARD_HOOLIGON
-    # # , region: None
-    # # , setting: treasure_spot
-    # # },
-    # # { name: L.FLEEP_MAP_REVEAL_27
-    # # , code: 371
-    # # , rom: None
-    # # , var: None
-    # # , item: I.CATCH_CARD_MR_L
-    # # , region: None
-    # # , setting: treasure_spot
-    # # },
-    # # { name: L.FLEEP_MAP_REVEAL_28
-    # # , code: 372
-    # # , rom: None
-    # # , var: None
-    # # , item: I.CATCH_CARD_BROBOT
-    # # , region: None
-    # # , setting: treasure_spot
-    # # },
-    # # { name: L.FLEEP_MAP_REVEAL_29
-    # # , code: 373
-    # # , rom: None
-    # # , var: None
-    # # , item: I.CATCH_CARD_MUTH
-    # # , region: None
-    # # , setting: treasure_spot
-    # # },
-    # # { name: L.FLEEP_MAP_REVEAL_30
-    # # , code: 374
-    # # , rom: None
-    # # , var: None
-    # # , item: I.CATCH_CARD_FLINT_CRAGLEY
-    # # , region: None
-    # # , setting: treasure_spot
-    # # },
-    # # { name: L.FLEEP_MAP_REVEAL_31
-    # # , code: 375
-    # # , rom: None
-    # # , var: None
-    # # , item: I.FIRE_BURST
-    # # , region: None
-    # # , setting: treasure_spot
-    # # },
-    # # { name: L.FLEEP_MAP_REVEAL_32
-    # # , code: 376
-    # # , rom: None
-    # # , var: None
-    # # , item: I.FIRE_BURST
-    # # , region: None
-    # # , setting: treasure_spot
-    # # },
-    # # { name: L.FLEEP_MAP_REVEAL_33
-    # # , code: 377
-    # # , rom: None
-    # # , var: None
-    # # , item: I.ULTRA_SHROOM_SHAKE
-    # # , region: None
-    # # , setting: treasure_spot
-    # # },
-    # # { name: L.FLEEP_MAP_REVEAL_34
-    # # , code: 378
-    # # , rom: None
-    # # , var: None
-    # # , item: I.SHOOTING_STAR
-    # # , region: None
-    # # , setting: treasure_spot
-    # # },
-    # # { name: L.FLEEP_MAP_REVEAL_35
-    # # , code: 379
-    # # , rom: None
-    # # , var: None
-    # # , item: I.CATCH_CARD_HORNFELS_MONZO
-    # # , region: None
-    # # , setting: treasure_spot
-    # # },
-    # # { name: L.FLEEP_MAP_REVEAL_36
-    # # , code: 380
-    # # , rom: None
-    # # , var: None
-    # # , item: I.POISON_SHROOM
-    # # , region: None
-    # # , setting: treasure_spot
-    # # },
-    # # { name: L.FLEEP_MAP_REVEAL_37
-    # # , code: 381
-    # # , rom: None
-    # # , var: None
-    # # , item: I.CATCH_CARD_KING_CROACUS
-    # # , region: None
-    # # , setting: treasure_spot
-    # # },
-    # # { name: L.FLEEP_MAP_REVEAL_38
-    # # , code: 382
-    # # , rom: None
-    # # , var: None
-    # # , item: I.CATCH_CARD_JAYDES
-    # # , region: None
-    # # , setting: treasure_spot
-    # # },
-    # # { name: L.FLEEP_MAP_REVEAL_39
-    # # , code: 383
-    # # , rom: None
-    # # , var: None
-    # # , item: I.CATCH_CARD_UNDERHAND
-    # # , region: None
-    # # , setting: treasure_spot
-    # # },
-    # # { name: L.FLEEP_MAP_REVEAL_40
-    # # , code: 384
-    # # , rom: None
-    # # , var: None
-    # # , item: I.TRIAL_STEW
-    # # , region: None
-    # # , setting: treasure_spot
-    # # },
-    # # { name: L.FLEEP_MAP_REVEAL_41
-    # # , code: 385
-    # # , rom: None
-    # # , var: None
-    # # , item: I.CATCH_CARD_THE_UNDERCHOMP
-    # # , region: None
-    # # , setting: treasure_spot
-    # # },
-    # # { name: L.FLEEP_MAP_REVEAL_42
-    # # , code: 386
-    # # , rom: None
-    # # , var: None
-    # # , item: I.GOLD_BAR_X3
-    # # , region: None
-    # # , setting: treasure_spot
-    # # },
-    # # { name: L.FLEEP_MAP_REVEAL_43
-    # # , code: 387
-    # # , rom: None
-    # # , var: None
-    # # , item: I.CATCH_CARD_GRAMBI
-    # # , region: None
-    # # , setting: treasure_spot
-    # # },
-    # # { name: L.FLEEP_MAP_REVEAL_44
-    # # , code: 388
-    # # , rom: None
-    # # , var: None
-    # # , item: I.CATCH_CARD_LUVBI
-    # # , region: None
-    # # , setting: treasure_spot
-    # # },
-    # # { name: L.FLEEP_MAP_REVEAL_45
-    # # , code: 389
-    # # , rom: None
-    # # , var: None
-    # # , item: I.CATCH_CARD_BONECHILL
-    # # , region: None
-    # # , setting: treasure_spot
-    # # },
-    # # { name: L.FLEEP_MAP_REVEAL_46
-    # # , code: 390
-    # # , rom: None
-    # # , var: None
-    # # , item: I.CATCH_CARD_NASTASIA
-    # # , region: None
-    # # , setting: treasure_spot
-    # # },
-    # # { name: L.FLEEP_MAP_REVEAL_47
-    # # , code: 391
-    # # , rom: None
-    # # , var: None
-    # # , item: I.CATCH_CARD_SUPER_DIMENTIO
-    # # , region: None
-    # # , setting: treasure_spot
-    # # },
-    # # { name: L.FLEEP_MAP_REVEAL_48
-    # # , code: 392
-    # # , rom: None
-    # # , var: None
-    # # , item: I.CATCH_CARD_COUNT_BLECK
-    # # , region: None
-    # # , setting: treasure_spot
-    # # },
+    # { name: L.FLEEP_MAP_REVEAL_44
+    # , code: 388
+    # , rom: None
+    # , var: None
+    # , item: I.CATCH_CARD_LUVBI
+    # , region: None
+    # , setting: treasure_spot
+    # },
+    # { name: L.FLEEP_MAP_REVEAL_45
+    # , code: 389
+    # , rom: None
+    # , var: None
+    # , item: I.CATCH_CARD_BONECHILL
+    # , region: None
+    # , setting: treasure_spot
+    # },
+    # { name: L.FLEEP_MAP_REVEAL_46
+    # , code: 390
+    # , rom: None
+    # , var: None
+    # , item: I.CATCH_CARD_NASTASIA
+    # , region: None
+    # , setting: treasure_spot
+    # },
+    # { name: L.FLEEP_MAP_REVEAL_47
+    # , code: 391
+    # , rom: None
+    # , var: None
+    # , item: I.CATCH_CARD_SUPER_DIMENTIO
+    # , region: None
+    # , setting: treasure_spot
+    # },
+    # { name: L.FLEEP_MAP_REVEAL_48
+    # , code: 392
+    # , rom: None
+    # , var: None
+    # , item: I.CATCH_CARD_COUNT_BLECK
+    # , region: None
+    # , setting: treasure_spot
+    # },
     #endregion
 ]  # fmt: skip
 
