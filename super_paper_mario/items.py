@@ -1,16 +1,10 @@
 """Defines the set of game items and item pools"""
 
-import typing
-
 from BaseClasses import ItemClassification
 
 from .data import item_data
 from .names import ItemName
-from .types import SPMItem
-
-if typing.TYPE_CHECKING:
-    from . import SuperPaperMarioWorld
-
+from .types import SPMItem, SPMWorldBase
 
 ITEM_ENUM_TO_DATA: dict[ItemName, item_data.ItemData] = {
     data.name: data for data in item_data.ITEM_DATA if data.code is not None
@@ -28,7 +22,7 @@ CHAPTER_KEYS = list(ITEM_GROUP_MAP["Chapter Key"])
 SUBCHAPTER_KEYS = list(ITEM_GROUP_MAP["Subchapter Key"])
 
 
-def create_items(world: "SuperPaperMarioWorld") -> list[SPMItem]:
+def create_items(world: SPMWorldBase) -> list[SPMItem]:
     items = []
 
     for idata in item_data.ITEM_DATA:
@@ -42,13 +36,13 @@ def create_items(world: "SuperPaperMarioWorld") -> list[SPMItem]:
     return items
 
 
-def create_item(world: "SuperPaperMarioWorld", item_name: ItemName) -> SPMItem:
+def create_item(world: SPMWorldBase, item_name: ItemName) -> SPMItem:
     data = ITEM_ENUM_TO_DATA[item_name]
     clazz = data.classification if not callable(data.classification) else data.classification(world.options)
     return SPMItem(item_name, clazz, data.code, world.player)
 
 
-def override_filler_options(world: "SuperPaperMarioWorld") -> None:
+def override_filler_options(world: SPMWorldBase) -> None:
     for item_name, weight in world.options.filler_weights.items():
         item_name = ItemName(item_name)
         data = ITEM_ENUM_TO_DATA[item_name]

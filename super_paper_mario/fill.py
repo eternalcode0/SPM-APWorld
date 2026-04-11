@@ -27,5 +27,5 @@ class SPMFillPlan:
         self.world = world
         self.options = world.options
 
-    def plan(world: SPMWorldBase):
+    def plan(self, world: SPMWorldBase):
         pass

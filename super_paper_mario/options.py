@@ -254,17 +254,13 @@ class EntranceRando(Choice):
 class EnemyRando(Choice):
     """Should enemies be randomized? Bosses are never randomized, many of them crash the game outside their usual room.
 
-    *Shuffle:* Every type of enemy is swapped with another.
+    - *Shuffle:* Every type of enemy is swapped with another.
         Ex. Every Goomba might be swapped with a Squig, every Squig with a Boomboxer, etc.
-
-    *Random:* Every enemy is randomized.
+    - *Random:* Every enemy is randomized.
         Ex. One Goomba might be replaced with a Squig, another Goomba replaced with a Boomboxer.
-
-    *Same Difficulty:* Attempt to keep enemies difficulty the same as what is replacing them.
-
-    *Similar Difficulty:* Attempt to make enemies relatively more/less difficult than what is replacing them.
-
-    *Any Difficulty:* Enemies can be replaced by any other enemy regardless of difficulty.
+    - *Same Difficulty:* Attempt to keep enemies difficulty the same as what is replacing them.
+    - *Similar Difficulty:* Attempt to make enemies relatively more/less difficult than what is replacing them.
+    - *Any Difficulty:* Enemies can be replaced by any other enemy regardless of difficulty.
     """
 
     display_name = "Enemy Randomization"
@@ -315,36 +311,65 @@ class ShuffleAbilities(Toggle):
     internal_name = "ability_shuffle"
 
 
-class ObscureTricks(Toggle):
-    """Should logic consider obscure tricks to be required for logic.
-    Some examples:
+class TrickEnemyJumps(Choice):
+    """Logic Trick: Jump off enemies to reach greater heights
 
-    - Jumping off of enemies, some require using Thoraeu to move the enemy first
-    - Mid-air flip jumps to jump around 3d objects
+    - *No Setup*: Jumping off enemies that are already in the correct position
+        may be required
+    - *Setup*: Forcing enemies into position (sometimes with Thoreau) may be
+        required before jumping off them
     """
 
-    display_name = "Obscure Tricks"
-    internal_name = "obscure_tricks"
+    display_name = "Enemy Jumps"
+    internal_name = "enemy_jumps"
+
+    option_disabled = 0
+    option_no_setup = 1
+    option_setup = 2
 
 
-# class TrickEnemyJumps(Toggle):
-#     """Should logic expect you to jump off enemies to reach higher locations?
-#     Some of these may also expect you to use Thoreau to place the enemy in a specific spot first."""
-#     display_name = "Enemy Jumps"
-#     internal_name = "enemy_jumps"
+class TrickThudleyJumps(Choice):
+    """Logic Trick: Perform mid-air jumps by timing Thudley ground pounds with Mario Flipping.
+
+    Ground pound while mid-air then as soon as you start moving down, press
+    ground pound again to cancel it then immediately flip. You should get the
+    prompt to jump again after Mario finishes flipping without ground below him.
+
+    - Easy: Only requires doing the extra jump once.
+    - Medium: May require optimally chaining the jumps up to a couple times.
+    - Hard: No cap on how many chained jumps may be required.
+    """
+
+    display_name = "Thudley Jumps"
+    internal_name = "thudley_jumps"
+
+    option_disabled = 0
+    option_easy = 1
+    option_medium = 2
+    option_hard = 3
 
 
-# class TrickThudleyJumps(Choice):
-#     """Should logic expect you to perform mid-air jumps using Thudley?
+class TrickBowserBumps(Choice):
+    """Logic Trick: Bowser can perform a one or more mid-air jumps while riding Carrie.
 
-#     Easy only requires doing the jump once or twice in a row.
-#     """
-#     display_name = "Thudley Jumps"
-#     internal_name = "thudley_jumps"
+    Press Jump and Down simultaneously for the first jump then after Bowser
+    stands up from breathing fire, jump again.
+    This cannot be performed if Bowser is offscreen.
 
-#     option_disabled = 0
-#     option_easy = 1
-#     option_hard = 2
+    | Risk: None
+    | Difficulty: Depends
+    | Potential Impact: Small
+
+    - Single: Performing a single mid-air jump may be expected
+    - Multiple: Performing chained mid-air jumps may be expected
+    """
+
+    display_name = "Bowser Bumps"
+    internal_name = "bowser_bumps"
+
+    option_disabled = 0
+    option_single = 1
+    option_multiple = 2
 
 
 class TradingQuest(Toggle):
@@ -429,33 +454,54 @@ class SuperPaperMarioOptions(PerGameCommonOptions):
     goal: Goal
     pure_hearts_required: PureHeartsRequired
     chapter_door_access: ChapterDoorAccess
+
     # Item Pool
     starting_character: StartingCharacter
     starting_pixl: StartingPixl
     ability_shuffle: ShuffleAbilities
     filler_weights: FillerWeights
+
     # Item Shuffle
     shuffle_pure_hearts: ShufflePureHearts
+
     # Location Shuffle
     trading_quest: TradingQuest
     treasure_maps: TreasureMaps
+
     # Pit of 100 Trials
     flipside_pit_access: FlipsidePitAccess
     # flipside_pit_logic: FlipsidePitLogic
     flopside_pit_access: FlopsidePitAccess
     # flopside_pit_logic: FlopsidePitLogic
+
     # Other Randomization
     randomize_entrances: EntranceRando
     randomize_enemies: EnemyRando
     randomize_music: MusicRando
+
     # Logic
-    # obscure_tricks: ObscureTricks
+    # thudley_jumps: TrickThudleyJumps
+    enemy_jumps: TrickEnemyJumps
+    bowser_bumps: TrickBowserBumps
+
     # Hidden
     practice_codes: PracticeCodes
 
 
-# TODO: send help, I suck at coming up with option group names.
-# particularly "Location Shuffle" & "Item/Location Pool"
+EXCLUDE_SD_OPTIONS = [
+    "local_items",
+    "non_local_items",
+    "start_inventory",
+    "start_hints",
+    "start_location_hints",
+    "exclude_locations",
+    "priority_locations",
+    "item_links",
+    "plando_items",
+]
+"""What options should be excluded from slot_data"""
+
+
 OPTION_GROUPS = [
     OptionGroup("World Access", [Goal, PureHeartsRequired, ChapterDoorAccess]),
     OptionGroup("Item Pool", [StartingCharacter, StartingPixl, ShuffleAbilities, FillerWeights]),
@@ -464,7 +510,7 @@ OPTION_GROUPS = [
     OptionGroup("Pit of 100 Trials", [FlipsidePitAccess, FlopsidePitAccess]),
     OptionGroup(
         "Logic",
-        [ObscureTricks],
+        [TrickEnemyJumps, TrickThudleyJumps, TrickBowserBumps],
     ),
     OptionGroup("Other Randomization", [EntranceRando, EnemyRando, MusicRando]),
 ]

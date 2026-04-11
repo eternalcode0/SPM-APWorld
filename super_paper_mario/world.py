@@ -2,12 +2,12 @@ import logging
 from typing import Any, TextIO
 
 from BaseClasses import Item, ItemClassification, Location, Region
-from Options import Option, Visibility
+from Options import Option
 
 from . import items, patch, rules
 from .locations import LOCATION_GROUP_MAP, LOCATION_NAME_TO_ID, create_all_locations, get_location_map
-from .names import ItemName, LocationName, RegionName
-from .options import FlopsidePitAccess, PitAccess
+from .names import ELocationName, ItemName, RegionName
+from .options import EXCLUDE_SD_OPTIONS, FlopsidePitAccess, PitAccess
 from .regions import create_regions, get_region_map
 from .types import GAME, SPMWorldBase
 
@@ -33,13 +33,14 @@ class SuperPaperMarioWorld(SPMWorldBase):
 
     # SPM specific stuffs
     rm: dict[RegionName, Region]
-    lm: dict[LocationName, Location]
+    lm: dict[ELocationName, Location]
     slot_data = {}
     disabled_locations: set[str] = set()
     filler_options: dict[ItemName, int] = {}
     starting_pair: tuple[ItemName, ItemName]
 
     # Universal Tracker stuffs
+    glitches_item_name = ItemName.OOL
     ut_can_gen_without_yaml = True
     is_ut: bool
     # tracker_world: ClassVar[dict[str, Any]] = {
@@ -66,10 +67,8 @@ class SuperPaperMarioWorld(SPMWorldBase):
         self.prepare_ut()
 
         # Populate slot data from options
-        visible_option_keys = [
-            key for key in self.options.__dict__.keys() if getattr(self.options, key).visibility != Visibility.none
-        ]
-        self.slot_data["options"] = self.options.as_dict(*visible_option_keys)
+        sd_options = [key for key in self.options.__dict__.keys() if key not in EXCLUDE_SD_OPTIONS]
+        self.slot_data["options"] = self.options.as_dict(*sd_options)
 
         # Start Inventory
         character = items.CHARACTERS[self.options.starting_character.value]
@@ -89,10 +88,10 @@ class SuperPaperMarioWorld(SPMWorldBase):
     def create_regions(self):
         create_regions(self)
         self.rm = get_region_map(self)
-        self.lm = get_location_map(self)
         # create_all_locations also gives the sum of each individual vanilla item from randomized locations
         # this lets us maintain a similar amount of filler to vanilla for randomized locations regardless of options
         self.filler_options = create_all_locations(self)
+        self.lm = get_location_map(self)
 
     # All non-event locations finalized
 

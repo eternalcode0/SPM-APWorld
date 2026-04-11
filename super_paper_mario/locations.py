@@ -2,7 +2,7 @@ from BaseClasses import ItemClassification, Location
 
 from . import items
 from .data import location_data
-from .names import ItemName, LocationName
+from .names import ELocationName, EventName, ItemName, LocationName
 from .types import RandomizationType, SPMLocation, SPMWorldBase
 
 BASE_LOCATION_ID = 4_998_000
@@ -59,8 +59,8 @@ def create_all_locations(world: SPMWorldBase) -> dict[ItemName, int]:
 
 
 def get_location_map(
-    world: SPMWorldBase, location_names: list[LocationName] | None = None
-) -> dict[LocationName, Location]:
+    world: SPMWorldBase, location_names: list[ELocationName] | None = None
+) -> dict[ELocationName, Location]:
     if location_names is None or len(location_names) == 0:
-        location_names = list(LocationName)
+        location_names = [*LocationName, *EventName]
     return {location.name: location for location in world.get_locations() if location.name in location_names}

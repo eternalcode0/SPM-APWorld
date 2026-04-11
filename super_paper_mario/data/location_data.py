@@ -2,10 +2,10 @@ from collections.abc import Callable
 from dataclasses import dataclass
 from typing import Any
 
-from ..names.event_names import EventName as E
-from ..names.item_names import ItemName as I
-from ..names.location_names import LocationName as L
-from ..names.region_names import RegionName as R
+from ..names import EventName as E
+from ..names import ItemName as I
+from ..names import LocationName as L
+from ..names import RegionName as R
 from ..options import ChapterDoorAccess, FlopsidePitAccess, PitAccess, SuperPaperMarioOptions
 from ..types import GSW, GSWF, ScriptVariable
 from ..types import RandomizationType as RT  # noqa: N817

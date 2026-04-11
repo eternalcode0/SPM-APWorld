@@ -4,7 +4,7 @@ from typing import Any
 
 from BaseClasses import ItemClassification
 
-from ..names.item_names import ItemName as I
+from ..names import ItemName as I
 from ..options import SuperPaperMarioOptions
 from ..types import SPMWorldBase
 
@@ -87,6 +87,11 @@ def maps_amount(world: SPMWorldBase) -> int:
 
 
 ITEM_LIST_DICT: list[dict[str, Any]] = [
+    { name: I.OOL  # Universal Tracker Out of Logic Item
+    , code: 0
+    , classification: ItemClassification.progression
+    , amount: 0
+    },
     #region Important Things
     # MOD: 3 Ruins keys typically use a GSW(0) sequence
     { name: I.RUINS_KEY

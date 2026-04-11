@@ -4,27 +4,14 @@ from dataclasses import dataclass
 from enum import IntEnum, auto
 from typing import ClassVar
 
-from BaseClasses import Item, Location, MultiWorld, Tutorial
+from BaseClasses import Item, Location, MultiWorld, Region, Tutorial
 from settings import Group, UserFilePath
 from worlds.AutoWorld import WebWorld, World
 
+from .names import LocationName, RegionName
 from .options import OPTION_GROUPS, OPTION_PRESETS, SuperPaperMarioOptions
 
-# region AP Types
-
-GAME = "Super Paper Mario"
-
-
-class SPMItem(Item):
-    """An Item belonging to an instance of Super Paper Mario"""
-
-    game: str = GAME
-
-
-class SPMLocation(Location):
-    """A Location belonging to an instance of Super Paper Mario"""
-
-    game: str = GAME
+# region Generic Types
 
 
 class RandomizationType(IntEnum):
@@ -49,6 +36,25 @@ class RandomizationType(IntEnum):
     """
     RANDOM = auto()
     """The location is added to the multiworld and is randomized as normal."""
+
+
+# endregion
+
+# region AP Types
+
+GAME = "Super Paper Mario"
+
+
+class SPMItem(Item):
+    """An Item belonging to an instance of Super Paper Mario"""
+
+    game: str = GAME
+
+
+class SPMLocation(Location):
+    """A Location belonging to an instance of Super Paper Mario"""
+
+    game: str = GAME
 
 
 class SuperPaperMarioWebWorld(WebWorld):
@@ -99,10 +105,15 @@ class SPMWorldBase(World):
     """Base world for importing into other files. Helps prevent circular dependencies, better TypeVar usage, and
     separation of concerns."""
 
+    # AP settings
     settings: ClassVar[SuperPaperMarioSettings]
     options_dataclass = SuperPaperMarioOptions
     options: SuperPaperMarioOptions
     web: ClassVar[WebWorld] = SuperPaperMarioWebWorld()
+
+    # World-specfic variables
+    lm: dict[LocationName, Location]
+    rm: dict[RegionName, Region]
 
     def __init__(self, multiworld: MultiWorld, player: int) -> None:
         super().__init__(multiworld, player)
