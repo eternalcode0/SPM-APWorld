@@ -108,8 +108,8 @@ class StartingPixl(Choice):
 
 class PitAccess(Choice):
     option_closed = 0
-    option_open = 1
-    option_normal = 2
+    # option_open = 1
+    # option_normal = 2
 
 
 class PitLogic(Choice):
@@ -179,7 +179,7 @@ class FlopsidePitAccess(PitAccess):
     display_name = "Flopside Pit Access"
     internal_name = "flopside_pit_access"
 
-    option_no_flipside = 3
+    # option_no_flipside = 3
     default = PitAccess.option_closed
 
 
@@ -380,6 +380,16 @@ class TradingQuest(Toggle):
 
     display_name = "Trading Quest"
     internal_name = "trading_quest"
+
+    # MOD: Can we eventually add an option to remove the requirements for the 6 fetch quest items
+    # could be nice being able to get the 6 locations without needing items that only unlock 1 location each
+
+    # option_disabled = 0
+    # option_locations_only = 1
+    # option_enabled = 2
+
+    # alias_true = option_enabled
+    # alias_false = option_disabled
 
 
 class TreasureMaps(Choice):

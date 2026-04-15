@@ -4,8 +4,7 @@ from typing import Any, TextIO
 from BaseClasses import Item, ItemClassification, Location, Region
 from Options import Option
 
-from . import items, patch, rules
-from .locations import LOCATION_GROUP_MAP, LOCATION_NAME_TO_ID, create_all_locations, get_location_map
+from . import items, patch, rules, locations
 from .names import ELocationName, ItemName, RegionName
 from .options import EXCLUDE_SD_OPTIONS, FlopsidePitAccess, PitAccess
 from .regions import create_regions, get_region_map
@@ -26,16 +25,15 @@ class SuperPaperMarioWorld(SPMWorldBase):
 
     # Generic AP World stuffs
     item_name_to_id = items.ITEM_NAME_TO_ID
-    location_name_to_id = LOCATION_NAME_TO_ID
+    location_name_to_id = locations.LOCATION_NAME_TO_ID
     origin_region_name = RegionName.MAC02_L_TOWER
-    location_name_groups = LOCATION_GROUP_MAP
+    location_name_groups = locations.LOCATION_GROUP_MAP
     item_name_groups = items.ITEM_GROUP_MAP
 
     # SPM specific stuffs
     rm: dict[RegionName, Region]
     lm: dict[ELocationName, Location]
     slot_data = {}
-    disabled_locations: set[str] = set()
     filler_options: dict[ItemName, int] = {}
     starting_pair: tuple[ItemName, ItemName]
 
@@ -56,11 +54,11 @@ class SuperPaperMarioWorld(SPMWorldBase):
         options = self.options
 
         # Override options if necessary
-        if (
-            options.flopside_pit_access.value == PitAccess.option_normal
-            and options.flipside_pit_access.value == PitAccess.option_closed
-        ):
-            options.flopside_pit_access.value = FlopsidePitAccess.option_no_flipside
+        # if (
+        #     options.flopside_pit_access.value == PitAccess.option_normal
+        #     and options.flipside_pit_access.value == PitAccess.option_closed
+        # ):
+        #     options.flopside_pit_access.value = FlopsidePitAccess.option_no_flipside
 
         # UT shenanigans
         self.is_ut = getattr(self.multiworld, "generation_is_fake", False)
@@ -77,11 +75,12 @@ class SuperPaperMarioWorld(SPMWorldBase):
         self.push_precollected(self.create_item(character))
         self.push_precollected(self.create_item(pixl))
 
-        # Disabled Locations
-        if self.options.flipside_pit_access.value == PitAccess.option_closed:
-            self.disabled_locations.update(LOCATION_GROUP_MAP["Flipside Pit"])
-        if self.options.flopside_pit_access.value == PitAccess.option_closed:
-            self.disabled_locations.update(LOCATION_GROUP_MAP["Flopside Pit"])
+        # item/location pool
+        self.items = items.prepare_item_data(self)
+        self.locations = locations.prepare_location_data(self)
+        self.filler_options = {ItemName(key): value for key, value in options.filler_weights.value.items()}
+        if not len(self.filler_options):
+            self.filler_options = {ItemName.SHROOM_SHAKE: 3}
 
     # push start_inventory and start_inventory_from_pool into precollected_items
 
@@ -90,14 +89,13 @@ class SuperPaperMarioWorld(SPMWorldBase):
         self.rm = get_region_map(self)
         # create_all_locations also gives the sum of each individual vanilla item from randomized locations
         # this lets us maintain a similar amount of filler to vanilla for randomized locations regardless of options
-        self.filler_options = create_all_locations(self)
-        self.lm = get_location_map(self)
+        locations.create_all_locations(self, self.locations)
+        self.lm = locations.get_location_map(self)
 
     # All non-event locations finalized
 
     def create_items(self):
-        items.override_filler_options(self)
-        base_pool = items.create_items(self)
+        base_pool = items.create_items(self, self.items)
         total_locations = len(self.multiworld.get_unfilled_locations(self.player))
         filler_pool = self.random.choices(
             population=list(self.filler_options.keys()),
@@ -170,7 +168,7 @@ class SuperPaperMarioWorld(SPMWorldBase):
     # region Utility Methods
 
     def create_item(self, name: str) -> items.SPMItem:
-        return items.create_item(self, ItemName(name))
+        return items.create_item(self, items.ITEM_ENUM_TO_SETUP[ItemName(name)])
 
     def create_event(self, name: str) -> items.SPMItem:
         return items.SPMItem(name, ItemClassification.progression, None, self.player)

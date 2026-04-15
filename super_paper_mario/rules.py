@@ -23,7 +23,6 @@ from rule_builder.rules import (
     HasAll,
     HasAny,
     HasGroupUnique,
-    NestedRule,
     OptionFilter,
     Or,
     Rule,
@@ -752,18 +751,7 @@ ENTRANCE_RULES = [
         fr=R.MAC15_LAYER1,
         to=R.L_FLOPSIDE_PIT,
         name="Flopside B2 - Layer 1 - Sealed Pipe",
-        rule=(
-            True_(options=[OptionFilter(FlopsidePitAccess, FlopsidePitAccess.option_open)])
-            | HasAll(
-                E.COMPLETED_FLIPSIDE_PIT,
-                E.FLEEP_FLOPSIDE_PIT_CAGE,
-                options=[OptionFilter(FlopsidePitAccess, FlopsidePitAccess.option_normal)],
-            )
-            | Has(
-                E.FLEEP_FLOPSIDE_PIT_CAGE,
-                options=[OptionFilter(FlopsidePitAccess, FlopsidePitAccess.option_no_flipside)],
-            )
-        ),
+        rule=False_(),
     ),
     EntranceRule(fr=R.MAC15_LAYER1, to=R.MAC12_LAYER1, name="Flopside B2 - Layer 2 - Blue Pipe"),
     EntranceRule(

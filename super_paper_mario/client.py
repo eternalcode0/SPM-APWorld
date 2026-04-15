@@ -4,7 +4,6 @@ import traceback
 from typing import TYPE_CHECKING, ClassVar
 
 import dolphin_memory_engine as dme
-
 import Patch
 import settings
 import Utils
@@ -16,8 +15,7 @@ from CommonClient import (
     server_loop,
 )
 
-from .data.location_data import LOCATION_DATA
-from .locations import BASE_LOCATION_ID
+from .locations import BASE_LOCATION_ID, LOCATION_SETUP
 from .types import GAME, StorageType
 
 if TYPE_CHECKING:
@@ -122,7 +120,7 @@ class SuperPaperMarioContext(SuperContext):
         locations_to_send = set()
         try:
             # TODO: optimize to exclude locations that have already been checked
-            for ldata in LOCATION_DATA:
+            for ldata, _ in LOCATION_SETUP:
                 lid = ldata.code + BASE_LOCATION_ID
                 if ldata.var is None or lid is None or lid in self.checked_locations:
                     continue

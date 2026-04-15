@@ -1,14 +1,14 @@
 import struct
 from collections.abc import Sequence
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 from enum import IntEnum, auto
 from typing import ClassVar
 
-from BaseClasses import Item, Location, MultiWorld, Region, Tutorial
+from BaseClasses import Item, ItemClassification, Location, MultiWorld, Region, Tutorial
 from settings import Group, UserFilePath
 from worlds.AutoWorld import WebWorld, World
 
-from .names import LocationName, RegionName
+from .names import EItemName, ELocationName, LocationName, RegionName
 from .options import OPTION_GROUPS, OPTION_PRESETS, SuperPaperMarioOptions
 
 # region Generic Types
@@ -39,89 +39,6 @@ class RandomizationType(IntEnum):
 
 
 # endregion
-
-# region AP Types
-
-GAME = "Super Paper Mario"
-
-
-class SPMItem(Item):
-    """An Item belonging to an instance of Super Paper Mario"""
-
-    game: str = GAME
-
-
-class SPMLocation(Location):
-    """A Location belonging to an instance of Super Paper Mario"""
-
-    game: str = GAME
-
-
-class SuperPaperMarioWebWorld(WebWorld):
-    """Super Paper Mario Webpage Configuration"""
-
-    game = GAME
-
-    theme = "dirt"
-
-    bug_report_page = "https://github.com/eternalcode0/SPM-APWorld/issues"
-
-    option_groups = OPTION_GROUPS
-    options_presets = OPTION_PRESETS
-
-    rich_text_options_doc = True
-
-    tutorials: Sequence[Tutorial] = [
-        Tutorial(
-            "Multiworld Setup Guide",
-            "A guide to setting up Super Paper Mario with Archipelago.",
-            "English",
-            "setup_en.md",
-            "setup/en",
-            ["EternalCode"],
-        )
-    ]
-
-
-class SuperPaperMarioSettings(Group):
-    class DolphinPath(UserFilePath):
-        """The location of the Dolphin you want to auto launch patched ROMs with"""
-
-        is_exe = True
-        description = "Dolphin Executable"
-
-    class RomFile(UserFilePath):
-        """File name of the Super Paper Mario US0 rom"""
-
-        copy_to = "SuperPaperMario-US0.wbfs"
-        description = "Super Paper Mario US0 ROM File"
-
-    dolphin_path: DolphinPath = DolphinPath(None)
-    rom_file: RomFile = RomFile(RomFile.copy_to)
-    rom_start: bool = True
-
-
-class SPMWorldBase(World):
-    """Base world for importing into other files. Helps prevent circular dependencies, better TypeVar usage, and
-    separation of concerns."""
-
-    # AP settings
-    settings: ClassVar[SuperPaperMarioSettings]
-    options_dataclass = SuperPaperMarioOptions
-    options: SuperPaperMarioOptions
-    web: ClassVar[WebWorld] = SuperPaperMarioWebWorld()
-
-    # World-specfic variables
-    lm: dict[LocationName, Location]
-    rm: dict[RegionName, Region]
-
-    def __init__(self, multiworld: MultiWorld, player: int) -> None:
-        super().__init__(multiworld, player)
-
-
-# endregion
-
-# region Game Types
 
 # region Script Types
 
@@ -232,6 +149,140 @@ NEW_SAVE = [
     GSWF(535),  # Blue Pipe built (mac_15 <-> mac_12)
 ]
 """The set of GSWF flags to set on new save file. Should be moved to basepatch ASAP."""
+
+
+# endregion
+
+# region AP Types
+
+GAME = "Super Paper Mario"
+
+
+class SPMItem(Item):
+    """An Item belonging to an instance of Super Paper Mario"""
+
+    game: str = GAME
+
+
+@dataclass(kw_only=True, frozen=True)
+class ItemConfig:
+    """Used to define item data that may need to change based off world options"""
+
+    count: int | None = None
+    """How many of the item should be in the pool? Positive/Zero only."""
+    clazz: ItemClassification | None = None
+    """What item classification should this be?"""
+
+
+@dataclass(frozen=True)
+class ItemData:
+    """Used to describe Item data that shouldn't change based off world options"""
+
+    name: EItemName
+    code: int = field(compare=False, hash=False)
+    """A unique id among all other SPM items. Should match the id given to the rom. Short value"""
+    groups: frozenset[str] | set[str] = field(compare=False, default=frozenset())
+    """What item groups does this belong to"""
+    tag: str = ""
+
+
+ItemSetup = tuple[ItemData, ItemConfig]
+
+
+class SPMLocation(Location):
+    """A Location belonging to an instance of Super Paper Mario"""
+
+    game: str = GAME
+
+
+@dataclass(kw_only=True, frozen=True)
+class LocationConfig:
+    setting: RandomizationType | None = None
+    """How is this location randomized? See RandomizationType"""
+
+
+@dataclass(kw_only=True, frozen=True)
+class LocationData:
+    name: ELocationName
+    code: int
+    """A unique id among all other SPM locations. Gets added to BASE_LOCATION_ID."""
+    rom: int | None  # TODO: Remove None type when all locations setup
+    """Where do we write the randomized item to to change what gets picked up?"""
+    region: RegionName
+    """What region does this location belong to"""
+    item: EItemName
+    """What item is normally at this location. Mostly just used for events, maybe to be used for multislot setting"""
+    var: ScriptVariable | None = None  # TODO: Remove None type when all locations setup
+    """Which game variable is set when this location is checked?
+    https://github.com/SeekyCt/spm-docs/wiki/GSWF"""
+    groups: frozenset[str] | set[str] = frozenset()
+    """What location groups does this belong to"""
+    tag: str = ""
+
+
+LocationSetup = tuple[LocationData, LocationConfig]
+
+
+class SuperPaperMarioWebWorld(WebWorld):
+    """Super Paper Mario Webpage Configuration"""
+
+    game = GAME
+
+    theme = "dirt"
+
+    bug_report_page = "https://github.com/eternalcode0/SPM-APWorld/issues"
+
+    option_groups = OPTION_GROUPS
+    options_presets = OPTION_PRESETS
+
+    rich_text_options_doc = True
+
+    tutorials: Sequence[Tutorial] = [
+        Tutorial(
+            "Multiworld Setup Guide",
+            "A guide to setting up Super Paper Mario with Archipelago.",
+            "English",
+            "setup_en.md",
+            "setup/en",
+            ["EternalCode"],
+        )
+    ]
+
+
+class SuperPaperMarioSettings(Group):
+    class DolphinPath(UserFilePath):
+        """The location of the Dolphin you want to auto launch patched ROMs with"""
+
+        is_exe = True
+        description = "Dolphin Executable"
+
+    class RomFile(UserFilePath):
+        """File name of the Super Paper Mario US0 rom"""
+
+        copy_to = "SuperPaperMario-US0.wbfs"
+        description = "Super Paper Mario US0 ROM File"
+
+    dolphin_path: DolphinPath = DolphinPath(None)
+    rom_file: RomFile = RomFile(RomFile.copy_to)
+    rom_start: bool = True
+
+
+class SPMWorldBase(World):
+    """Base world for importing into other files. Helps prevent circular dependencies, better TypeVar usage, and
+    separation of concerns."""
+
+    # AP settings
+    settings: ClassVar[SuperPaperMarioSettings]
+    options_dataclass = SuperPaperMarioOptions
+    options: SuperPaperMarioOptions
+    web: ClassVar[WebWorld] = SuperPaperMarioWebWorld()
+
+    # World-specfic variables
+    lm: dict[LocationName, Location]
+    rm: dict[RegionName, Region]
+
+    def __init__(self, multiworld: MultiWorld, player: int) -> None:
+        super().__init__(multiworld, player)
 
 
 # endregion
