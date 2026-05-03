@@ -1313,14 +1313,14 @@ class RegionName(StrEnum):
 
     # 3-1: When Geeks Attack
     TA101 = f"{TA1} - Entrance"
-    # TA102 = f"{TA1} - Long Room"
-    # TA103 = f"{TA1} - SMB 1-2 Level"
-    # TA104 = f"{TA1} - Koopa Fortress"
-    # TA105 = f"{TA1} - Blomeba Room"
-    # TA106 = f"{TA1} - Underground Platform Room"
-    # TA107 = f"{TA1} - Underground Pyramid Room"
-    # TA108 = f"{TA1} - Underground Flip Block Room"
-    # TA109 = f"{TA1} - Mega Koopa Room"
+    TA102 = f"{TA1} - Long Room"
+    TA103 = f"{TA1} - SMB 1-2 Level"
+    TA104 = f"{TA1} - Koopa Fortress"
+    TA105 = f"{TA1} - Blomeba Room"
+    TA106 = f"{TA1} - Underground Platform Room"
+    TA107 = f"{TA1} - Underground Pyramid Room"
+    TA108 = f"{TA1} - Underground Flip Block Room"
+    TA109 = f"{TA1} - Mega Koopa Room"
 
     # 3-2: Bloops Ahoy
     TA201 = f"{TA2} - Entrance"

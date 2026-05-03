@@ -1140,34 +1140,18 @@ ENTRANCE_RULES = [
     # endregion
     # region Chapter 3-1
     # doa1_l
-    # EntranceRule(fr=R.TA101
-    # , to=R.TA102
-    # , name=f"{R.TA101} - Door in the sky"
-    # ),
-    # Entrance has an empty name
-    # EntranceRule(fr=R.TA101
-    # , to=R.TA103
-    # , name=f"{R.TA101} - Fall between Red Pipes"
-    # , etype=EntranceType.ONE_WAY
-    # ),
+    EntranceRule(
+        fr=R.TA101, to=R.TA102, name=f"{R.TA101} - Door in the sky", rule=SPMRules.can_super_jump | SPMRules.can_flip
+    ),
+    # Entrance has an empty name?
+    EntranceRule(fr=R.TA101, to=R.TA103, name=f"{R.TA101} - Fall between Red Pipes", etype=EntranceType.ONE_WAY),
     # dokan_m
-    # EntranceRule(fr=R.TA101
-    # , to=R.MAC02_L_TOWER
-    # , name=f"{R.TA101} - Left Red Pipe"
-    # , etype=EntranceType.ONE_WAY
-    # ),
+    EntranceRule(fr=R.TA101, to=R.MAC02_L_TOWER, name=f"{R.TA101} - Left Red Pipe", etype=EntranceType.ONE_WAY),
     # dokan_m2
-    # EntranceRule(fr=R.TA101
-    # , to=R.MAC02_L_TOWER
-    # , name=f"{R.TA101} - Right Red Pipe"
-    # , etype=EntranceType.ONE_WAY
-    # ),
+    EntranceRule(fr=R.TA101, to=R.MAC02_L_TOWER, name=f"{R.TA101} - Right Red Pipe", etype=EntranceType.ONE_WAY),
     # hai_dokan_03
-    # EntranceRule(fr=R.TA101
-    # , to=R.MAC02_L_TOWER
-    # , name=f"{R.TA101} - Right Background Pipe"
-    # , etype=EntranceType.ONE_WAY
-    # ),
+    EntranceRule(fr=R.TA101, to=R.MAC02_L_TOWER, name=f"{R.TA101} - Right Background Pipe", etype=EntranceType.ONE_WAY),
+    EntranceRule(fr=R.TA102, to=R.TA107, name=f"{R.TA102} - Secret Right Pipe"),
     # endregion
 ]
 
@@ -1275,4 +1259,6 @@ LOCATION_RULES = [
     # TODO: Add more ways to defeat mimi
     LocationRule(L.C24_YELLOW_PURE_HEART, Has(I.PIXL_THOREAU)),
     # endregion
+    # region Chapter 3-1
+    LocationRule(L.C31_CHEST_IN_WARP_ZONE_RIGHT_PIPE, SPMRules.can_flip),
 ]
