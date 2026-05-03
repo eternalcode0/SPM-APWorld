@@ -1634,6 +1634,25 @@ ALL_RULES: list[EntranceRule | LocationRule] = [
     # ta109
     EntranceRule(fr=R.TA109, to=R.TA102_L_FOREGROUND, name=f"{R.TA109} - Door"),
     # endregion
+    # region Chapter 3-2
+    # ta201
+    EntranceRule(fr=R.TA201, to=R.TA202, name=f"{R.TA201} - Caged Pipe", rule=SPMRules.can_flip),
+    EntranceRule(fr=R.TA201, to=R.TA205, name=f"{R.TA201} - Door", rule=Has(I.PIXL_THUDLEY)),
+    # ta202
+    EntranceRule(fr=R.TA202, to=R.TA201, name=f"{R.TA202} - Left Pipe"),
+    EntranceRule(fr=R.TA202, to=R.TA203, name=f"{R.TA202} - Middle Pipe"),
+    LocationRule(L.C32_HIDDEN_CHEST_NEAR_PIPE, SPMRules.can_flip),
+    # ta203
+    EntranceRule(fr=R.TA203, to=R.TA202, name=f"{R.TA203} - Pipe"),
+    EntranceRule(fr=R.TA203, to=R.TA204, name=f"{R.TA203} - Door"),
+    # ta204
+    EntranceRule(fr=R.TA204, to=R.TA203, name=f"{R.TA204} - Door"),
+    # ta205
+    EntranceRule(fr=R.TA205, to=R.TA201, name=f"{R.TA205} - Door"),
+    EntranceRule(
+        fr=R.TA205, to=R.TA206, name=f"{R.TA205} - Pipe", rule=SPMRules.can_fire | Has(I.PIXL_THUDLEY)
+    ),  # TODO: other ways to beat big blooper
+    # endregion
 ]
 """ALL_RULES keeps a list of both Entrance & Location rules manually sorted by Region."""
 

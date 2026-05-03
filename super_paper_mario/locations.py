@@ -2104,28 +2104,28 @@ LOCATION_SETUP: list[LocationSetup] = [
     ),
     # endregion
     # region 3-2
-    # (LocationData(name=L.C32_HIDDEN_CHEST_NEAR_PIPE
-    # , code=178
-    # , rom=None
-    # , var=None
-    # , item=None
-    # , region=None
-    # ), CFG_RANDOM),
-    # (LocationData(name=L.C32_THUDLEY_CHEST
-    # , code=179
-    # , rom=None
-    # , var=None
-    # , item=None
-    # , region=None
-    # ), CFG_RANDOM),
-    # (LocationData(name=L.C32_STAR_BLOCK
-    # , code=180
-    # , rom=None
-    # , var=None
-    # , item=None
-    # , region=None
-    # , tag=TAG_STAR_BLOCK
-    # ), CFG_DISABLED),
+    (
+        LocationData(
+            name=L.C32_HIDDEN_CHEST_NEAR_PIPE, code=178, rom=None, var=GSWF(823), item=I.GOLD_BAR, region=R.TA202
+        ),
+        CFG_RANDOM,
+    ),
+    (
+        LocationData(name=L.C32_THUDLEY_CHEST, code=179, rom=None, var=None, item=I.PIXL_THUDLEY, region=R.TA204),
+        CFG_RANDOM,
+    ),
+    (
+        LocationData(
+            name=L.C32_STAR_BLOCK,
+            code=180,
+            rom=None,
+            var=None,
+            item=I.CHAPTER_3_3_KEY,
+            region=R.TA206,
+            tag=TAG_STAR_BLOCK,
+        ),
+        CFG_DISABLED,
+    ),
     # endregion
     # region 3-3
     # (LocationData(name=L.C33_CHOMPS_CHEST

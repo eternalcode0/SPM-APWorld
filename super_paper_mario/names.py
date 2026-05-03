@@ -1327,11 +1327,11 @@ class RegionName(StrEnum):
 
     # 3-2: Bloops Ahoy
     TA201 = f"{TA2} - Entrance"
-    # TA202 = f"{TA2} - "
-    # TA203 = f"{TA2} - "
-    # TA204 = f"{TA2} - "
-    # TA205 = f"{TA2} - "
-    # TA206 = f"{TA2} - "
+    TA202 = f"{TA2} - Tentacle Corridor"
+    TA203 = f"{TA2} - Cave Corridor"
+    TA204 = f"{TA2} - Thudley Room"
+    TA205 = f"{TA2} - Big Blooper Arena"
+    TA206 = f"{TA2} - Star Block Room"
 
     # 3-3: Up, Up, and a Tree
     TA301 = f"{TA3} - Entrance"
