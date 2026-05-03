@@ -1312,15 +1312,18 @@ class RegionName(StrEnum):
     MI415 = f"{MI4} - Staircase to Bathrooms"  # Room after MI411 / Room 9
 
     # 3-1: When Geeks Attack
-    TA101 = f"{TA1} - Entrance"
-    # TA102 = f"{TA1} - Long Room"
-    # TA103 = f"{TA1} - SMB 1-2 Level"
-    # TA104 = f"{TA1} - Koopa Fortress"
-    # TA105 = f"{TA1} - Blomeba Room"
-    # TA106 = f"{TA1} - Underground Platform Room"
-    # TA107 = f"{TA1} - Underground Pyramid Room"
-    # TA108 = f"{TA1} - Underground Flip Block Room"
-    # TA109 = f"{TA1} - Mega Koopa Room"
+    TA101_L_FOREGROUND = f"{TA1} - Entrance / Foreground"
+    TA101_L_BACKGROUND = f"{TA1} - Entrance / Background"
+    TA102_L_FOREGROUND = f"{TA1} - Long Room / Foreground"
+    TA102_L_BACKGROUND = f"{TA1} - Long Room / Background"
+    TA103 = f"{TA1} - SMB 1-2 Level"
+    TA103_L_WARP_ZONE = f"{TA1} - SMB 1-2 Level / Warp Zone"
+    TA104 = f"{TA1} - Koopa Fortress"
+    TA105 = f"{TA1} - Blomeba Room"
+    TA106 = f"{TA1} - Underground Platform Room"
+    TA107 = f"{TA1} - Underground Pyramid Room"
+    TA108 = f"{TA1} - Underground Flip Block Room"
+    TA109 = f"{TA1} - Mega Koopa Room"
 
     # 3-2: Bloops Ahoy
     TA201 = f"{TA2} - Entrance"

@@ -2031,63 +2031,77 @@ LOCATION_SETUP: list[LocationSetup] = [
     ),
     # endregion
     # region 3-1
-    # (LocationData(name=L.C31_TALK_TO_BARRY_AFTER_DEFEATING_FRANCIS
-    # , code=169
-    # , rom=None
-    # , var=None
-    # , item=None
-    # , region=None
-    # ), CFG_RANDOM),
-    # (LocationData(name=L.C31_CHEST_IN_WARP_ZONE_RIGHT_PIPE
-    # , code=170
-    # , rom=None
-    # , var=None
-    # , item=None
-    # , region=None
-    # ), CFG_RANDOM),
-    # (LocationData(name=L.C31_OPEN_ITEM_IN_BACKGROUND
-    # , code=171
-    # , rom=None
-    # , var=None
-    # , item=None
-    # , region=None
-    # ), CFG_RANDOM),
-    # (LocationData(name=L.C31_CHEST_IN_BACKGROUND_PIPE
-    # , code=172
-    # , rom=None
-    # , var=None
-    # , item=None
-    # , region=None
-    # ), CFG_RANDOM),
-    # (LocationData(name=L.C31_CHEST_ABOVE_COLORFUL_PERSONS
-    # , code=173
-    # , rom=None
-    # , var=None
-    # , item=None
-    # , region=None
-    # ), CFG_RANDOM),
-    # (LocationData(name=L.C31_OPEN_ITEM_IN_BACKGROUND_2
-    # , code=174
-    # , rom=None
-    # , var=None
-    # , item=None
-    # , region=None
-    # ), CFG_RANDOM),
-    # (LocationData(name=L.C31_BOWSER
-    # , code=175
-    # , rom=None
-    # , var=None
-    # , item=None
-    # , region=None
-    # ), CFG_RANDOM),
-    # (LocationData(name=L.C31_STAR_BLOCK
-    # , code=176
-    # , rom=None
-    # , var=None
-    # , item=None
-    # , region=None
-    # , tag=TAG_STAR_BLOCK
-    # ), CFG_DISABLED),
+    # TODO: Double check all locations, I couldn't find some of them initially.
+    (
+        LocationData(
+            name=L.C31_TALK_TO_BARRY_AFTER_DEFEATING_FRANCIS,
+            code=169,
+            rom=None,
+            var=None,
+            item=I.PIXL_BARRY,
+            region=R.TA101_L_FOREGROUND,
+        ),
+        CFG_RANDOM,
+    ),
+    (
+        LocationData(
+            name=L.C31_CHEST_IN_WARP_ZONE_RIGHT_PIPE,
+            code=170,
+            rom=None,
+            var=None,
+            item=I.CATCH_CARD_MAGIKOOPA,
+            region=R.TA107,
+        ),
+        CFG_RANDOM,
+    ),
+    (
+        LocationData(
+            name=L.C31_OPEN_ITEM_IN_BACKGROUND,
+            code=171,
+            rom=None,
+            var=None,
+            item=I.CATCH_CARD_SP,
+            region=R.TA102_L_BACKGROUND,
+        ),
+        CFG_RANDOM,
+    ),
+    (
+        LocationData(
+            name=L.C31_CHEST_IN_BACKGROUND_PIPE, code=172, rom=None, var=None, item=I.THUNDER_RAGE, region=R.TA105
+        ),
+        CFG_RANDOM,
+    ),
+    # (
+    #     LocationData(name=L.C31_CHEST_ABOVE_COLORFUL_PERSONS, code=173, rom=None, var=None, item=None, region=None),
+    #     CFG_RANDOM,
+    # ),
+    # (
+    #     LocationData(name=L.C31_OPEN_ITEM_IN_BACKGROUND_2, code=174, rom=None, var=None, item=None, region=None),
+    #     CFG_RANDOM,
+    # ),
+    (
+        LocationData(
+            name=L.C31_BOWSER,
+            code=175,
+            rom=None,
+            var=GSW(0, 104),
+            item=I.CHARACTER_BOWSER,
+            region=R.TA104,
+        ),
+        CFG_RANDOM,
+    ),
+    (
+        LocationData(
+            name=L.C31_STAR_BLOCK,
+            code=176,
+            rom=None,
+            var=GSW(0, 105),
+            item=I.CHAPTER_3_2_KEY,
+            region=R.TA104,
+            tag=TAG_STAR_BLOCK,
+        ),
+        CFG_DISABLED,
+    ),
     # endregion
     # region 3-2
     # (LocationData(name=L.C32_HIDDEN_CHEST_NEAR_PIPE
