@@ -1826,6 +1826,17 @@ LOCATION_SETUP: list[LocationSetup] = [
     ),
     (
         LocationData(
+            name=E.SWITCH_YOLD_RUINS_SQUIG_ROOM,
+            code=146,
+            rom=0,
+            var=GSW(0, 42),
+            item=E.SWITCH_YOLD_RUINS_SQUIG_ROOM,
+            region=R.HE406,
+        ),
+        CFG_EVENT,
+    ),
+    (
+        LocationData(
             name=L.C14_HIDDEN_CHEST_AFTER_3D_PATH,
             code=146,
             rom=0,
