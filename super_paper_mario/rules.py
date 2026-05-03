@@ -5,8 +5,6 @@ from collections.abc import Callable
 from dataclasses import dataclass
 from enum import IntEnum
 
-from typing_extensions import TypedDict, override
-
 from BaseClasses import CollectionState
 from entrance_rando import (
     Entrance,
@@ -16,6 +14,7 @@ from entrance_rando import (
     disconnect_entrance_for_randomization,
 )
 from entrance_rando import randomize_entrances as er_randomize_entrances
+from NetUtils import JSONMessagePart
 from Options import Toggle
 from rule_builder.field_resolvers import FromOption
 from rule_builder.rules import (
@@ -31,6 +30,7 @@ from rule_builder.rules import (
     True_,
     WrapperRule,
 )
+from typing_extensions import TypedDict, override
 from worlds.AutoWorld import World
 
 from .names import EventName as E
@@ -138,21 +138,89 @@ class CanFleepTreasureSpot(Rule[SPMWorldBase], game=GAME):
 
 
 @dataclass
-class OutOfLogic(WrapperRule[World], game=GAME):
-    in_logic: Callable[[SPMWorldBase], bool]
-    """When is the rule traditionally in logic? Use this instead of OptionFilters"""
+class OutOfLogic(Rule[SPMWorldBase], game=GAME):
+    option: OptionFilter
 
     @override
-    def _instantiate(self, world: World) -> Rule.Resolved:
-        if self.in_logic(world):
-            # The rule is in logic anyway so just return it
-            return self.child.resolve(world)
-        # We are out of logic so check if we need to apply the out of logic item
-        ool_item: str = getattr(world, "glitches_item_name", "")
-        if getattr(world.multiworld, "generation_is_fake", False):
-            return And(Has(ool_item), self.child).resolve(world)
-        # No need for the item, the rule is simply out of logic, no access
-        return False_().resolve(world)
+    def _instantiate(self, world: SPMWorldBase) -> Rule.Resolved:
+        return self.Resolved(
+            in_logic=self.option.check(world.options),
+            # TODO: don't use string of option, it obscures the value name of the setting (TrickThroaueJumps == 1)
+            ofilter=str(self.option),
+            item_name=getattr(world, "glitches_item_name", ""),
+            player=world.player,
+            caching_enabled=getattr(world, "rule_caching_enabled", False),
+        )
+
+    @override
+    def __str__(self) -> str:
+        return f"{self.__class__.__name__}"
+
+    class Resolved(Rule.Resolved):
+        in_logic: bool = False
+        ofilter: str = ""
+        item_name: str = ""
+
+        @override
+        def _evaluate(self, state: CollectionState) -> bool:
+            return state.has(self.item_name, self.player)
+
+        @override
+        def explain_json(self, state: CollectionState | None = None) -> list[JSONMessagePart]:
+            if state is None:
+                return [{"type": "text", "text": str(self)}]
+            return [
+                {
+                    "type": "color",
+                    "color": "green" if self.in_logic else "yellow",
+                    "text": str(self),
+                }
+            ]
+
+        @override
+        def __str__(self) -> str:
+            return f"{'LogicTrick' if self.in_logic else 'OutOfLogic'}[{self.ofilter}]"
+
+
+# This is mostly a copy of DrTChops' Macro rule but without the actual macro'ing.
+# If a rule needed macro'ing then it isn't being stored as a variable properly, hence renamed this to Describe
+# https://github.com/drtchops/Archipelago/blob/57eb8106cc7a1e46546482fc4019e3cab983bcf6/worlds/astalon/logic/custom_rules.py#L289
+@dataclass
+class Describe(WrapperRule[SPMWorldBase], game=GAME):
+    name: str
+
+    @override
+    def _instantiate(self, world: SPMWorldBase) -> Rule.Resolved:
+        return self.Resolved(
+            self.child.resolve(world),
+            self.name,
+            player=world.player,
+            caching_enabled=getattr(world, "rule_caching_enabled", False),
+        )
+
+    @override
+    def __str__(self) -> str:
+        return f"{self.__class__.__name__}[{self.child}]"
+
+    class Resolved(WrapperRule.Resolved):
+        name: str
+
+        @override
+        def explain_json(self, state: CollectionState | None = None) -> list[JSONMessagePart]:
+            if state is None:
+                return [{"type": "text", "text": str(self)}]
+            return [{"type": "color", "color": "green" if self(state) else "salmon", "text": str(self)}]
+
+        @override
+        def explain_str(self, state: CollectionState | None = None) -> str:
+            suffix = ""
+            if state is not None:
+                suffix = " ✓" if self(state) else " ✕"
+            return f"{self.name}{suffix}"
+
+        @override
+        def __str__(self) -> str:
+            return self.name
 
 
 class SPMRules:
@@ -163,19 +231,34 @@ class SPMRules:
     flipside_pit_access_filter = OptionFilter(FlipsidePitAccess, FlipsidePitAccess.option_closed, operator="ne")
 
     # Base Rules
-    can_flip = Has(I.CHARACTER_MARIO) & (
-        Has(I.ABILITY_FLIP, options=[shuffle_ability_filter], filtered_resolution=True)
+    can_flip = Describe(
+        Has(I.CHARACTER_MARIO) & (Has(I.ABILITY_FLIP, options=[shuffle_ability_filter], filtered_resolution=True)),
+        "Mario flips",
+        # Use Mario to flip to the 3rd dimension with A
     )
-    can_float = Has(I.CHARACTER_PEACH) & (
-        Has(I.ABILITY_UMBRELLA, options=[shuffle_ability_filter], filtered_resolution=True)
+    can_float = Describe(
+        Has(I.CHARACTER_PEACH) & (Has(I.ABILITY_UMBRELLA, options=[shuffle_ability_filter], filtered_resolution=True)),
+        "Peach floats",
+        # Use Peach to float by holding jump
     )
-    can_fire = Has(I.CHARACTER_BOWSER) & (
-        Has(I.ABILITY_FIRE, options=[shuffle_ability_filter], filtered_resolution=True)
+    can_fire = Describe(
+        Has(I.CHARACTER_BOWSER) & (Has(I.ABILITY_FIRE, options=[shuffle_ability_filter], filtered_resolution=True)),
+        "Bowser breaths fire",
+        # Use Bowser to breath fire, breaking blocks or activating switches
     )
-    can_super_jump = Has(I.CHARACTER_LUIGI) & (
-        Has(I.ABILITY_SUPER_JUMP, options=[shuffle_ability_filter], filtered_resolution=True)
+    can_luigi_jump = Describe(
+        Has(I.CHARACTER_LUIGI),
+        "Luigi jumps",  # Luigi has slightly higher jump height even without super jump
     )
-    can_break_hard_blocks = HasAny(I.PIXL_BOOMER, I.PIXL_CUDGE, I.PIXL_THUDLEY) | can_fire
+    can_super_jump = Describe(
+        Has(I.CHARACTER_LUIGI)
+        & (Has(I.ABILITY_SUPER_JUMP, options=[shuffle_ability_filter], filtered_resolution=True)),
+        "Luigi super jumps",
+        # Luigi super jumps by holding down
+    )
+    can_break_hard_blocks = Describe(
+        HasAny(I.PIXL_BOOMER, I.PIXL_CUDGE, I.PIXL_THUDLEY) | can_fire, "Break hard blocks"
+    )
 
     # chapter 2 rules
     mi110_door_group = (
@@ -193,21 +276,16 @@ class SPMRules:
     )
 
     # Tricks
-    single_bowser_bump = OutOfLogic(
-        And(can_fire, Has(I.PIXL_CARRIE)),
-        lambda world: world.options.bowser_bumps.value != TrickBowserBumps.option_disabled,
+    single_bowser_bump = And[SPMWorldBase](can_fire, Has(I.PIXL_CARRIE)) & OutOfLogic(
+        OptionFilter(TrickBowserBumps, TrickBowserBumps.option_disabled, "ne")
     )
-    multiple_bowser_bumps = OutOfLogic(
-        And(
-            can_fire,
-            Has(I.PIXL_CARRIE),
-        ),
-        lambda world: world.options.bowser_bumps.value == TrickBowserBumps.option_multiple,
+    multiple_bowser_bumps = And[SPMWorldBase](
+        can_fire,
+        Has(I.PIXL_CARRIE),
+    ) & OutOfLogic(
+        OptionFilter(TrickBowserBumps, TrickBowserBumps.option_multiple),
     )
-    throeau_jump = OutOfLogic(
-        Has(I.PIXL_THOREAU),
-        lambda world: world.options.enemy_jumps.value == TrickEnemyJumps.option_setup,
-    )
+    throeau_jump = Has(I.PIXL_THOREAU) & OutOfLogic(OptionFilter(TrickEnemyJumps, TrickEnemyJumps.option_setup))
 
 
 def connect_regions(world: SPMWorldBase) -> list[Entrance]:
@@ -926,7 +1004,7 @@ ENTRANCE_RULES = [
         fr=R.MI101_BOTTOM_RIGHT,
         to=R.MI101_TOP_RIGHT,
         name=f"{R.MI101_BOTTOM_RIGHT} - Jump to Upper Platforms",
-        rule=Or(SPMRules.can_flip | Has(I.CHARACTER_LUIGI) | SPMRules.multiple_bowser_bumps),
+        rule=Or(SPMRules.can_flip | SPMRules.can_luigi_jump | SPMRules.multiple_bowser_bumps),
     ),
     EntranceRule(fr=R.MI101_TOP_RIGHT, to=R.MI105, name=f"{R.MI101_TOP_RIGHT} - Pipe"),
     EntranceRule(fr=R.MI101_TOP_RIGHT, to=R.MI101_BOTTOM_RIGHT, name=f"{R.MI101_TOP_RIGHT} - Fall"),

@@ -59,7 +59,7 @@ CONFIG_OVERRIDES: dict[str, tuple[Callable[[SuperPaperMarioOptions], bool], Loca
 
 
 def prepare_location_data(world: SPMWorldBase) -> list[LocationSetup]:
-    # Construct a dictionary of tag to count/classification to override ItemData defaults
+    # Construct a dictionary of tag to count/classification to override LocationData defaults
     overrides: dict[str, LocationConfigOverride] = {
         tag: override for tag, (func, override) in CONFIG_OVERRIDES.items() if func(world.options)
     }
