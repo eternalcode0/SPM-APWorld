@@ -1334,14 +1334,17 @@ class RegionName(StrEnum):
     TA206 = f"{TA2} - Star Block Room"
 
     # 3-3: Up, Up, and a Tree
-    TA301 = f"{TA3} - Entrance"
-    # TA302 = f"{TA3} - "
-    # TA303 = f"{TA3} - "
-    # TA304 = f"{TA3} - "
-    # TA305 = f"{TA3} - "
-    # TA306 = f"{TA3} - "
-    # TA307 = f"{TA3} - "
-    # TA308 = f"{TA3} - "
+    TA301_GROUND = f"{TA3} - Lower Outer Tree / Ground"
+    TA301_MIDDLE_TREE = f"{TA3} - Lower Outer Tree / Middle of the tree"
+    TA301_DOTWOOD_SHOP = f"{TA3} - Lower Outer Tree / Itty Bits"
+    TA302_BOTTOM = f"{TA3} - Inner Tree / Bottom"
+    TA302_TOP = f"{TA3} - Inner Tree / Top"
+    TA303 = f"{TA3} - Upper Outer Tree"
+    TA304 = f"{TA3} - Star Block Room"
+    TA305 = f"{TA3} - Yellow Coin Room"
+    TA306 = f"{TA3} - Spike Floors"
+    TA307 = f"{TA3} - Chain Chomp Room"
+    TA308 = f"{TA3} - Slim & Boomer Room"  # better name where?
 
     # 3-4: The Battle of Fort Francis
     TA401 = f"{TA4} - Entrance"

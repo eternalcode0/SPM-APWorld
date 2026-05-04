@@ -690,43 +690,43 @@ LOCATION_SETUP: list[LocationSetup] = [
         ),
         CFG_RANDOM,
     ),
+    (
+        LocationData(
+            name=L.DOTWOOD_TREE_ITTY_BITS_1,
+            code=45,
+            rom=0,
+            var=None,
+            item=I.PEACHY_PEACH,
+            region=R.TA301_DOTWOOD_SHOP,
+            groups={GROUP_SHOP},
+        ),
+        CFG_RANDOM,
+    ),
+    (
+        LocationData(
+            name=L.DOTWOOD_TREE_ITTY_BITS_2,
+            code=46,
+            rom=0,
+            var=None,
+            item=I.FRESH_VEGGIE,
+            region=R.TA301_DOTWOOD_SHOP,
+            groups={GROUP_SHOP},
+        ),
+        CFG_RANDOM,
+    ),
+    (
+        LocationData(
+            name=L.DOTWOOD_TREE_ITTY_BITS_3,
+            code=47,
+            rom=0,
+            var=None,
+            item=I.HORSETAIL,
+            region=R.TA301_DOTWOOD_SHOP,
+            groups={GROUP_SHOP},
+        ),
+        CFG_RANDOM,
+    ),
     # TODO: Need regions on these
-    # (
-    #     LocationData(
-    #         name=L.DOTWOOD_TREE_ITTY_BITS_1,
-    #         code=45,
-    #         rom=0,
-    #         var=None,
-    #         item=I.FRESH_VEGGIE,
-    #         region=None,
-    #         groups={GROUP_SHOP},
-    #     ),
-    #     CFG_RANDOM,
-    # ),
-    # (
-    #     LocationData(
-    #         name=L.DOTWOOD_TREE_ITTY_BITS_2,
-    #         code=46,
-    #         rom=0,
-    #         var=None,
-    #         item=I.HORSETAIL,
-    #         region=None,
-    #         groups={GROUP_SHOP},
-    #     ),
-    #     CFG_RANDOM,
-    # ),
-    # (
-    #     LocationData(
-    #         name=L.DOTWOOD_TREE_ITTY_BITS_3,
-    #         code=47,
-    #         rom=0,
-    #         var=None,
-    #         item=I.PEACHY_PEACH,
-    #         region=None,
-    #         groups={GROUP_SHOP},
-    #     ),
-    #     CFG_RANDOM,
-    # ),
     # (
     #     LocationData(
     #         name=L.OUTER_LIMITS_HOWZITS_TWINKLE_MART_1,
@@ -2128,21 +2128,24 @@ LOCATION_SETUP: list[LocationSetup] = [
     ),
     # endregion
     # region 3-3
-    # (LocationData(name=L.C33_CHOMPS_CHEST
-    # , code=181
-    # , rom=None
-    # , var=None
-    # , item=None
-    # , region=None
-    # ), CFG_RANDOM),
-    # (LocationData(name=L.C33_STAR_BLOCK
-    # , code=182
-    # , rom=None
-    # , var=None
-    # , item=None
-    # , region=None
-    # , tag=TAG_STAR_BLOCK
-    # ), CFG_DISABLED),
+    (
+        LocationData(
+            name=L.C33_CHOMPS_CHEST, code=181, rom=None, var=GSWF(828), item=I.CATCH_CARD_PEACH_2, region=R.TA307
+        ),
+        CFG_RANDOM,
+    ),
+    (
+        LocationData(
+            name=L.C33_STAR_BLOCK,
+            code=182,
+            rom=None,
+            var=GSW(0, 117),
+            item=I.CHAPTER_3_4_KEY,
+            region=R.TA304,
+            tag=TAG_STAR_BLOCK,
+        ),
+        CFG_DISABLED,
+    ),
     # endregion
     # region 3-4
     # (LocationData(name=L.C34_CHEST_IN_PIPE_OUTSIDE_OF_CASTLE

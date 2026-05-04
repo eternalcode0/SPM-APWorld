@@ -454,7 +454,7 @@ ALL_RULES: list[EntranceRule | LocationRule] = [
     ),
     EntranceRule(
         fr=R.MAC02_L_TOWER,
-        to=R.TA301,
+        to=R.TA301_GROUND,
         rule=HasChapterKey(I.CHAPTER_3_KEY, I.CHAPTER_3_3_KEY),
         name="Flipside Tower - Yellow Door [3-3]",
         **CHAPTER_DOOR_ER,
@@ -1652,6 +1652,55 @@ ALL_RULES: list[EntranceRule | LocationRule] = [
     EntranceRule(
         fr=R.TA205, to=R.TA206, name=f"{R.TA205} - Pipe", rule=SPMRules.can_fire | Has(I.PIXL_THUDLEY)
     ),  # TODO: other ways to beat big blooper
+    # endregion
+    # region Chapter 3-3
+    # ta301
+    EntranceRule(
+        fr=R.TA301_GROUND,
+        to=R.TA301_DOTWOOD_SHOP,
+        name=f"{R.TA301_GROUND} - Shrink to Itty Bits",
+        rule=Has(I.PIXL_DOTTIE),
+    ),
+    EntranceRule(
+        fr=R.TA301_GROUND,
+        to=R.TA301_MIDDLE_TREE,
+        name=f"{R.TA301_GROUND} - Climb Dotwood tree",
+        rule=((SPMRules.can_flip & SPMRules.can_float) | SPMRules.can_super_jump) & Has(I.PIXL_THUDLEY),
+    ),
+    EntranceRule(fr=R.TA301_MIDDLE_TREE, to=R.TA301_GROUND, name=f"{R.TA301_MIDDLE_TREE} - Fall to the ground"),
+    EntranceRule(fr=R.TA301_MIDDLE_TREE, to=R.TA305, name=f"{R.TA301_MIDDLE_TREE} - Yellow Pipe"),
+    EntranceRule(
+        fr=R.TA301_MIDDLE_TREE,
+        to=R.TA302_BOTTOM,
+        name=f"{R.TA301_MIDDLE_TREE} - Overgrown Door",
+        rule=SPMRules.can_fire,
+    ),
+    # ta302
+    # MOD: I'm not dealing with the logic implications of having the warp pipes here be entrance rando'd *yet*
+    # The below rule is written with the intention that all this room's warp pipe switches can be hit
+    EntranceRule(
+        fr=R.TA302_BOTTOM,
+        to=R.TA302_TOP,
+        name=f"{R.TA302_BOTTOM} - Lowest Pipe",
+        rule=HasAll(I.PIXL_SLIM, I.PIXL_BOOMER) & SPMRules.can_flip,
+    ),
+    EntranceRule(fr=R.TA302_BOTTOM, to=R.TA306, name=f"{R.TA302_BOTTOM} - Middle Flip Pipe", rule=SPMRules.can_flip),
+    EntranceRule(fr=R.TA302_BOTTOM, to=R.TA307, name=f"{R.TA302_BOTTOM} - Middle L Pipe"),
+    EntranceRule(fr=R.TA302_BOTTOM, to=R.TA308, name=f"{R.TA302_BOTTOM} - Top Pipe"),
+    EntranceRule(fr=R.TA302_TOP, to=R.TA303, name=f"{R.TA302_TOP} - Door"),
+    # ta303
+    EntranceRule(fr=R.TA303, to=R.TA304, name=f"{R.TA303} - Pipe after Red Wind"),
+    EntranceRule(fr=R.TA303, to=R.TA302_TOP, name=f"{R.TA303} - Door"),
+    # ta304
+    EntranceRule(fr=R.TA304, to=R.TA303, name=f"{R.TA304} - Pipe"),
+    # ta305
+    EntranceRule(fr=R.TA305, to=R.TA301_MIDDLE_TREE, name=f"{R.TA305} - Pipe"),
+    # ta306
+    EntranceRule(fr=R.TA306, to=R.TA302_BOTTOM, name=f"{R.TA306} - Pipe"),
+    # ta307
+    EntranceRule(fr=R.TA307, to=R.TA302_BOTTOM, name=f"{R.TA307} - Pipe"),
+    # ta308
+    EntranceRule(fr=R.TA308, to=R.TA302_BOTTOM, name=f"{R.TA308} - Pipe"),
     # endregion
 ]
 """ALL_RULES keeps a list of both Entrance & Location rules manually sorted by Region."""
