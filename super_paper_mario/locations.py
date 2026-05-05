@@ -2148,42 +2148,45 @@ LOCATION_SETUP: list[LocationSetup] = [
     ),
     # endregion
     # region 3-4
-    # (LocationData(name=L.C34_CHEST_IN_PIPE_OUTSIDE_OF_CASTLE
-    # , code=183
-    # , rom=None
-    # , var=None
-    # , item=None
-    # , region=None
-    # ), CFG_RANDOM),
-    # (LocationData(name=L.C34_FREE_CARRIE
-    # , code=184
-    # , rom=None
-    # , var=None
-    # , item=None
-    # , region=None
-    # ), CFG_RANDOM),
-    # (LocationData(name=L.C34_RIGHT_FRANCIS_CHAMBER_CHEST
-    # , code=185
-    # , rom=None
-    # , var=None
-    # , item=None
-    # , region=None
-    # ), CFG_RANDOM),
-    # (LocationData(name=L.C34_LEFT_FRANCIS_CHAMBER_CHEST
-    # , code=186
-    # , rom=None
-    # , var=None
-    # , item=None
-    # , region=None
-    # ), CFG_RANDOM),
-    # (LocationData(name=L.C34_GREEN_PURE_HEART
-    # , code=187
-    # , rom=None
-    # , var=None
-    # , item=I.GREEN_PURE_HEART
-    # , region=None
-    # , tag="ph"
-    # ), CFG_RANDOM),
+    (
+        LocationData(
+            name=L.C34_CHEST_IN_PIPE_OUTSIDE_OF_CASTLE,
+            code=183,
+            rom=None,
+            var=GSW(0, 121),
+            item=I.FORT_KEY,
+            region=R.TA402,
+        ),
+        CFG_RANDOM,
+    ),
+    (
+        LocationData(name=L.C34_FREE_CARRIE, code=184, rom=None, var=GSW(0, 123), item=I.PIXL_CARRIE, region=R.TA412),
+        CFG_RANDOM,
+    ),
+    (
+        LocationData(
+            name=L.C34_RIGHT_FRANCIS_CHAMBER_CHEST, code=185, rom=None, var=GSWF(812), item=I.FORT_KEY, region=R.TA411
+        ),
+        CFG_RANDOM,
+    ),
+    (
+        LocationData(
+            name=L.C34_LEFT_FRANCIS_CHAMBER_CHEST, code=186, rom=None, var=GSWF(811), item=I.FORT_KEY, region=R.TA410
+        ),
+        CFG_RANDOM,
+    ),
+    (
+        LocationData(
+            name=L.C34_GREEN_PURE_HEART,
+            code=187,
+            rom=None,
+            var=GSWF(0, 125),
+            item=I.GREEN_PURE_HEART,
+            region=R.TA413,
+            tag="ph",
+        ),
+        CFG_LOCKED,
+    ),
     # endregion
     # region 4-1
     # (LocationData(name=L.C41_SQUIRPS

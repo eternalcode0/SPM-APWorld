@@ -654,8 +654,8 @@ ITEM_SETUP: list[ItemSetup] = [
     (ItemData(I.RED_PURE_HEART, 768, {GROUP_HEART}, "h"), ItemConfig(count=0, clazz=IC.progression_skip_balancing)),
     (ItemData(I.ORANGE_PURE_HEART, 769, {GROUP_HEART}, "h"), ItemConfig(count=0, clazz=IC.progression_skip_balancing)),
     (ItemData(I.YELLOW_PURE_HEART, 770, {GROUP_HEART}, "h"), ItemConfig(count=0, clazz=IC.progression_skip_balancing)),
+    (ItemData(I.GREEN_PURE_HEART, 771, {GROUP_HEART}, "h"), ItemConfig(count=0, clazz=IC.progression_skip_balancing)),
     # TODO: add h tag when chapter logic is finished
-    (ItemData(I.GREEN_PURE_HEART, 771, {GROUP_HEART}), ItemConfig(count=1, clazz=IC.progression_skip_balancing)),
     (ItemData(I.CYAN_PURE_HEART, 772, {GROUP_HEART}), ItemConfig(count=1, clazz=IC.progression_skip_balancing)),
     (ItemData(I.BLUE_PURE_HEART, 773, {GROUP_HEART}), ItemConfig(count=1, clazz=IC.progression_skip_balancing)),
     (ItemData(I.PURPLE_PURE_HEART, 774, {GROUP_HEART}), ItemConfig(count=1, clazz=IC.progression_skip_balancing)),

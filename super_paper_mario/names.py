@@ -1347,21 +1347,23 @@ class RegionName(StrEnum):
     TA308 = f"{TA3} - Slim & Boomer Room"  # better name where?
 
     # 3-4: The Battle of Fort Francis
-    TA401 = f"{TA4} - Entrance"
-    # TA402 = f"{TA4} - "
-    # TA403 = f"{TA4} - "
-    # TA404 = f"{TA4} - "
-    # TA405 = f"{TA4} - "
-    # TA406 = f"{TA4} - "
-    # TA407 = f"{TA4} - "
-    # TA408 = f"{TA4} - "
-    # TA409 = f"{TA4} - "
-    # TA410 = f"{TA4} - "
-    # TA411 = f"{TA4} - "
-    # TA412 = f"{TA4} - "
-    # TA413 = f"{TA4} - "
-    # TA414 = f"{TA4} - "
-    # TA415 = f"{TA4} - "
+    TA401 = f"{TA4} - Outside Fort Gate"
+    TA402 = f"{TA4} - Below the Fort"
+    TA403 = f"{TA4} - Foyer"
+    TA404 = f"{TA4} - Main Hall"
+    TA405_BOTTOM = f"{TA4} - Main Staircase / Bottom"
+    TA405_TOP = f"{TA4} - Main Staircase / Top"
+    TA406 = f"{TA4} - 2nd Story Hall"
+    TA407_BOTTOM = f"{TA4} - West Wing Staircase / Bottom"
+    TA407_TOP = f"{TA4} - West Wing Staircase / Top"
+    TA408 = f"{TA4} - West Bridge"
+    TA409 = f"{TA4} - West Guard"
+    TA410 = f"{TA4} - West Chambers"
+    TA411 = f"{TA4} - East Guard & Chambers"
+    TA412 = f"{TA4} - Prison"
+    TA413 = f"{TA4} - Fight Francis"  # TODO: better name
+    TA414 = f"{TA4} - Spike Room"
+    TA415 = f"{TA4} - West Pit Trap"
 
     # 4-1: Into Outer Space
     SP101 = f"{SP1} - Entrance"

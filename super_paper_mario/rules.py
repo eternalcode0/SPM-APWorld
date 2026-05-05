@@ -1702,6 +1702,78 @@ ALL_RULES: list[EntranceRule | LocationRule] = [
     # ta308
     EntranceRule(fr=R.TA308, to=R.TA302_BOTTOM, name=f"{R.TA308} - Pipe"),
     # endregion
+    # region Chapter 3-4
+    EntranceRule(fr=R.TA401, to=R.TA402, name=f"{R.TA401} - 3D Pipe behind hidden wall", rule=SPMRules.can_flip),
+    EntranceRule(fr=R.TA401, to=R.TA403, name=f"{R.TA401} - Door", rule=Has(I.FORT_KEY, 1)),
+    # ta402
+    EntranceRule(fr=R.TA402, to=R.TA401, name=f"{R.TA402} - Pipe"),
+    LocationRule(L.C34_CHEST_IN_PIPE_OUTSIDE_OF_CASTLE, rule=Has(I.PIXL_THOREAU) | SPMRules.can_luigi_jump),
+    # ta403
+    EntranceRule(fr=R.TA403, to=R.TA401, name=f"{R.TA403} - Left Door"),
+    EntranceRule(fr=R.TA403, to=R.TA404, name=f"{R.TA403} - Right Door"),
+    EntranceRule(fr=R.TA403, to=R.TA412, name=f"{R.TA403} - 3D Pipe behind Right Door", rule=SPMRules.can_flip),
+    # ta404
+    EntranceRule(fr=R.TA404, to=R.TA403, name=f"{R.TA404} - Left Door"),
+    EntranceRule(
+        fr=R.TA404, to=R.TA413, name=f"{R.TA404} - Middle Door", rule=Has(I.FORT_KEY, 3) & Has(I.CHARACTER_PEACH)
+    ),
+    EntranceRule(fr=R.TA404, to=R.TA405_BOTTOM, name=f"{R.TA404} - Right Door"),
+    # ta405
+    EntranceRule(fr=R.TA405_BOTTOM, to=R.TA404, name=f"{R.TA405_BOTTOM} - Bottom Door"),
+    EntranceRule(fr=R.TA405_BOTTOM, to=R.TA405_TOP, name=f"{R.TA405_BOTTOM} - Climb Staircase", rule=SPMRules.can_flip),
+    EntranceRule(fr=R.TA405_TOP, to=R.TA405_BOTTOM, name=f"{R.TA405_BOTTOM} - Descend Staircase"),
+    EntranceRule(fr=R.TA405_TOP, to=R.TA406, name=f"{R.TA405_TOP} - Top Door"),
+    # ta406
+    EntranceRule(fr=R.TA406, to=R.TA405_TOP, name=f"{R.TA406} - Right Door"),
+    EntranceRule(fr=R.TA406, to=R.TA414, name=f"{R.TA406} - Middle Door", rule=Has(I.PIXL_THUDLEY)),
+    EntranceRule(fr=R.TA406, to=R.TA407_BOTTOM, name=f"{R.TA406} - Left Door", rule=Has(I.PIXL_THUDLEY)),
+    # ta407
+    EntranceRule(fr=R.TA407_BOTTOM, to=R.TA406, name=f"{R.TA407_BOTTOM} - Bottom Door", rule=SPMRules.can_flip),
+    EntranceRule(
+        fr=R.TA407_BOTTOM,
+        to=R.TA407_TOP,
+        name=f"{R.TA407_BOTTOM} - Climb Staircase",
+        rule=SPMRules.can_flip & (SPMRules.can_float | Has(I.PIXL_DASHELL)),
+    ),
+    EntranceRule(
+        fr=R.TA407_TOP,
+        to=R.TA407_BOTTOM,
+        name=f"{R.TA407_BOTTOM} - Descend Staircase",
+        rule=SPMRules.can_flip,
+    ),
+    EntranceRule(fr=R.TA407_TOP, to=R.TA408, name=f"{R.TA407_TOP} - Top Door"),
+    # ta408
+    EntranceRule(fr=R.TA408, to=R.TA407_TOP, name=f"{R.TA408} - Left Door"),
+    EntranceRule(
+        fr=R.TA408, to=R.TA409, name=f"{R.TA408} - Right Door", rule=SPMRules.can_luigi_jump | Has(I.PIXL_THOREAU)
+    ),
+    # ta409
+    # MOD: the game crashes if you exit the right door before activating the bridge
+    # EntranceRule(fr=R.TA409, to=R.TA408, name=f"{R.TA409} - Left Door"),
+    EntranceRule(fr=R.TA409, to=R.TA410, name=f"{R.TA409} - Right Door"),
+    # This is the west pitfall for entering the code 2828 wrong. It needs to be OoL or disabled since it's missable.
+    # EntranceRule(fr=R.TA409, to=R.TA415, name=f"{R.TA409} - Pit Trap"),
+    # ta410
+    EntranceRule(fr=R.TA410, to=R.TA409, name=f"{R.TA410} - Door"),
+    # ta411
+    # This is the west pitfall for entering the code 2323 wrong. It needs to be OoL or disabled since it's missable.
+    # EntranceRule(fr=R.TA411, to=R.TA415, name=f"{R.TA411} - Pit Trap"),
+    EntranceRule(fr=R.TA411, to=R.TA414, name=f"{R.TA411} - Left Door"),
+    EntranceRule(fr=R.TA411, to=R.TA414, name=f"{R.TA411} - Right Door"),
+    # ta412
+    EntranceRule(fr=R.TA412, to=R.TA403, name=f"{R.TA412} - Left 3D Pipe", rule=SPMRules.can_flip),
+    EntranceRule(fr=R.TA412, to=R.TA415, name=f"{R.TA412} - Right Pipe"),
+    LocationRule(
+        L.C34_FREE_CARRIE, Has(I.PIXL_THUDLEY) & (SPMRules.can_flip | SPMRules.can_luigi_jump | Has(I.PIXL_CARRIE))
+    ),
+    # ta413
+    # LocationRule(L.C34_GREEN_PURE_HEART),
+    # ta414
+    EntranceRule(fr=R.TA414, to=R.TA406, name=f"{R.TA414} - Left Door", rule=Has(I.PIXL_CARRIE)),
+    EntranceRule(fr=R.TA414, to=R.TA411, name=f"{R.TA414} - Right Door", rule=Has(I.PIXL_CARRIE)),
+    # ta415
+    EntranceRule(fr=R.TA415, to=R.TA412, name=f"{R.TA415} - Pipe", rule=Has(I.PIXL_THOREAU)),
+    # endregion
 ]
 """ALL_RULES keeps a list of both Entrance & Location rules manually sorted by Region."""
 
