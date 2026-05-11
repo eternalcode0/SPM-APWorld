@@ -2037,7 +2037,7 @@ LOCATION_SETUP: list[LocationSetup] = [
             name=L.C31_TALK_TO_BARRY_AFTER_DEFEATING_FRANCIS,
             code=170,
             rom=None,
-            var=None,
+            var=GSWF(818),
             item=I.PIXL_BARRY,
             region=R.TA101_L_FOREGROUND,
         ),
@@ -2048,7 +2048,7 @@ LOCATION_SETUP: list[LocationSetup] = [
             name=L.C31_CHEST_IN_WARP_ZONE_RIGHT_PIPE,
             code=171,
             rom=None,
-            var=None,
+            var=GSWF(826),
             item=I.CATCH_CARD_MAGIKOOPA,
             region=R.TA107,
         ),
@@ -2059,7 +2059,7 @@ LOCATION_SETUP: list[LocationSetup] = [
             name=L.C31_OPEN_ITEM_IN_BACKGROUND,
             code=172,
             rom=None,
-            var=None,
+            var=GSWF(821),
             item=I.CATCH_CARD_SP,
             region=R.TA102_L_BACKGROUND,
         ),
@@ -2067,18 +2067,32 @@ LOCATION_SETUP: list[LocationSetup] = [
     ),
     (
         LocationData(
-            name=L.C31_CHEST_IN_BACKGROUND_PIPE, code=173, rom=None, var=None, item=I.THUNDER_RAGE, region=R.TA105
+            name=L.C31_CHEST_IN_BACKGROUND_PIPE, code=173, rom=None, var=GSWF(832), item=I.THUNDER_RAGE, region=R.TA105
         ),
         CFG_RANDOM,
     ),
-    # (
-    #     LocationData(name=L.C31_CHEST_ABOVE_COLORFUL_PERSONS, code=174, rom=None, var=None, item=None, region=None),
-    #     CFG_RANDOM,
-    # ),
-    # (
-    #     LocationData(name=L.C31_OPEN_ITEM_IN_BACKGROUND_2, code=175, rom=None, var=None, item=None, region=None),
-    #     CFG_RANDOM,
-    # ),
+    (
+        LocationData(
+            name=L.C31_CHEST_ABOVE_COLORFUL_PERSONS,
+            code=174,
+            rom=None,
+            var=GSWF(820),
+            item=I.CATCH_CARD_PIRANHA_PLANT,
+            region=R.TA101_L_FOREGROUND,
+        ),
+        CFG_RANDOM,
+    ),
+    (
+        LocationData(
+            name=L.C31_OPEN_ITEM_IN_BACKGROUND_2,
+            code=175,
+            rom=None,
+            var=GSWF(822),
+            item=I.CATCH_CARD_SP,
+            region=R.TA106,
+        ),
+        CFG_RANDOM,
+    ),
     (
         LocationData(
             name=L.C31_BOWSER,
@@ -2111,7 +2125,9 @@ LOCATION_SETUP: list[LocationSetup] = [
         CFG_RANDOM,
     ),
     (
-        LocationData(name=L.C32_THUDLEY_CHEST, code=179, rom=None, var=None, item=I.PIXL_THUDLEY, region=R.TA204),
+        LocationData(
+            name=L.C32_THUDLEY_CHEST, code=179, rom=None, var=None, item=I.PIXL_THUDLEY, region=R.TA204
+        ),  # MOD: TODO: This doesn't have an associated script var? closest is GSW(108) unlocking the cage *with* thudley
         CFG_RANDOM,
     ),
     (
@@ -2119,7 +2135,7 @@ LOCATION_SETUP: list[LocationSetup] = [
             name=L.C32_STAR_BLOCK,
             code=180,
             rom=None,
-            var=None,
+            var=GSW(0, 112),
             item=I.CHAPTER_3_3_KEY,
             region=R.TA206,
             tag=TAG_STAR_BLOCK,
@@ -2180,7 +2196,7 @@ LOCATION_SETUP: list[LocationSetup] = [
             name=L.C34_GREEN_PURE_HEART,
             code=187,
             rom=None,
-            var=GSWF(0, 125),
+            var=GSW(0, 125),
             item=I.GREEN_PURE_HEART,
             region=R.TA413,
             tag="ph",

@@ -80,7 +80,7 @@ class SuperPaperMarioWorld(SPMWorldBase):
         self.locations = locations.prepare_location_data(self)
         self.filler_options = {ItemName(key): value for key, value in options.filler_weights.value.items()}
         if not len(self.filler_options):
-            self.filler_options = {ItemName.SHROOM_SHAKE: 3}
+            self.filler_options = {ItemName.SHROOM_SHAKE: 1}
 
     # push start_inventory and start_inventory_from_pool into precollected_items
 
