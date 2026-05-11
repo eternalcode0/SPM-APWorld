@@ -1558,6 +1558,7 @@ ALL_RULES: list[EntranceRule | LocationRule] = [
         to=R.TA102_L_FOREGROUND,
         name=f"{R.TA101_L_FOREGROUND} - Door in the sky",
         rule=SPMRules.can_super_jump | SPMRules.can_flip,
+        group=EGroup.CHAP_3,
     ),
     # Entrance has an empty name?
     EntranceRule(
@@ -1565,93 +1566,206 @@ ALL_RULES: list[EntranceRule | LocationRule] = [
         to=R.TA103,
         name=f"{R.TA101_L_FOREGROUND} - Fall between Red Pipes",
         etype=EntranceType.ONE_WAY,
+        group=EGroup.CHAP_3,
     ),
     EntranceRule(
         fr=R.TA101_L_FOREGROUND,
         to=R.MAC02_L_TOWER,
         name=f"{R.TA101_L_FOREGROUND} - Left Red Pipe",
         etype=EntranceType.ONE_WAY,
+        group=EGroup.CHAP_3,
     ),
     EntranceRule(
         fr=R.TA101_L_FOREGROUND,
         to=R.MAC02_L_TOWER,
         name=f"{R.TA101_L_FOREGROUND} - Right Red Pipe",
         etype=EntranceType.ONE_WAY,
+        group=EGroup.CHAP_3,
     ),
-    EntranceRule(fr=R.TA101_L_FOREGROUND, to=R.TA103_L_WARP_ZONE, name=f"{R.TA101_L_FOREGROUND} - Pipe in the Sky"),
+    EntranceRule(
+        fr=R.TA101_L_FOREGROUND,
+        to=R.TA103_L_WARP_ZONE,
+        name=f"{R.TA101_L_FOREGROUND} - Pipe in the Sky",
+        group=EGroup.CHAP_3,
+    ),
     EntranceRule(fr=R.TA101_L_FOREGROUND, to=R.TA101_L_BACKGROUND, name=f"{R.TA101_L_FOREGROUND} - Right Pipe"),
     EntranceRule(fr=R.TA101_L_BACKGROUND, to=R.TA101_L_FOREGROUND, name=f"{R.TA101_L_BACKGROUND} - Right Pipe"),
-    EntranceRule(fr=R.TA101_L_BACKGROUND, to=R.TA105, name=f"{R.TA101_L_FOREGROUND} - Middle Pipe"),
+    EntranceRule(
+        fr=R.TA101_L_BACKGROUND,
+        to=R.TA105,
+        name=f"{R.TA101_L_FOREGROUND} - Middle Pipe",
+        group=EGroup.CHAP_3,
+    ),
     # MOD: Will the barry check still require defeating francis?
     # LocationRule(L.C31_TALK_TO_BARRY_AFTER_DEFEATING_FRANCIS, True_()),
     # EntranceRule(fr=R.TA101_L_BACKGROUND, name=f"{R.TA101_L_BACKGROUND} - Left Pipe")  # Doesn't go anywhere
-    EntranceRule(fr=R.TA102_L_FOREGROUND, to=R.TA107, name=f"{R.TA102_L_FOREGROUND} - Secret Right Pipe"),
     EntranceRule(
         fr=R.TA102_L_FOREGROUND,
         to=R.TA102_L_BACKGROUND,
         name=f"{R.TA102_L_FOREGROUND} - Left Pipe",
         rule=SPMRules.can_float,
     ),
-    EntranceRule(fr=R.TA102_L_FOREGROUND, to=R.TA101_L_FOREGROUND, name=f"{R.TA102_L_FOREGROUND} - Left Door"),
-    EntranceRule(fr=R.TA102_L_FOREGROUND, to=R.TA109, name=f"{R.TA102_L_FOREGROUND} - Right Door"),
-    EntranceRule(fr=R.TA102_L_BACKGROUND, to=R.TA102_L_FOREGROUND, name=f"{R.TA102_L_BACKGROUND} - Pipe"),
+    EntranceRule(
+        fr=R.TA102_L_FOREGROUND,
+        to=R.TA101_L_FOREGROUND,
+        name=f"{R.TA102_L_FOREGROUND} - Left Door",
+        group=EGroup.CHAP_3,
+    ),
+    EntranceRule(
+        fr=R.TA102_L_FOREGROUND,
+        to=R.TA109,
+        name=f"{R.TA102_L_FOREGROUND} - Right Door",
+        group=EGroup.CHAP_3,
+    ),
+    EntranceRule(
+        fr=R.TA102_L_BACKGROUND,
+        to=R.TA102_L_FOREGROUND,
+        name=f"{R.TA102_L_BACKGROUND} - Pipe",
+    ),
     # EntranceRule(fr=R.TA103, name=f"{R.TA103} - Pipe before falling platforms"),
-    EntranceRule(fr=R.TA103, to=R.TA106, name=f"{R.TA103} - First pipe after floating coin section"),
-    EntranceRule(fr=R.TA103, to=R.TA108, name=f"{R.TA103} - Pipe between the staircase before falling platforms"),
-    EntranceRule(fr=R.TA103, to=R.TA104, name=f"{R.TA103} - Pipe before the warp zone"),
-    EntranceRule(fr=R.TA103, to=R.TA103_L_WARP_ZONE, name=f"{R.TA103} - Jump above level"),
+    EntranceRule(
+        fr=R.TA103,
+        to=R.TA106,
+        name=f"{R.TA103} - First pipe after floating coin section",
+        group=EGroup.CHAP_3,
+    ),
+    EntranceRule(
+        fr=R.TA103,
+        to=R.TA108,
+        name=f"{R.TA103} - Pipe between the staircase before falling platforms",
+        group=EGroup.CHAP_3,
+    ),
+    EntranceRule(
+        fr=R.TA103,
+        to=R.TA104,
+        name=f"{R.TA103} - Pipe before the warp zone",
+        group=EGroup.CHAP_3,
+    ),
+    EntranceRule(
+        fr=R.TA103,
+        to=R.TA103_L_WARP_ZONE,
+        name=f"{R.TA103} - Jump above level",
+    ),
     EntranceRule(
         fr=R.TA103_L_WARP_ZONE,
         to=R.TA103,
         name=f"{R.TA103_L_WARP_ZONE} - Jump above level",
         rule=SPMRules.can_super_jump,
     ),
-    EntranceRule(fr=R.TA103_L_WARP_ZONE, to=R.TA101_L_FOREGROUND, name=f"{R.TA103_L_WARP_ZONE} - Left Pipe"),
-    EntranceRule(fr=R.TA103_L_WARP_ZONE, to=R.TA104, name=f"{R.TA103_L_WARP_ZONE} - Middle Pipe"),
-    EntranceRule(fr=R.TA103_L_WARP_ZONE, to=R.TA107, name=f"{R.TA103_L_WARP_ZONE} - Right Pipe"),
+    EntranceRule(
+        fr=R.TA103_L_WARP_ZONE,
+        to=R.TA101_L_FOREGROUND,
+        name=f"{R.TA103_L_WARP_ZONE} - Left Pipe",
+        group=EGroup.CHAP_3,
+    ),
+    EntranceRule(
+        fr=R.TA103_L_WARP_ZONE,
+        to=R.TA104,
+        name=f"{R.TA103_L_WARP_ZONE} - Middle Pipe",
+        group=EGroup.CHAP_3,
+    ),
+    EntranceRule(
+        fr=R.TA103_L_WARP_ZONE,
+        to=R.TA107,
+        name=f"{R.TA103_L_WARP_ZONE} - Right Pipe",
+        group=EGroup.CHAP_3,
+    ),
     # ta104
-    EntranceRule(fr=R.TA104, to=R.TA103, name=f"{R.TA104} - Left Pipe"),
-    EntranceRule(fr=R.TA104, to=R.TA103_L_WARP_ZONE, name=f"{R.TA104} - Right Pipe"),
+    EntranceRule(
+        fr=R.TA104,
+        to=R.TA103,
+        name=f"{R.TA104} - Left Pipe",
+        group=EGroup.CHAP_3,
+    ),
+    EntranceRule(
+        fr=R.TA104,
+        to=R.TA103_L_WARP_ZONE,
+        name=f"{R.TA104} - Right Pipe",
+        group=EGroup.CHAP_3,
+    ),
     LocationRule(L.C31_BOWSER, Has(I.PIXL_BOOMER) | SPMRules.can_super_jump),  # TODO: more ways to defeat bowser?
     LocationRule(L.C31_STAR_BLOCK, Has(I.PIXL_BOOMER) | SPMRules.can_super_jump),  # TODO: more ways to defeat bowser?
     # ta105
-    EntranceRule(fr=R.TA105, to=R.TA101_L_BACKGROUND, name=f"{R.TA105} - Top Right Pipe"),
+    EntranceRule(
+        fr=R.TA105,
+        to=R.TA101_L_BACKGROUND,
+        name=f"{R.TA105} - Top Right Pipe",
+        group=EGroup.CHAP_3,
+    ),
     EntranceRule(
         fr=R.TA105,
         to=R.TA101_L_BACKGROUND,
         name=f"{R.TA105} - Bottom Left Pipe",
         etype=EntranceType.ONE_WAY,
+        group=EGroup.CHAP_3,
         # Goes to the TA101_L_BACKGROUND_PIPE - Left Pipe
     ),
     # ta106
     # EntranceRule(fr=R.TA106, to=R.TA103, name=f"{R.TA106} - Fall"),
-    EntranceRule(fr=R.TA106, to=R.TA103, name=f"{R.TA106} - Pipe"),
+    EntranceRule(
+        fr=R.TA106,
+        to=R.TA103,
+        name=f"{R.TA106} - Pipe",
+        group=EGroup.CHAP_3,
+    ),
     # ta107
-    EntranceRule(fr=R.TA107, to=R.TA103_L_WARP_ZONE, name=f"{R.TA107} - Pipe"),
+    EntranceRule(
+        fr=R.TA107,
+        to=R.TA103_L_WARP_ZONE,
+        name=f"{R.TA107} - Pipe",
+        group=EGroup.CHAP_3,
+    ),
     LocationRule(L.C31_CHEST_IN_WARP_ZONE_RIGHT_PIPE, SPMRules.can_flip),
     # ta108
-    EntranceRule(fr=R.TA108, to=R.TA103, name=f"{R.TA108} - Pipe"),
+    EntranceRule(
+        fr=R.TA108,
+        to=R.TA103,
+        name=f"{R.TA108} - Pipe",
+        group=EGroup.CHAP_3,
+    ),
     # ta109
-    EntranceRule(fr=R.TA109, to=R.TA102_L_FOREGROUND, name=f"{R.TA109} - Door"),
+    EntranceRule(
+        fr=R.TA109,
+        to=R.TA102_L_FOREGROUND,
+        name=f"{R.TA109} - Door",
+        group=EGroup.CHAP_3,
+    ),
     # endregion
     # region Chapter 3-2
     # ta201
-    EntranceRule(fr=R.TA201, to=R.TA202, name=f"{R.TA201} - Caged Pipe", rule=SPMRules.can_flip),
-    EntranceRule(fr=R.TA201, to=R.TA205, name=f"{R.TA201} - Door", rule=Has(I.PIXL_THUDLEY)),
+    EntranceRule(
+        fr=R.TA201,
+        to=R.TA202,
+        name=f"{R.TA201} - Caged Pipe",
+        rule=SPMRules.can_flip,
+        group=EGroup.CHAP_3,
+    ),
+    EntranceRule(fr=R.TA201, to=R.TA205, name=f"{R.TA201} - Door", rule=Has(I.PIXL_THUDLEY), group=EGroup.CHAP_3),
     # ta202
-    EntranceRule(fr=R.TA202, to=R.TA201, name=f"{R.TA202} - Left Pipe"),
-    EntranceRule(fr=R.TA202, to=R.TA203, name=f"{R.TA202} - Middle Pipe"),
+    EntranceRule(
+        fr=R.TA202,
+        to=R.TA201,
+        name=f"{R.TA202} - Left Pipe",
+        group=EGroup.CHAP_3,
+    ),
+    EntranceRule(fr=R.TA202, to=R.TA203, name=f"{R.TA202} - Middle Pipe", group=EGroup.CHAP_3),
     LocationRule(L.C32_HIDDEN_CHEST_NEAR_PIPE, SPMRules.can_flip),
     # ta203
-    EntranceRule(fr=R.TA203, to=R.TA202, name=f"{R.TA203} - Pipe"),
-    EntranceRule(fr=R.TA203, to=R.TA204, name=f"{R.TA203} - Door"),
+    EntranceRule(fr=R.TA203, to=R.TA202, name=f"{R.TA203} - Pipe", group=EGroup.CHAP_3),
+    EntranceRule(fr=R.TA203, to=R.TA204, name=f"{R.TA203} - Door", group=EGroup.CHAP_3),
     # ta204
-    EntranceRule(fr=R.TA204, to=R.TA203, name=f"{R.TA204} - Door"),
+    EntranceRule(fr=R.TA204, to=R.TA203, name=f"{R.TA204} - Door", group=EGroup.CHAP_3),
     # ta205
-    EntranceRule(fr=R.TA205, to=R.TA201, name=f"{R.TA205} - Door"),
+    EntranceRule(fr=R.TA205, to=R.TA201, name=f"{R.TA205} - Door", group=EGroup.CHAP_3),
     EntranceRule(
-        fr=R.TA205, to=R.TA206, name=f"{R.TA205} - Pipe", rule=SPMRules.can_fire | Has(I.PIXL_THUDLEY)
+        fr=R.TA205,
+        to=R.TA206,
+        name=f"{R.TA205} - Pipe",
+        rule=SPMRules.can_fire | Has(I.PIXL_THUDLEY),
+        group=EGroup.CHAP_3,
     ),  # TODO: other ways to beat big blooper
+    # ta206
+    EntranceRule(fr=R.TA206, to=R.TA205, name=f"{R.TA206} - Pipe", group=EGroup.CHAP_3),
     # endregion
     # region Chapter 3-3
     # ta301
@@ -1668,14 +1782,16 @@ ALL_RULES: list[EntranceRule | LocationRule] = [
         rule=((SPMRules.can_flip & SPMRules.can_float) | SPMRules.can_super_jump) & Has(I.PIXL_THUDLEY),
     ),
     EntranceRule(fr=R.TA301_MIDDLE_TREE, to=R.TA301_GROUND, name=f"{R.TA301_MIDDLE_TREE} - Fall to the ground"),
-    EntranceRule(fr=R.TA301_MIDDLE_TREE, to=R.TA305, name=f"{R.TA301_MIDDLE_TREE} - Yellow Pipe"),
+    EntranceRule(fr=R.TA301_MIDDLE_TREE, to=R.TA305, name=f"{R.TA301_MIDDLE_TREE} - Yellow Pipe", group=EGroup.CHAP_3),
     EntranceRule(
         fr=R.TA301_MIDDLE_TREE,
         to=R.TA302_BOTTOM,
         name=f"{R.TA301_MIDDLE_TREE} - Overgrown Door",
         rule=SPMRules.can_fire,
+        group=EGroup.CHAP_3,
     ),
     # ta302
+    EntranceRule(fr=R.TA302_BOTTOM, to=R.TA301_MIDDLE_TREE, name=f"{R.TA302_BOTTOM} - Door", group=EGroup.CHAP_3),
     # MOD: I'm not dealing with the logic implications of having the warp pipes here be entrance rando'd *yet*
     # The below rule is written with the intention that all this room's warp pipe switches can be hit
     EntranceRule(
@@ -1687,14 +1803,14 @@ ALL_RULES: list[EntranceRule | LocationRule] = [
     EntranceRule(fr=R.TA302_BOTTOM, to=R.TA306, name=f"{R.TA302_BOTTOM} - Middle Flip Pipe", rule=SPMRules.can_flip),
     EntranceRule(fr=R.TA302_BOTTOM, to=R.TA307, name=f"{R.TA302_BOTTOM} - Middle L Pipe"),
     EntranceRule(fr=R.TA302_BOTTOM, to=R.TA308, name=f"{R.TA302_BOTTOM} - Top Pipe"),
-    EntranceRule(fr=R.TA302_TOP, to=R.TA303, name=f"{R.TA302_TOP} - Door"),
+    EntranceRule(fr=R.TA302_TOP, to=R.TA303, name=f"{R.TA302_TOP} - Door", group=EGroup.CHAP_3),
     # ta303
-    EntranceRule(fr=R.TA303, to=R.TA304, name=f"{R.TA303} - Pipe after Red Wind"),
-    EntranceRule(fr=R.TA303, to=R.TA302_TOP, name=f"{R.TA303} - Door"),
+    EntranceRule(fr=R.TA303, to=R.TA302_TOP, name=f"{R.TA303} - Door", group=EGroup.CHAP_3),
+    EntranceRule(fr=R.TA303, to=R.TA304, name=f"{R.TA303} - Pipe after Red Wind", group=EGroup.CHAP_3),
     # ta304
-    EntranceRule(fr=R.TA304, to=R.TA303, name=f"{R.TA304} - Pipe"),
+    EntranceRule(fr=R.TA304, to=R.TA303, name=f"{R.TA304} - Pipe", group=EGroup.CHAP_3),
     # ta305
-    EntranceRule(fr=R.TA305, to=R.TA301_MIDDLE_TREE, name=f"{R.TA305} - Pipe"),
+    EntranceRule(fr=R.TA305, to=R.TA301_MIDDLE_TREE, name=f"{R.TA305} - Pipe", group=EGroup.CHAP_3),
     # ta306
     EntranceRule(fr=R.TA306, to=R.TA302_BOTTOM, name=f"{R.TA306} - Pipe"),
     # ta307
@@ -1703,32 +1819,58 @@ ALL_RULES: list[EntranceRule | LocationRule] = [
     EntranceRule(fr=R.TA308, to=R.TA302_BOTTOM, name=f"{R.TA308} - Pipe"),
     # endregion
     # region Chapter 3-4
-    EntranceRule(fr=R.TA401, to=R.TA402, name=f"{R.TA401} - 3D Pipe behind hidden wall", rule=SPMRules.can_flip),
-    EntranceRule(fr=R.TA401, to=R.TA403, name=f"{R.TA401} - Door", rule=Has(I.FORT_KEY, 1)),
+    EntranceRule(
+        fr=R.TA401,
+        to=R.TA402,
+        name=f"{R.TA401} - 3D Pipe behind hidden wall",
+        rule=SPMRules.can_flip,
+        group=EGroup.CHAP_3,
+    ),
+    EntranceRule(fr=R.TA401, to=R.TA403, name=f"{R.TA401} - Door", rule=Has(I.FORT_KEY, 1), group=EGroup.CHAP_3),
     # ta402
-    EntranceRule(fr=R.TA402, to=R.TA401, name=f"{R.TA402} - Pipe"),
+    EntranceRule(fr=R.TA402, to=R.TA401, name=f"{R.TA402} - Pipe", group=EGroup.CHAP_3),
     LocationRule(L.C34_CHEST_IN_PIPE_OUTSIDE_OF_CASTLE, rule=Has(I.PIXL_THOREAU) | SPMRules.can_luigi_jump),
     # ta403
-    EntranceRule(fr=R.TA403, to=R.TA401, name=f"{R.TA403} - Left Door"),
-    EntranceRule(fr=R.TA403, to=R.TA404, name=f"{R.TA403} - Right Door"),
-    EntranceRule(fr=R.TA403, to=R.TA412, name=f"{R.TA403} - 3D Pipe behind Right Door", rule=SPMRules.can_flip),
-    # ta404
-    EntranceRule(fr=R.TA404, to=R.TA403, name=f"{R.TA404} - Left Door"),
+    EntranceRule(fr=R.TA403, to=R.TA401, name=f"{R.TA403} - Left Door", group=EGroup.CHAP_3),
+    EntranceRule(fr=R.TA403, to=R.TA404, name=f"{R.TA403} - Right Door", group=EGroup.CHAP_3),
     EntranceRule(
-        fr=R.TA404, to=R.TA413, name=f"{R.TA404} - Middle Door", rule=Has(I.FORT_KEY, 3) & Has(I.CHARACTER_PEACH)
+        fr=R.TA403,
+        to=R.TA412,
+        name=f"{R.TA403} - 3D Pipe behind Right Door",
+        rule=SPMRules.can_flip,
+        group=EGroup.CHAP_3,
     ),
-    EntranceRule(fr=R.TA404, to=R.TA405_BOTTOM, name=f"{R.TA404} - Right Door"),
+    # ta404
+    EntranceRule(fr=R.TA404, to=R.TA403, name=f"{R.TA404} - Left Door", group=EGroup.CHAP_3),
+    EntranceRule(
+        fr=R.TA404,
+        to=R.TA413,
+        name=f"{R.TA404} - Middle Door",
+        rule=Has(I.FORT_KEY, 3) & Has(I.CHARACTER_PEACH),
+        group=EGroup.CHAP_3,
+    ),
+    EntranceRule(fr=R.TA404, to=R.TA405_BOTTOM, name=f"{R.TA404} - Right Door", group=EGroup.CHAP_3),
     # ta405
-    EntranceRule(fr=R.TA405_BOTTOM, to=R.TA404, name=f"{R.TA405_BOTTOM} - Bottom Door"),
+    EntranceRule(fr=R.TA405_BOTTOM, to=R.TA404, name=f"{R.TA405_BOTTOM} - Bottom Door", group=EGroup.CHAP_3),
     EntranceRule(fr=R.TA405_BOTTOM, to=R.TA405_TOP, name=f"{R.TA405_BOTTOM} - Climb Staircase", rule=SPMRules.can_flip),
     EntranceRule(fr=R.TA405_TOP, to=R.TA405_BOTTOM, name=f"{R.TA405_BOTTOM} - Descend Staircase"),
-    EntranceRule(fr=R.TA405_TOP, to=R.TA406, name=f"{R.TA405_TOP} - Top Door"),
+    EntranceRule(fr=R.TA405_TOP, to=R.TA406, name=f"{R.TA405_TOP} - Top Door", group=EGroup.CHAP_3),
     # ta406
-    EntranceRule(fr=R.TA406, to=R.TA405_TOP, name=f"{R.TA406} - Right Door"),
-    EntranceRule(fr=R.TA406, to=R.TA414, name=f"{R.TA406} - Middle Door", rule=Has(I.PIXL_THUDLEY)),
-    EntranceRule(fr=R.TA406, to=R.TA407_BOTTOM, name=f"{R.TA406} - Left Door", rule=Has(I.PIXL_THUDLEY)),
+    EntranceRule(fr=R.TA406, to=R.TA405_TOP, name=f"{R.TA406} - Right Door", group=EGroup.CHAP_3),
+    EntranceRule(
+        fr=R.TA406, to=R.TA414, name=f"{R.TA406} - Middle Door", rule=Has(I.PIXL_THUDLEY), group=EGroup.CHAP_3
+    ),
+    EntranceRule(
+        fr=R.TA406, to=R.TA407_BOTTOM, name=f"{R.TA406} - Left Door", rule=Has(I.PIXL_THUDLEY), group=EGroup.CHAP_3
+    ),
     # ta407
-    EntranceRule(fr=R.TA407_BOTTOM, to=R.TA406, name=f"{R.TA407_BOTTOM} - Bottom Door", rule=SPMRules.can_flip),
+    EntranceRule(
+        fr=R.TA407_BOTTOM,
+        to=R.TA406,
+        name=f"{R.TA407_BOTTOM} - Bottom Door",
+        rule=SPMRules.can_flip,
+        group=EGroup.CHAP_3,
+    ),
     EntranceRule(
         fr=R.TA407_BOTTOM,
         to=R.TA407_TOP,
@@ -1741,38 +1883,39 @@ ALL_RULES: list[EntranceRule | LocationRule] = [
         name=f"{R.TA407_BOTTOM} - Descend Staircase",
         rule=SPMRules.can_flip,
     ),
-    EntranceRule(fr=R.TA407_TOP, to=R.TA408, name=f"{R.TA407_TOP} - Top Door"),
+    EntranceRule(fr=R.TA407_TOP, to=R.TA408, name=f"{R.TA407_TOP} - Top Door", group=EGroup.CHAP_3),
     # ta408
-    EntranceRule(fr=R.TA408, to=R.TA407_TOP, name=f"{R.TA408} - Left Door"),
+    EntranceRule(fr=R.TA408, to=R.TA407_TOP, name=f"{R.TA408} - Left Door", group=EGroup.CHAP_3),
     EntranceRule(
         fr=R.TA408, to=R.TA409, name=f"{R.TA408} - Right Door", rule=SPMRules.can_luigi_jump | Has(I.PIXL_THOREAU)
     ),
     # ta409
     # MOD: the game crashes if you exit the right door before activating the bridge
     # EntranceRule(fr=R.TA409, to=R.TA408, name=f"{R.TA409} - Left Door"),
-    EntranceRule(fr=R.TA409, to=R.TA410, name=f"{R.TA409} - Right Door"),
+    EntranceRule(fr=R.TA409, to=R.TA410, name=f"{R.TA409} - Right Door", group=EGroup.CHAP_3),
     # This is the west pitfall for entering the code 2828 wrong. It needs to be OoL or disabled since it's missable.
     # EntranceRule(fr=R.TA409, to=R.TA415, name=f"{R.TA409} - Pit Trap"),
     # ta410
-    EntranceRule(fr=R.TA410, to=R.TA409, name=f"{R.TA410} - Door"),
+    EntranceRule(fr=R.TA410, to=R.TA409, name=f"{R.TA410} - Door", group=EGroup.CHAP_3),
     # ta411
     # This is the west pitfall for entering the code 2323 wrong. It needs to be OoL or disabled since it's missable.
     # EntranceRule(fr=R.TA411, to=R.TA415, name=f"{R.TA411} - Pit Trap"),
-    EntranceRule(fr=R.TA411, to=R.TA414, name=f"{R.TA411} - Left Door"),
-    EntranceRule(fr=R.TA411, to=R.TA414, name=f"{R.TA411} - Right Door"),
+    EntranceRule(fr=R.TA411, to=R.TA414, name=f"{R.TA411} - Left Door", group=EGroup.CHAP_3),
+    # EntranceRule(fr=R.TA411, to=R.TA411, name=f"{R.TA411} - Right Door"),  This is the elevator that goes to the same room
     # ta412
-    EntranceRule(fr=R.TA412, to=R.TA403, name=f"{R.TA412} - Left 3D Pipe", rule=SPMRules.can_flip),
-    EntranceRule(fr=R.TA412, to=R.TA415, name=f"{R.TA412} - Right Pipe"),
+    EntranceRule(fr=R.TA412, to=R.TA403, name=f"{R.TA412} - Left 3D Pipe", rule=SPMRules.can_flip, group=EGroup.CHAP_3),
+    EntranceRule(fr=R.TA412, to=R.TA415, name=f"{R.TA412} - Right Pipe", group=EGroup.CHAP_3),
     LocationRule(
         L.C34_FREE_CARRIE, Has(I.PIXL_THUDLEY) & (SPMRules.can_flip | SPMRules.can_luigi_jump | Has(I.PIXL_CARRIE))
     ),
     # ta413
+    EntranceRule(fr=R.TA413, to=R.TA404, name=f"{R.TA413} - Door", group=EGroup.CHAP_3),
     # LocationRule(L.C34_GREEN_PURE_HEART),
     # ta414
-    EntranceRule(fr=R.TA414, to=R.TA406, name=f"{R.TA414} - Left Door", rule=Has(I.PIXL_CARRIE)),
-    EntranceRule(fr=R.TA414, to=R.TA411, name=f"{R.TA414} - Right Door", rule=Has(I.PIXL_CARRIE)),
+    EntranceRule(fr=R.TA414, to=R.TA406, name=f"{R.TA414} - Left Door", rule=Has(I.PIXL_CARRIE), group=EGroup.CHAP_3),
+    EntranceRule(fr=R.TA414, to=R.TA411, name=f"{R.TA414} - Right Door", rule=Has(I.PIXL_CARRIE), group=EGroup.CHAP_3),
     # ta415
-    EntranceRule(fr=R.TA415, to=R.TA412, name=f"{R.TA415} - Pipe", rule=Has(I.PIXL_THOREAU)),
+    EntranceRule(fr=R.TA415, to=R.TA412, name=f"{R.TA415} - Pipe", rule=Has(I.PIXL_THOREAU), group=EGroup.CHAP_3),
     # endregion
 ]
 """ALL_RULES keeps a list of both Entrance & Location rules manually sorted by Region."""
