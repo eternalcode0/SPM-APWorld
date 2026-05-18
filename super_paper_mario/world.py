@@ -4,9 +4,9 @@ from typing import Any, TextIO
 from BaseClasses import Item, ItemClassification, Location, Region
 from Options import Option
 
-from . import items, patch, rules, locations
+from . import items, locations, patch, rules
 from .names import ELocationName, ItemName, RegionName
-from .options import EXCLUDE_SD_OPTIONS, FlopsidePitAccess, PitAccess
+from .options import EXCLUDE_SD_OPTIONS, EntranceRando
 from .regions import create_regions, get_region_map
 from .types import GAME, SPMWorldBase
 
@@ -80,7 +80,7 @@ class SuperPaperMarioWorld(SPMWorldBase):
         self.locations = locations.prepare_location_data(self)
         self.filler_options = {ItemName(key): value for key, value in options.filler_weights.value.items()}
         if not len(self.filler_options):
-            self.filler_options = {ItemName.SHROOM_SHAKE: 3}
+            self.filler_options = {ItemName.SHROOM_SHAKE: 1}
 
     # push start_inventory and start_inventory_from_pool into precollected_items
 
@@ -157,7 +157,17 @@ class SuperPaperMarioWorld(SPMWorldBase):
         pass
 
     def write_spoiler(self, spoiler_handle: TextIO):
-        pass
+        er_pairings: list[tuple[str, str]] | None = self.slot_data.get("entrances", None)
+        if not er_pairings:
+            return
+
+        spoiler_handle.write(f"\n\nEntrance Rando ({self.player_name}):\n")
+        arrow = "->"
+        if self.options.randomize_entrances.value == EntranceRando.option_coupled:
+            er_pairings = er_pairings[0::2]  # filter pairings down since they're bidirectional
+            arrow = "<->"
+        for i in er_pairings:
+            spoiler_handle.write(f"\t{i[0]} {arrow} {i[1]}\n")
 
     def write_spoiler_end(self, spoiler_handle: TextIO):
         pass

@@ -14,6 +14,7 @@ from entrance_rando import (
     disconnect_entrance_for_randomization,
 )
 from entrance_rando import randomize_entrances as er_randomize_entrances
+from NetUtils import JSONMessagePart
 from Options import Toggle
 from rule_builder.field_resolvers import FromOption
 from rule_builder.rules import (
@@ -40,7 +41,6 @@ from .options import (
     ChapterDoorAccess,
     EntranceRando,
     FlipsidePitAccess,
-    FlopsidePitAccess,
     PureHeartsRequired,
     ShuffleAbilities,
     TrickBowserBumps,
@@ -53,48 +53,21 @@ class EGroup(IntEnum):
     """An Entrance Group for entrance_rando"""
 
     NONE = 0
-    # Transportation
-    PIPE = 1
-    DOOR = 2
-    ELEVATOR_UP = 3
-    ELEVATOR_DOWN = 4
-    PORTAL = 5  # Chapter 4 Space Wormholes
-    JUMP = 6
-    FALL = 7
     # Chapter
-    HUB = 1 << 3
-    CHAP_1 = 2 << 3
-    CHAP_2 = 3 << 3
-    CHAP_3 = 4 << 3
-    CHAP_4 = 5 << 3
-    CHAP_5 = 6 << 3
-    CHAP_6 = 7 << 3
-    CHAP_7 = 8 << 3
-    CHAP_8 = 9 << 3
-    # Bitmasks
-    TRANSPORTATION_MASK = 0b00_0111
-    CHAPTER_MASK = 0b111_1000
+    CHAP_1 = 1
+    CHAP_2 = 2
+    CHAP_3 = 3
+    CHAP_4 = 4
+    CHAP_5 = 5
+    CHAP_6 = 6
+    CHAP_7 = 7
+    CHAP_8 = 8
+    HUB = 9
 
 
-transportation_matching_group_lookup = {
-    EGroup.DOOR: [EGroup.DOOR, EGroup.PORTAL],
-    EGroup.PIPE: [EGroup.PIPE],
-    EGroup.ELEVATOR_UP: [EGroup.ELEVATOR_DOWN],
-    EGroup.ELEVATOR_DOWN: [EGroup.ELEVATOR_UP],
-    EGroup.PORTAL: [EGroup.PORTAL, EGroup.DOOR],
-    EGroup.JUMP: [EGroup.FALL],
-    EGroup.FALL: [EGroup.JUMP],
-}
-
-
-def get_target_groups(group: int) -> list[int]:
-    """Return the list of applicable destination entrances by their EGroup. Intended to be used with
-    `bake_target_er_lookup`"""
-    # Transportation must match the transportation dictionary values
-    # Chapter must match
-    transportation = group & EGroup.TRANSPORTATION_MASK
-    chapter = group & EGroup.CHAPTER_MASK
-    return [pair | chapter for pair in transportation_matching_group_lookup[transportation]]
+er_within_chapter = lambda group: [group]
+er_anywhere_targets = [i for i in range(1, 10)]
+er_anywhere = lambda group: er_anywhere_targets
 
 
 @dataclass(kw_only=True)
@@ -165,21 +138,95 @@ class CanFleepTreasureSpot(Rule[SPMWorldBase], game=GAME):
 
 
 @dataclass
-class OutOfLogic(WrapperRule[World], game=GAME):
-    in_logic: Callable[[SPMWorldBase], bool]
-    """When is the rule traditionally in logic? Use this instead of OptionFilters"""
+class OutOfLogic(Rule[SPMWorldBase], game=GAME):
+    option: OptionFilter
 
     @override
-    def _instantiate(self, world: World) -> Rule.Resolved:
-        if self.in_logic(world):
-            # The rule is in logic anyway so just return it
-            return self.child.resolve(world)
-        # We are out of logic so check if we need to apply the out of logic item
-        ool_item: str = getattr(world, "glitches_item_name", "")
-        if getattr(world.multiworld, "generation_is_fake", False):
-            return And(Has(ool_item), self.child).resolve(world)
-        # No need for the item, the rule is simply out of logic, no access
-        return False_().resolve(world)
+    def _instantiate(self, world: SPMWorldBase) -> Rule.Resolved:
+        return self.Resolved(
+            in_logic=self.option.check(world.options),
+            # TODO: don't use string of option, it obscures the value name of the setting (TrickThroaueJumps == 1)
+            ofilter=str(self.option),
+            item_name=getattr(world, "glitches_item_name", ""),
+            player=world.player,
+            caching_enabled=getattr(world, "rule_caching_enabled", False),
+        )
+
+    @override
+    def __str__(self) -> str:
+        return f"{self.__class__.__name__}"
+
+    class Resolved(Rule.Resolved):
+        in_logic: bool = False
+        ofilter: str = ""
+        item_name: str = ""
+
+        @override
+        def _evaluate(self, state: CollectionState) -> bool:
+            return state.has(self.item_name, self.player)
+
+        @override
+        def explain_json(self, state: CollectionState | None = None) -> list[JSONMessagePart]:
+            if state is None:
+                return [{"type": "text", "text": str(self)}]
+            return [
+                {
+                    "type": "color",
+                    "color": "green" if self.in_logic else "yellow",
+                    "text": str(self),
+                }
+            ]
+
+        @override
+        def __str__(self) -> str:
+            return f"{'LogicTrick' if self.in_logic else 'OutOfLogic'}[{self.ofilter}]"
+
+
+# This is mostly a copy of DrTChops' Macro rule but without the actual macro'ing.
+# If a rule needed macro'ing then it isn't being stored as a variable properly, hence renamed this to Describe
+# https://github.com/drtchops/Archipelago/blob/57eb8106cc7a1e46546482fc4019e3cab983bcf6/worlds/astalon/logic/custom_rules.py#L289
+@dataclass
+class Describe(WrapperRule[SPMWorldBase], game=GAME):
+    name: str
+
+    @override
+    def _instantiate(self, world: SPMWorldBase) -> Rule.Resolved:
+        return self.Resolved(
+            self.child.resolve(world),
+            self.name,
+            player=world.player,
+            caching_enabled=getattr(world, "rule_caching_enabled", False),
+        )
+
+    @override
+    def __str__(self) -> str:
+        return f"{self.__class__.__name__}[{self.child}]"
+
+    class Resolved(WrapperRule.Resolved):
+        name: str
+
+        @override
+        def explain_json(self, state: CollectionState | None = None) -> list[JSONMessagePart]:
+            if state is None:
+                return [{"type": "text", "text": str(self)}]
+            return [
+                {
+                    "type": "color",
+                    "color": "green" if self(state) else "salmon",
+                    "text": str(self),
+                }
+            ]
+
+        @override
+        def explain_str(self, state: CollectionState | None = None) -> str:
+            suffix = ""
+            if state is not None:
+                suffix = " ✓" if self(state) else " ✕"
+            return f"{self.name}{suffix}"
+
+        @override
+        def __str__(self) -> str:
+            return self.name
 
 
 class SPMRules:
@@ -190,19 +237,64 @@ class SPMRules:
     flipside_pit_access_filter = OptionFilter(FlipsidePitAccess, FlipsidePitAccess.option_closed, operator="ne")
 
     # Base Rules
-    can_flip = Has(I.CHARACTER_MARIO) & (
-        Has(I.ABILITY_FLIP, options=[shuffle_ability_filter], filtered_resolution=True)
+    can_flip = Describe(
+        Has(I.CHARACTER_MARIO)
+        & (
+            Has(
+                I.ABILITY_FLIP,
+                options=[shuffle_ability_filter],
+                filtered_resolution=True,
+            )
+        ),
+        "Mario flips",
+        # Use Mario to flip to the 3rd dimension with A
     )
-    can_float = Has(I.CHARACTER_PEACH) & (
-        Has(I.ABILITY_UMBRELLA, options=[shuffle_ability_filter], filtered_resolution=True)
+    can_float = Describe(
+        Has(I.CHARACTER_PEACH)
+        & (
+            Has(
+                I.ABILITY_UMBRELLA,
+                options=[shuffle_ability_filter],
+                filtered_resolution=True,
+            )
+        ),
+        "Peach floats",
+        # Use Peach to float by holding jump
     )
-    can_fire = Has(I.CHARACTER_BOWSER) & (
-        Has(I.ABILITY_FIRE, options=[shuffle_ability_filter], filtered_resolution=True)
+    can_fire = Describe(
+        Has(I.CHARACTER_BOWSER)
+        & Has(
+            I.ABILITY_FIRE,
+            options=[shuffle_ability_filter],
+            filtered_resolution=True,
+        ),
+        "Bowser breaths fire",
+        # Use Bowser to breath fire, breaking blocks or activating switches
     )
-    can_super_jump = Has(I.CHARACTER_LUIGI) & (
-        Has(I.ABILITY_SUPER_JUMP, options=[shuffle_ability_filter], filtered_resolution=True)
+    can_luigi_jump = Describe(
+        Has(I.CHARACTER_LUIGI),
+        "Luigi jumps",  # Luigi has slightly higher jump height even without super jump
     )
-    can_break_hard_blocks = HasAny(I.PIXL_BOOMER, I.PIXL_CUDGE, I.PIXL_THUDLEY) | can_fire
+    can_super_jump = Describe(
+        Has(I.CHARACTER_LUIGI)
+        & (
+            Has(
+                I.ABILITY_SUPER_JUMP,
+                options=[shuffle_ability_filter],
+                filtered_resolution=True,
+            )
+        ),
+        "Luigi super jumps",
+        # Luigi super jumps by holding down
+    )
+    can_break_hard_blocks = Describe(
+        HasAny(I.PIXL_BOOMER, I.PIXL_CUDGE, I.PIXL_THUDLEY) | can_fire,
+        "Break hard blocks",
+    )
+    can_climb_ladder = Describe(
+        HasAny(I.CHARACTER_LUIGI, I.CHARACTER_MARIO, I.CHARACTER_PEACH),
+        "Climb Ladders",  # Bowser too chunky, I def missed locations that need this rule
+    )
 
     # chapter 2 rules
     mi110_door_group = (
@@ -220,21 +312,16 @@ class SPMRules:
     )
 
     # Tricks
-    single_bowser_bump = OutOfLogic(
-        And(can_fire, Has(I.PIXL_CARRIE)),
-        lambda world: world.options.bowser_bumps.value != TrickBowserBumps.option_disabled,
+    single_bowser_bump = And[SPMWorldBase](can_fire, Has(I.PIXL_CARRIE)) & OutOfLogic(
+        OptionFilter(TrickBowserBumps, TrickBowserBumps.option_disabled, "ne")
     )
-    multiple_bowser_bumps = OutOfLogic(
-        And(
-            can_fire,
-            Has(I.PIXL_CARRIE),
-        ),
-        lambda world: world.options.bowser_bumps.value == TrickBowserBumps.option_multiple,
+    multiple_bowser_bumps = And[SPMWorldBase](
+        can_fire,
+        Has(I.PIXL_CARRIE),
+    ) & OutOfLogic(
+        OptionFilter(TrickBowserBumps, TrickBowserBumps.option_multiple),
     )
-    throeau_jump = OutOfLogic(
-        Has(I.PIXL_THOREAU),
-        lambda world: world.options.enemy_jumps.value == TrickEnemyJumps.option_setup,
-    )
+    throeau_jump = Has(I.PIXL_THOREAU) & OutOfLogic(OptionFilter(TrickEnemyJumps, TrickEnemyJumps.option_setup))
 
 
 def connect_regions(world: SPMWorldBase) -> list[Entrance]:
@@ -264,21 +351,17 @@ def connect_regions(world: SPMWorldBase) -> list[Entrance]:
         create_entrance(world, edata.fr, edata.to, edata.rule, edata.name, edata.group, edata.etype)
         for edata in ENTRANCE_RULES
     ]
-    return [
-        entrance
-        for entrance in all_entrances
-        if entrance is not None
-        and entrance.randomization_group > 0
-        and entrance.randomization_type == EntranceType.TWO_WAY
-    ]
+    return [entrance for entrance in all_entrances if entrance is not None and entrance.randomization_group > 0]
 
 
 def randomize_entrances(world: SPMWorldBase, entrances: list[Entrance]) -> ERPlacementState:
-    _ = [disconnect_entrance_for_randomization(entrance) for entrance in entrances]
-    target_group_lookup = bake_target_group_lookup(world, get_target_groups)
-    return er_randomize_entrances(
-        world, world.options.randomize_entrances.value == EntranceRando.option_coupled, target_group_lookup, True
-    )
+    _ = [
+        disconnect_entrance_for_randomization(entrance, one_way_target_name=f"[ONE-WAY]{entrance.name}")
+        for entrance in entrances
+    ]
+    target_group_lookup = bake_target_group_lookup(world, er_anywhere)
+    coupled = world.options.randomize_entrances.value == EntranceRando.option_coupled
+    return er_randomize_entrances(world, coupled, target_group_lookup)
 
 
 def set_rules(world: SPMWorldBase) -> None:
@@ -294,10 +377,10 @@ class ERSettings(TypedDict):
     etype: EntranceType
 
 
-CHAPTER_DOOR_ER: ERSettings = {"group": EGroup.HUB | EGroup.DOOR, "etype": EntranceType.ONE_WAY}
+CHAPTER_DOOR_ER: ERSettings = {"group": 0, "etype": EntranceType.ONE_WAY}
 
 
-ENTRANCE_RULES = [
+ALL_RULES: list[EntranceRule | LocationRule] = [
     # region Chapter Doors
     EntranceRule(
         fr=R.MAC02_L_TOWER,
@@ -357,7 +440,7 @@ ENTRANCE_RULES = [
     ),
     EntranceRule(
         fr=R.MAC02_L_TOWER,
-        to=R.TA101,
+        to=R.TA101_L_FOREGROUND,
         rule=HasChapterKey(I.CHAPTER_3_KEY, I.CHAPTER_3_1_KEY),
         name="Flipside Tower - Yellow Door [3-1]",
         **CHAPTER_DOOR_ER,
@@ -371,7 +454,7 @@ ENTRANCE_RULES = [
     ),
     EntranceRule(
         fr=R.MAC02_L_TOWER,
-        to=R.TA301,
+        to=R.TA301_GROUND,
         rule=HasChapterKey(I.CHAPTER_3_KEY, I.CHAPTER_3_3_KEY),
         name="Flipside Tower - Yellow Door [3-3]",
         **CHAPTER_DOOR_ER,
@@ -471,28 +554,28 @@ ENTRANCE_RULES = [
         fr=R.MAC02_L_TOWER,
         to=R.AN101,
         rule=HasChapterKey(I.CHAPTER_7_KEY, I.CHAPTER_7_1_KEY),
-        name="Flipside Tower - Black Door [7-1]",
+        name="Flipside Tower - Purple Door [7-1]",
         **CHAPTER_DOOR_ER,
     ),
     EntranceRule(
         fr=R.MAC02_L_TOWER,
         to=R.AN201,
         rule=HasChapterKey(I.CHAPTER_7_KEY, I.CHAPTER_7_2_KEY),
-        name="Flipside Tower - Black Door [7-2]",
+        name="Flipside Tower - Purple Door [7-2]",
         **CHAPTER_DOOR_ER,
     ),
     EntranceRule(
         fr=R.MAC02_L_TOWER,
         to=R.AN301,
         rule=HasChapterKey(I.CHAPTER_7_KEY, I.CHAPTER_7_3_KEY),
-        name="Flipside Tower - Black Door [7-3]",
+        name="Flipside Tower - Purple Door [7-3]",
         **CHAPTER_DOOR_ER,
     ),
     EntranceRule(
         fr=R.MAC02_L_TOWER,
         to=R.AN401,
         rule=HasChapterKey(I.CHAPTER_7_KEY, I.CHAPTER_7_4_KEY),
-        name="Flipside Tower - Black Door [7-4]",
+        name="Flipside Tower - Purple Door [7-4]",
         **CHAPTER_DOOR_ER,
     ),
     EntranceRule(
@@ -533,7 +616,7 @@ ENTRANCE_RULES = [
         fr=R.MAC02_L_TOWER,
         to=R.MAC01_LAYER1,
         name="Flipside Tower - Fall",
-        group=EGroup.HUB | EGroup.FALL,
+        group=EGroup.HUB,
         etype=EntranceType.ONE_WAY,
     ),
     EntranceRule(fr=R.MAC02_L_TOWER, to=R.MAC02_LAYER1, name="Flipside Tower - Elevator Down"),
@@ -541,66 +624,124 @@ ENTRANCE_RULES = [
         fr=R.MAC01_LAYER1,
         to=R.MAC02_LAYER1,
         name="Flipside 3F - Layer 1 - Elevator Down",
-        group=EGroup.ELEVATOR_DOWN | EGroup.HUB,
+        group=EGroup.HUB,
     ),
+    LocationRule(L.FLIPSIDE_HEART_PILLAR_RED, Has(I.RED_PURE_HEART)),
+    # MOD: will this require spicy soup in the itempool?
+    LocationRule(L.FLIPSIDE_3F_EAT_A_SPICY_SOUP, True_()),
+    LocationRule(L.FLEEP_MAP_REVEAL_01, CanFleepTreasureSpot(I.MAP_1)),
     EntranceRule(
-        fr=R.MAC01_LAYER2, to=R.MAC02_LAYER2, name="Flipside 3F - Layer 2 - Pipe", group=EGroup.PIPE | EGroup.HUB
+        fr=R.MAC01_LAYER2,
+        to=R.MAC02_LAYER2,
+        name="Flipside 3F - Layer 2 - Pipe",
+        group=EGroup.HUB,
     ),
+    LocationRule(L.FLIPSIDE_3F_CHEST_AFTER_INVISIBLE_BLOCKS, Has(I.PIXL_TIPPI)),
+    LocationRule(L.FLIPSIDE_3F_CHEST_IN_PICCOLO_BLOCK, Has(I.PIXL_PICCOLO)),
     EntranceRule(fr=R.MAC02_LAYER1, to=R.MAC02_L_TOWER, name="Flipside Tower - Elevator Up"),
     # MOD: This elevator doesn't work until GSW(0, 53), after chapter 1-4 cleared, before intermission
     EntranceRule(
         fr=R.MAC02_LAYER1,
         to=R.MAC09_LAYER3,
         name="Flipside 2F - Layer 1 - Elevator Down",
-        group=EGroup.ELEVATOR_DOWN | EGroup.HUB,
+        group=EGroup.HUB,
     ),
-    # TODO: Figure out why this entrance in particular screws over ER. Probably too few possible placements?
-    # group=EGroup.ELEVATOR_UP | EGroup.HUB
-    EntranceRule(fr=R.MAC02_LAYER1, to=R.MAC01_LAYER1, name="Flipside 2F - Layer 1 - Elevator Up"),
     EntranceRule(
-        fr=R.MAC02_LAYER1, to=R.MAC05_LAYER1, rule=SPMRules.can_flip, name="Flipside 2F - Layer 1 - Left Blue Pipe"
+        fr=R.MAC02_LAYER1,
+        to=R.MAC01_LAYER1,
+        name="Flipside 2F - Layer 1 - Elevator Up",
+        group=EGroup.HUB,
     ),
-    EntranceRule(fr=R.MAC02_LAYER1, to=R.MAC12_LAYER1, name="Flipside 2F - Layer 1 - Right Blue Pipe"),
+    EntranceRule(
+        fr=R.MAC02_LAYER1,
+        to=R.MAC05_LAYER1,
+        rule=SPMRules.can_flip,
+        name="Flipside 2F - Layer 1 - Left Blue Pipe",
+    ),
+    EntranceRule(
+        fr=R.MAC02_LAYER1,
+        to=R.MAC12_LAYER1,
+        name="Flipside 2F - Layer 1 - Right Blue Pipe",
+    ),
     EntranceRule(
         fr=R.MAC02_LAYER1,
         to=R.MAC02_LAYER2,
         rule=SPMRules.can_flip & Has(I.OLD_KEY),
         name="Flipside 2F - Layer 1 -> 2",
     ),
+    LocationRule(L.PICCOLO_FETCH_MERLUVLEE, Has(I.TRAINING_MACHINE)),
     EntranceRule(
         fr=R.MAC02_LAYER2,
         to=R.MAC01_LAYER2,
         rule=SPMRules.can_break_hard_blocks,
         name="Flipside 2F - Layer 2 - Pipe",
-        group=EGroup.PIPE | EGroup.HUB,
+        group=EGroup.HUB,
     ),
-    EntranceRule(fr=R.MAC02_LAYER2, to=R.MAC02_LAYER3, rule=SPMRules.can_flip, name="Flipside 2F - Layer 2 -> 3"),
+    EntranceRule(
+        fr=R.MAC02_LAYER2,
+        to=R.MAC02_LAYER3,
+        rule=SPMRules.can_flip,
+        name="Flipside 2F - Layer 2 -> 3",
+    ),
     EntranceRule(
         fr=R.MAC02_LAYER3,
         to=R.MAC06_LAYER1,
         name="Flipside 2F Outskirts - Layer 3 - Pipe",
-        group=EGroup.PIPE | EGroup.HUB,
+        group=EGroup.HUB,
     ),
-    EntranceRule(fr=R.MAC02_LAYER3, to=R.MAC02_LAYER2, rule=SPMRules.can_flip, name="Flipside 2F - Layer 3 -> 2"),
+    EntranceRule(
+        fr=R.MAC02_LAYER3,
+        to=R.MAC02_LAYER2,
+        rule=SPMRules.can_flip,
+        name="Flipside 2F - Layer 3 -> 2",
+    ),
+    LocationRule(L.FLIPSIDE_HEART_PILLAR_GREEN, HasAll(I.PIXL_THUDLEY, I.GREEN_PURE_HEART)),
     EntranceRule(
         fr=R.MAC03_LAYER1,
         to=R.MAC09_LAYER1,
         name="Flipside 1F - Mirror Hall - Right Door",
-        group=EGroup.DOOR | EGroup.HUB,
+        group=EGroup.HUB,
     ),
     EntranceRule(
-        fr=R.MAC03_LAYER1, to=R.MAC03_LAYER2, rule=SPMRules.can_flip, name="Flipside 1F - Mirror Hall - Layer 1 -> 2"
+        fr=R.MAC03_LAYER1,
+        to=R.MAC03_LAYER2,
+        rule=SPMRules.can_flip,
+        name="Flipside 1F - Mirror Hall - Layer 1 -> 2",
+    ),
+    LocationRule(L.FLEEP_MAP_REVEAL_02, CanFleepTreasureSpot(I.MAP_2)),
+    EntranceRule(
+        fr=R.MAC04_LAYER1,
+        to=R.MAC04_ITTY_BITS,
+        rule=Has(I.PIXL_DOTTIE),
+        name="Flipside B1 - Shrink to Itty Bits",
     ),
     EntranceRule(
-        fr=R.MAC04_LAYER1, to=R.MAC04_ITTY_BITS, rule=Has(I.PIXL_DOTTIE), name="Flipside B1 - Shrink to Itty Bits"
+        fr=R.MAC04_LAYER1,
+        to=R.MAC04_BAR,
+        rule=SPMRules.can_flip,
+        name="Flipside B1 - Flip to Bar's backrooms",
+    ),
+    LocationRule(L.FLIPSIDE_B1_3D_CHEST, SPMRules.can_flip),
+    LocationRule(L.FLEEP_MAP_REVEAL_03, CanFleepTreasureSpot(I.MAP_3)),
+    EntranceRule(
+        fr=R.MAC04_BAR,
+        to=R.MAC30,
+        name="Flipside B1 - Bar's backroom pipe",
+        group=EGroup.HUB,
+    ),
+    EntranceRule(fr=R.MAC04_BAR, to=R.MAC04_LAYER1, name="Flipside B1 - Bar's flip"),
+    EntranceRule(
+        fr=R.MAC05_LAYER1,
+        to=R.MAC04_LAYER1,
+        name="Flipside B2 - Layer 1 - Elevator Up",
+        group=EGroup.HUB,
     ),
     EntranceRule(
-        fr=R.MAC04_LAYER1, to=R.MAC04_BAR, rule=SPMRules.can_flip, name="Flipside B1 - Flip to Bar's backrooms"
-    ),
-    EntranceRule(fr=R.MAC04_BAR, to=R.MAC30, name="Flipside B1 - Bar's backroom pipe"),
-    EntranceRule(fr=R.MAC05_LAYER1, to=R.MAC04_LAYER1, name="Flipside B2 - Layer 1 - Elevator Up"),
-    EntranceRule(
-        fr=R.MAC05_LAYER1, to=R.MAC02_LAYER1, rule=SPMRules.can_flip, name="Flipside B2 - Layer 1 - Blue Pipe"
+        fr=R.MAC05_LAYER1,
+        to=R.MAC02_LAYER1,
+        rule=SPMRules.can_flip,
+        name="Flipside B2 - Layer 1 - Blue Pipe",
+        group=EGroup.HUB,
     ),
     # TODO: more access logic for individual floors
     EntranceRule(
@@ -616,7 +757,10 @@ ENTRANCE_RULES = [
         name="Flipside B2 - Layer 1 -> Cage",
     ),
     EntranceRule(
-        fr=R.L_FLIPSIDE_PIT_TOP, to=R.MAC05_LAYER2, rule=SPMRules.can_flip, name="Flipside B2 - Layer 1 Cage -> 2"
+        fr=R.L_FLIPSIDE_PIT_TOP,
+        to=R.MAC05_LAYER2,
+        rule=SPMRules.can_flip,
+        name="Flipside B2 - Layer 1 Cage -> 2",
     ),
     EntranceRule(
         fr=R.MAC05_LAYER2,
@@ -628,13 +772,14 @@ ENTRANCE_RULES = [
         fr=R.MAC05_LAYER2,
         to=R.MAC07_LAYER2,
         name="Flipside B2 Outskirts - Layer 2 - Pipe",
-        group=EGroup.PIPE | EGroup.HUB,
+        group=EGroup.HUB,
     ),
+    LocationRule(L.FLIPSIDE_B2_CHEST_AFTER_PIPE, Has(E.SMASH_FLOPSIDE_B2_OUTSKIRTS_BLOCK)),
     EntranceRule(
         fr=R.MAC06_LAYER1,
         to=R.MAC02_LAYER3,
         name="Flipside 1F Outskirts - Layer 1 - Right Pipe",
-        group=EGroup.PIPE | EGroup.HUB,
+        group=EGroup.HUB,
     ),
     # Bowser *barely* has enough room to stand to break the blocks
     EntranceRule(
@@ -642,26 +787,41 @@ ENTRANCE_RULES = [
         to=R.MAC07_LAYER2,
         rule=SPMRules.can_break_hard_blocks,
         name="Flipside 1F Outskirts - Layer 1 - Left Pipe",
-        group=EGroup.PIPE | EGroup.HUB,
-    ),
-    EntranceRule(fr=R.MAC06_LAYER1, to=R.MAC08, name="Flipside 1F Outskirts - Layer 1 - Chasm Fall"),
-    EntranceRule(
-        fr=R.MAC06_LAYER1, to=R.MAC06_LAYER2, rule=SPMRules.can_flip, name="Flipside 1F Outskirts - Layer 1 -> 2"
+        group=EGroup.HUB,
     ),
     EntranceRule(
-        fr=R.MAC06_LAYER2, to=R.MAC06_LAYER1, rule=SPMRules.can_flip, name="Flipside 1F Outskirts - Layer 2 -> 1"
+        fr=R.MAC06_LAYER1,
+        to=R.MAC08,
+        name="Flipside 1F Outskirts - Layer 1 - Chasm Fall",
+        group=EGroup.HUB,
+    ),
+    EntranceRule(
+        fr=R.MAC06_LAYER1,
+        to=R.MAC06_LAYER2,
+        rule=SPMRules.can_flip,
+        name="Flipside 1F Outskirts - Layer 1 -> 2",
+    ),
+    EntranceRule(
+        fr=R.MAC06_LAYER2,
+        to=R.MAC06_LAYER1,
+        rule=SPMRules.can_flip,
+        name="Flipside 1F Outskirts - Layer 2 -> 1",
+    ),
+    LocationRule(
+        L.FLIPSIDE_HEART_PILLAR_ORANGE,
+        (SPMRules.can_float | SPMRules.throeau_jump) & Has(I.ORANGE_PURE_HEART),
     ),
     EntranceRule(
         fr=R.MAC07_LAYER2,
         to=R.MAC05_LAYER2,
         name="Flipside B1 Outskirts - Layer 1 - Right Pipe",
-        group=EGroup.PIPE | EGroup.HUB,
+        group=EGroup.HUB,
     ),
     EntranceRule(
         fr=R.MAC07_LAYER2,
         to=R.MAC06_LAYER1,
         name="Flipside B1 Outskirts - Layer 1 - Left Pipe",
-        group=EGroup.PIPE | EGroup.HUB,
+        group=EGroup.HUB,
     ),
     EntranceRule(
         fr=R.MAC07_LAYER2,
@@ -669,10 +829,24 @@ ENTRANCE_RULES = [
         rule=SPMRules.can_flip & Has(E.SMASH_FLOPSIDE_B1_OUTSKIRTS_BLOCK),
         name="Flipside B1 Outskirts - Layer 2 -> 1",
     ),
-    EntranceRule(fr=R.MAC08, to=R.MAC06_LAYER1, name="Flipside 1F - Jump Out"),
-    EntranceRule(fr=R.MAC09_LAYER1, to=R.MAC03_LAYER1, name="Flipside 1F - Door", group=EGroup.HUB | EGroup.DOOR),
+    LocationRule(
+        L.FLIPSIDE_HEART_PILLAR_YELLOW,
+        SPMRules.can_flip & HasAll(I.YELLOW_PURE_HEART, I.PIXL_SLIM),
+    ),
+    EntranceRule(fr=R.MAC08, to=R.MAC06_LAYER1, name="Flipside 1F - Jump Out", group=EGroup.HUB),
+    EntranceRule(
+        fr=R.MAC09_LAYER1,
+        to=R.MAC03_LAYER1,
+        name="Flipside 1F - Door",
+        group=EGroup.HUB,
+    ),
     # Standing outside Mirror Hall, you don't need Fleep. You just walk thru the wall
-    EntranceRule(fr=R.MAC09_LAYER1, to=R.MAC09_LAYER2, rule=SPMRules.can_flip, name="Flipside 1F - Layer 1 -> 2"),
+    EntranceRule(
+        fr=R.MAC09_LAYER1,
+        to=R.MAC09_LAYER2,
+        rule=SPMRules.can_flip,
+        name="Flipside 1F - Layer 1 -> 2",
+    ),
     EntranceRule(
         fr=R.MAC09_LAYER2,
         to=R.MAC09_LAYER1,
@@ -686,15 +860,18 @@ ENTRANCE_RULES = [
         name="Flipside 1F - Layer 2 -> 3",
     ),
     EntranceRule(
-        fr=R.MAC09_LAYER3, to=R.MAC02_LAYER1, name="Flipside 1F - Elevator Up", group=EGroup.ELEVATOR_UP | EGroup.HUB
+        fr=R.MAC09_LAYER3,
+        to=R.MAC02_LAYER1,
+        name="Flipside 1F - Elevator Up",
+        group=EGroup.HUB,
     ),
-    # MOD=This elevator only works starting at GSW(0, 73), getting boomer
+    # MOD: This elevator only works starting at GSW(0, 73), getting boomer
     EntranceRule(
         fr=R.MAC09_LAYER3,
         to=R.MAC04_LAYER1,
         rule=True_(),
         name="Flipside 1F - Elevator Down",
-        group=EGroup.ELEVATOR_DOWN | EGroup.HUB,
+        group=EGroup.HUB,
     ),
     EntranceRule(
         fr=R.MAC09_LAYER3,
@@ -704,91 +881,238 @@ ENTRANCE_RULES = [
     ),
     # endregion
     # region Flopside
-    EntranceRule(fr=R.MAC12_L_TOWER, to=R.MAC11_LAYER1, name="Flopside Tower - Fall", etype=EntranceType.ONE_WAY),
+    EntranceRule(
+        fr=R.MAC12_L_TOWER,
+        to=R.MAC11_LAYER1,
+        name="Flopside Tower - Fall",
+        etype=EntranceType.ONE_WAY,
+    ),
     EntranceRule(fr=R.MAC12_L_TOWER, to=R.MAC12_LAYER1, name="Flopside Tower - Elevator Down"),
-    EntranceRule(fr=R.MAC11_LAYER1, to=R.MAC12_LAYER1, name="Flopside 3F - Layer 1 - Elevator Down"),
-    EntranceRule(fr=R.MAC11_LAYER2, to=R.MAC12_LAYER2, name="Flopside 3F - Layer 2 - Right Pipe"),
+    EntranceRule(
+        fr=R.MAC11_LAYER1,
+        to=R.MAC12_LAYER1,
+        name="Flopside 3F - Layer 1 - Elevator Down",
+        group=EGroup.HUB,
+    ),
+    LocationRule(L.FLOPSIDE_HEART_PILLAR_CYAN, Has(I.CYAN_PURE_HEART)),
+    LocationRule(L.FLEEP_MAP_REVEAL_05, CanFleepTreasureSpot(I.MAP_5)),
+    EntranceRule(
+        fr=R.MAC11_LAYER2,
+        to=R.MAC12_LAYER2,
+        name="Flopside 3F - Layer 2 - Right Pipe",
+        group=EGroup.HUB,
+    ),
+    LocationRule(L.FLOPSIDE_3F_CHEST_IN_PICCOLO_BLOCK, Has(I.PIXL_PICCOLO)),
+    LocationRule(L.FLOPSIDE_3F_CHEST_AFTER_INVISIBLE_BLOCKS, Has(I.PIXL_TIPPI)),
     EntranceRule(fr=R.MAC12_LAYER1, to=R.MAC12_L_TOWER, name="Flopside Tower - Elevator Up"),
     EntranceRule(
         fr=R.MAC12_LAYER1,
         to=R.MAC11_LAYER1,
         name="Flopside 2F - Layer 1 - Elevator Up",
-        group=EGroup.ELEVATOR_UP | EGroup.HUB,
+        group=EGroup.HUB,
     ),
     EntranceRule(
         fr=R.MAC12_LAYER1,
         to=R.MAC19_LAYER3,
         name="Flopside 2F - Layer 1 - Elevator Down",
-        group=EGroup.ELEVATOR_DOWN | EGroup.HUB,
+        group=EGroup.HUB,
     ),
     EntranceRule(
-        fr=R.MAC12_LAYER1, to=R.MAC15_LAYER1, name="Flopside 2F - Layer 1 - Left Blue Pipe", rule=SPMRules.can_flip
+        fr=R.MAC12_LAYER1,
+        to=R.MAC15_LAYER1,
+        name="Flopside 2F - Layer 1 - Left Blue Pipe",
+        rule=SPMRules.can_flip,
+        group=EGroup.HUB,
     ),
-    EntranceRule(fr=R.MAC12_LAYER1, to=R.MAC02_LAYER1, name="Flopside 2F - Layer 1 - Right Blue Pipe"),
-    EntranceRule(fr=R.MAC12_LAYER1, to=R.MAC12_LAYER2, name="Flopside 2F - Layer 1 -> 2", rule=SPMRules.can_flip),
     EntranceRule(
-        fr=R.MAC12_LAYER2, to=R.MAC11_LAYER2, name="Flopside 2F - Layer 2 - Pipe", group=EGroup.PIPE | EGroup.HUB
+        fr=R.MAC12_LAYER1,
+        to=R.MAC02_LAYER1,
+        name="Flopside 2F - Layer 1 - Right Blue Pipe",
+        group=EGroup.HUB,
     ),
-    EntranceRule(fr=R.MAC12_LAYER2, to=R.MAC12_LAYER1, name="Flopside 2F - Layer 2 -> 1", rule=SPMRules.can_flip),
-    EntranceRule(fr=R.MAC12_LAYER2, to=R.MAC12_LAYER3, name="Flopside 2F - Layer 2 -> 3", rule=SPMRules.can_flip),
+    EntranceRule(
+        fr=R.MAC12_LAYER1,
+        to=R.MAC12_LAYER2,
+        name="Flopside 2F - Layer 1 -> 2",
+        rule=SPMRules.can_flip,
+    ),
+    LocationRule(L.PICCOLO_FETCH_MERLEE, Has(I.CRYSTAL_BALL)),
+    EntranceRule(
+        fr=R.MAC12_LAYER2,
+        to=R.MAC11_LAYER2,
+        name="Flopside 2F - Layer 2 - Pipe",
+        group=EGroup.HUB,
+    ),
+    EntranceRule(
+        fr=R.MAC12_LAYER2,
+        to=R.MAC12_LAYER1,
+        name="Flopside 2F - Layer 2 -> 1",
+        rule=SPMRules.can_flip,
+    ),
+    EntranceRule(
+        fr=R.MAC12_LAYER2,
+        to=R.MAC12_LAYER3,
+        name="Flopside 2F - Layer 2 -> 3",
+        rule=SPMRules.can_flip,
+    ),
     EntranceRule(
         fr=R.MAC12_LAYER3,
         to=R.MAC16_LAYER1,
         name="Flopside 2F - Layer 3 - Blocked Pipe",
-        group=EGroup.PIPE | EGroup.HUB,
+        group=EGroup.HUB,
     ),
-    EntranceRule(fr=R.MAC12_LAYER3, to=R.MAC12_LAYER2, name="Flopside 2F - Layer 3 -> 2", rule=SPMRules.can_flip),
-    EntranceRule(fr=R.MAC14_RIGHT, to=R.MAC15_LAYER1, name="Flopside B1 - Elevator Down"),
-    EntranceRule(fr=R.MAC14_RIGHT, to=R.MAC19_LAYER3, name="Flopside B1 - Elevator Up"),
-    EntranceRule(fr=R.MAC14_RIGHT, to=R.MAC14_LEFT, name="Flopside B1 - Right -> Left", rule=SPMRules.can_flip),
     EntranceRule(
-        fr=R.MAC14_RIGHT, to=R.MAC14_L_BACK_BEVERAGARIUM, name="Flopside B1 - Beveragarium", rule=SPMRules.can_flip
+        fr=R.MAC12_LAYER3,
+        to=R.MAC12_LAYER2,
+        name="Flopside 2F - Layer 3 -> 2",
+        rule=SPMRules.can_flip,
     ),
-    EntranceRule(fr=R.MAC14_LEFT, to=R.MAC14_L_ITTY_BITS, name="Flopside B1 - Itty Bits", rule=Has(I.PIXL_DOTTIE)),
-    EntranceRule(fr=R.MAC14_LEFT, to=R.MAC14_RIGHT, name="Flopside B1 - Left -> Right", rule=SPMRules.can_flip),
-    # TODO=More access rules
+    LocationRule(L.FLOPSIDE_HEART_PILLAR_WHITE, Has(I.WHITE_PURE_HEART)),
+    EntranceRule(
+        fr=R.MAC14_RIGHT,
+        to=R.MAC15_LAYER1,
+        name="Flopside B1 - Elevator Down",
+        group=EGroup.HUB,
+    ),
+    EntranceRule(
+        fr=R.MAC14_RIGHT,
+        to=R.MAC19_LAYER3,
+        name="Flopside B1 - Elevator Up",
+        group=EGroup.HUB,
+    ),
+    EntranceRule(
+        fr=R.MAC14_RIGHT,
+        to=R.MAC14_LEFT,
+        name="Flopside B1 - Right -> Left",
+        rule=SPMRules.can_flip,
+    ),
+    EntranceRule(
+        fr=R.MAC14_RIGHT,
+        to=R.MAC14_L_BACK_BEVERAGARIUM,
+        name="Flopside B1 - Beveragarium",
+        rule=SPMRules.can_flip,
+    ),
+    EntranceRule(
+        fr=R.MAC14_LEFT,
+        to=R.MAC14_L_ITTY_BITS,
+        name="Flopside B1 - Itty Bits",
+        rule=Has(I.PIXL_DOTTIE),
+    ),
+    EntranceRule(
+        fr=R.MAC14_LEFT,
+        to=R.MAC14_RIGHT,
+        name="Flopside B1 - Left -> Right",
+        rule=SPMRules.can_flip,
+    ),
+    # TODO: More access rules
     EntranceRule(
         fr=R.MAC15_LAYER1,
         to=R.L_FLOPSIDE_PIT,
         name="Flopside B2 - Layer 1 - Sealed Pipe",
         rule=False_(),
     ),
-    EntranceRule(fr=R.MAC15_LAYER1, to=R.MAC12_LAYER1, name="Flopside B2 - Layer 2 - Blue Pipe"),
+    EntranceRule(
+        fr=R.MAC15_LAYER1,
+        to=R.MAC12_LAYER1,
+        name="Flopside B2 - Layer 2 - Blue Pipe",
+        group=EGroup.HUB,
+    ),
     EntranceRule(
         fr=R.MAC15_LAYER1,
         to=R.L_FLOPSIDE_PIT_TOP,
         name="Flopside B2 - Layer 1 -> Top of Cage",
         rule=SPMRules.can_super_jump,
     ),
-    EntranceRule(fr=R.MAC15_LAYER1, to=R.MAC14_RIGHT, name="Flopside B2 - Layer 1 - Elevator Up"),
-    EntranceRule(fr=R.MAC15_LAYER2, to=R.MAC18, name="Flopside B2 - Layer 2 - Chasm Fall"),
-    EntranceRule(fr=R.MAC15_LAYER2, to=R.MAC17_LAYER2, name="Flopside B2 - Layer 2 - Pipe"),
+    EntranceRule(
+        fr=R.MAC15_LAYER1,
+        to=R.MAC14_RIGHT,
+        name="Flopside B2 - Layer 1 - Elevator Up",
+        group=EGroup.HUB,
+    ),
+    EntranceRule(
+        fr=R.MAC15_LAYER2,
+        to=R.MAC18,
+        name="Flopside B2 - Layer 2 - Chasm Fall",
+        group=EGroup.HUB,
+    ),
+    EntranceRule(
+        fr=R.MAC15_LAYER2,
+        to=R.MAC17_LAYER2,
+        name="Flopside B2 - Layer 2 - Pipe",
+        group=EGroup.HUB,
+    ),
     EntranceRule(
         fr=R.MAC15_LAYER2,
         to=R.L_FLOPSIDE_PIT_TOP,
         name="Flopside B2 - Layer 2 - Cage Top",
         rule=(SPMRules.can_super_jump | Has(I.PIXL_TIPPI)) & SPMRules.can_flip,
     ),
+    LocationRule(E.SMASH_FLOPSIDE_B2_OUTSKIRTS_BLOCK, SPMRules.can_flip & Has(I.PIXL_CUDGE)),
+    LocationRule(L.FLOPSIDE_B2_CHEST_AFTER_PIPE, Has(E.SMASH_FLOPSIDE_B2_OUTSKIRTS_BLOCK)),
     EntranceRule(fr=R.L_FLOPSIDE_PIT_TOP, to=R.MAC15_LAYER1, name="Flopside B2 Cage Top - Drop"),
-    EntranceRule(fr=R.L_FLOPSIDE_PIT_TOP, to=R.MAC15_LAYER2, name="Flopside B2 Cage Top - Layer 2"),
-    EntranceRule(fr=R.MAC16_LAYER1, to=R.MAC12_LAYER3, name="Flopside 1F Outskirts - Layer 1 - Left Blocked Pipe"),
-    EntranceRule(fr=R.MAC16_LAYER1, to=R.MAC17_LAYER1, name="Flopside 1F Outskirts - Layer 1 - Right Pipe"),
-    EntranceRule(fr=R.MAC16_LAYER1, to=R.MAC16_LAYER2, name="Flopside 1F Outskirts - Layer 1 -> 2"),
-    EntranceRule(fr=R.MAC16_LAYER2, to=R.MAC16_LAYER1, name="Flopside 1F Outskirts - Layer 2 -> 1"),
-    EntranceRule(fr=R.MAC17_LAYER1, to=R.MAC15_LAYER2, name="Flopside B1 Outskirts - Left Pipe"),
-    EntranceRule(fr=R.MAC17_LAYER1, to=R.MAC16_LAYER1, name="Flopside B1 Outskirts - Right Pipe"),
-    # TODO=More access rules
+    EntranceRule(
+        fr=R.L_FLOPSIDE_PIT_TOP,
+        to=R.MAC15_LAYER2,
+        name="Flopside B2 Cage Top - Layer 2",
+    ),
+    LocationRule(E.FLEEP_FLOPSIDE_PIT_CAGE, Has(I.PIXL_FLEEP)),
+    EntranceRule(
+        fr=R.MAC16_LAYER1,
+        to=R.MAC12_LAYER3,
+        name="Flopside 1F Outskirts - Layer 1 - Left Blocked Pipe",
+        group=EGroup.HUB,
+    ),
+    EntranceRule(
+        fr=R.MAC16_LAYER1,
+        to=R.MAC17_LAYER1,
+        name="Flopside 1F Outskirts - Layer 1 - Right Pipe",
+        group=EGroup.HUB,
+    ),
+    EntranceRule(
+        fr=R.MAC16_LAYER1,
+        to=R.MAC16_LAYER2,
+        name="Flopside 1F Outskirts - Layer 1 -> 2",
+    ),
+    EntranceRule(
+        fr=R.MAC16_LAYER2,
+        to=R.MAC16_LAYER1,
+        name="Flopside 1F Outskirts - Layer 2 -> 1",
+    ),
+    LocationRule(L.FLOPSIDE_HEART_PILLAR_BLUE, Has(I.BLUE_PURE_HEART)),
+    EntranceRule(
+        fr=R.MAC17_LAYER2,
+        to=R.MAC15_LAYER2,
+        name="Flopside B1 Outskirts - Left Pipe",
+        group=EGroup.HUB,
+    ),
+    EntranceRule(
+        fr=R.MAC17_LAYER2,
+        to=R.MAC16_LAYER1,
+        name="Flopside B1 Outskirts - Right Pipe",
+        group=EGroup.HUB,
+    ),
+    # TODO: More access rules
     EntranceRule(
         fr=R.MAC17_LAYER2,
         to=R.MAC17_LAYER1,
         name="Flopside B1 Outskirts - Layer 2 -> 1",
         rule=SPMRules.can_flip & Has(I.CHARACTER_LUIGI),
     ),
-    EntranceRule(fr=R.MAC18, to=R.MAC15_LAYER1, name="Flopside B2 - Jump Out"),
+    LocationRule(L.FLOPSIDE_HEART_PILLAR_PURPLE, HasAll(I.PURPLE_PURE_HEART, I.CHARACTER_LUIGI)),
+    LocationRule(E.SMASH_FLOPSIDE_B1_OUTSKIRTS_BLOCK, Has(I.PIXL_CUDGE)),
+    EntranceRule(fr=R.MAC18, to=R.MAC15_LAYER1, name="Flopside B2 - Jump Out", group=EGroup.HUB),
     EntranceRule(
-        fr=R.MAC19_LAYER1, to=R.MAC03_LAYER2, name="Flopside 1F - Layer 1 - Door", group=EGroup.HUB | EGroup.DOOR
+        fr=R.MAC19_LAYER1,
+        to=R.MAC03_LAYER2,
+        name="Flopside 1F - Layer 1 - Door",
+        group=EGroup.HUB,
     ),
-    EntranceRule(fr=R.MAC19_LAYER1, to=R.MAC19_LAYER2, name="Flopside 1F - Layer 1 -> 2", rule=SPMRules.can_flip),
+    EntranceRule(
+        fr=R.MAC19_LAYER1,
+        to=R.MAC19_LAYER2,
+        name="Flopside 1F - Layer 1 -> 2",
+        rule=SPMRules.can_flip,
+    ),
     EntranceRule(
         fr=R.MAC19_LAYER2,
         to=R.MAC19_LAYER1,
@@ -805,41 +1129,72 @@ ENTRANCE_RULES = [
         fr=R.MAC19_LAYER3,
         to=R.MAC12_LAYER1,
         name="Flopside 1F - Layer 3 - Elevator Up",
-        group=EGroup.ELEVATOR_UP | EGroup.HUB,
+        group=EGroup.HUB,
     ),
     EntranceRule(
         fr=R.MAC19_LAYER3,
         to=R.MAC14_RIGHT,
         name="Flopside 1F - Layer 3 - Elevator Down",
-        group=EGroup.ELEVATOR_UP | EGroup.HUB,
+        group=EGroup.HUB,
     ),
     EntranceRule(fr=R.MAC19_LAYER3, to=R.MAC19_LAYER2, name="Flopside 1F - Layer 3 -> 2"),
     EntranceRule(
         fr=R.MAC03_LAYER2,
         to=R.MAC19_LAYER1,
         name="Flopside 1F - Mirror Hall - Left Door",
-        group=EGroup.DOOR | EGroup.HUB,
+        # group=EGroup.HUB,
     ),
-    EntranceRule(fr=R.MAC03_LAYER2, to=R.MAC03_LAYER1, name="Flipside 1F - Mirror Hall - Layer 2 -> 1"),
+    EntranceRule(
+        fr=R.MAC03_LAYER2,
+        to=R.MAC03_LAYER1,
+        name="Flipside 1F - Mirror Hall - Layer 2 -> 1",
+    ),
+    LocationRule(L.FLEEP_MAP_REVEAL_04, CanFleepTreasureSpot(I.MAP_4)),
     # endregion
     # region Chapter 1-1
-    # TODO=ER settings
-    EntranceRule(fr=R.HE101, to=R.HE106, rule=Has(I.PIXL_TIPPI), name=f"{R.HE101} - Bestovius' House, Hidden Door"),
+    # TODO: ER settings
+    EntranceRule(
+        fr=R.HE101,
+        to=R.HE106,
+        rule=Has(I.PIXL_TIPPI),
+        name=f"{R.HE101} - Bestovius' House, Hidden Door",
+    ),
     EntranceRule(fr=R.HE101, to=R.HE103, name=f"{R.HE101} - Front Pipe near Bestovius' House"),
     EntranceRule(fr=R.HE101, to=R.HE102, name=f"{R.HE101} - Sealed Door", rule=SPMRules.can_flip),
+    LocationRule(L.C11_OPEN_ITEM_INSIDE_BESTOVIUS_HOUSE_HALLWAY, SPMRules.can_flip),
+    LocationRule(L.FLEEP_MAP_REVEAL_06, CanFleepTreasureSpot(I.MAP_6)),
     EntranceRule(fr=R.HE102, to=R.HE101, name=f"{R.HE102} - Left Door"),
-    EntranceRule(fr=R.HE102, to=R.HE104, name=f"{R.HE102} - Right Door", rule=SPMRules.can_flip | SPMRules.can_float),
+    EntranceRule(
+        fr=R.HE102,
+        to=R.HE104,
+        name=f"{R.HE102} - Right Door",
+        rule=SPMRules.can_flip | SPMRules.can_float,
+    ),
+    LocationRule(L.C11_OPEN_ITEM_BEHIND_PIPE, SPMRules.can_flip),
     EntranceRule(fr=R.HE103, to=R.HE101, name=f"{R.HE103} - Right Pipe"),
     EntranceRule(fr=R.HE104, to=R.HE102, name=f"{R.HE104} - Left Door"),
     EntranceRule(
-        fr=R.HE104, to=R.HE105, name=f"{R.HE104} - Right Door", rule=SPMRules.can_flip | SPMRules.can_super_jump
+        fr=R.HE104,
+        to=R.HE105,
+        name=f"{R.HE104} - Right Door",
+        rule=SPMRules.can_flip | SPMRules.can_super_jump,
     ),
     EntranceRule(fr=R.HE105, to=R.HE104, name=f"{R.HE105} - Left Door"),
+    LocationRule(L.C11_CHEST_AFTER_STAR_BLOCK, SPMRules.can_flip),
     EntranceRule(fr=R.HE106, to=R.HE101, name=f"{R.HE106} - Door"),
+    LocationRule(L.C11_FIRST_OPEN_ITEM_INSIDE_BESTOVIUS_ROOM, SPMRules.can_flip),
+    LocationRule(L.C11_SECOND_OPEN_ITEM_INSIDE_BESTOVIUS_ROOM, SPMRules.can_flip),
     # endregion
     # region Chapter 1-2
     EntranceRule(fr=R.HE201, to=R.HE202, name=f"{R.HE201} - Right Door"),
-    EntranceRule(fr=R.HE201, to=R.HE202, name=f"{R.HE201} - Hidden Shortcut Door", rule=SPMRules.can_flip),
+    EntranceRule(
+        fr=R.HE201,
+        to=R.HE202,
+        name=f"{R.HE201} - Hidden Shortcut Door",
+        rule=SPMRules.can_flip,
+    ),
+    LocationRule(L.C12_CHEST_IN_SHORTCUT, SPMRules.can_flip),
+    LocationRule(L.FLEEP_MAP_REVEAL_07, CanFleepTreasureSpot(I.MAP_7)),
     EntranceRule(fr=R.HE202, to=R.HE201, name=f"{R.HE202} - Left Door"),
     EntranceRule(
         fr=R.HE202,
@@ -847,8 +1202,18 @@ ENTRANCE_RULES = [
         name=f"{R.HE202} - Right Door",
         rule=SPMRules.can_flip | (SPMRules.can_float & SPMRules.can_super_jump & Has(I.PIXL_DASHELL)),
     ),
-    EntranceRule(fr=R.HE203, to=R.HE208, name=f"{R.HE203} - Pipe behind bricks", rule=SPMRules.can_flip),
-    EntranceRule(fr=R.HE203, to=R.HE206, name=f"{R.HE203} - Pipe in house behind partition", rule=SPMRules.can_flip),
+    EntranceRule(
+        fr=R.HE203,
+        to=R.HE208,
+        name=f"{R.HE203} - Pipe behind bricks",
+        rule=SPMRules.can_flip,
+    ),
+    EntranceRule(
+        fr=R.HE203,
+        to=R.HE206,
+        name=f"{R.HE203} - Pipe in house behind partition",
+        rule=SPMRules.can_flip,
+    ),
     EntranceRule(fr=R.HE203, to=R.HE202, name=f"{R.HE203} - Left Door"),
     EntranceRule(fr=R.HE203, to=R.HE204, name=f"{R.HE203} - Red's House"),
     EntranceRule(
@@ -857,8 +1222,19 @@ ENTRANCE_RULES = [
         name=f"{R.HE203} - Green's House",
         rule=SPMRules.can_flip | SPMRules.can_float | Has(I.PIXL_DASHELL),
     ),
+    LocationRule(
+        L.C12_OPEN_ITEM_ON_TOP_OF_WATCHITTS_HOUSE,
+        SPMRules.can_flip | SPMRules.can_float | Has(I.PIXL_DASHELL),
+    ),
+    # MOD: Will Watchitt still require having Thoreau to tell Green to build the bridge?
+    LocationRule(
+        L.C12_STAR_BLOCK,
+        (SPMRules.can_flip & Has(I.PIXL_THOREAU)) | SPMRules.can_float | Has(I.PIXL_DASHELL),
+    ),
     EntranceRule(fr=R.HE204, to=R.HE203, name=f"{R.HE204} - Door"),
     EntranceRule(fr=R.HE205, to=R.HE203, name=f"{R.HE205} - Door"),
+    LocationRule(L.C12_OPEN_ITEM_BEHIND_GREENS_BED, SPMRules.can_flip),
+    LocationRule(L.FLEEP_MAP_REVEAL_08, CanFleepTreasureSpot(I.MAP_8)),
     EntranceRule(fr=R.HE206, to=R.HE203, name=f"{R.HE206} - Left Pipe"),
     EntranceRule(fr=R.HE206, to=R.HE209, name=f"{R.HE206} - Right Door"),
     EntranceRule(fr=R.HE207, to=R.HE209, name=f"{R.HE207} - Door", rule=Has(I.PIXL_THOREAU)),
@@ -869,8 +1245,11 @@ ENTRANCE_RULES = [
     # region Chapter 1-3
     EntranceRule(fr=R.HE301, to=R.HE303, name=f"{R.HE301} - Door below red palm tree"),
     EntranceRule(fr=R.HE301, to=R.HE302, name=f"{R.HE301} - Right door"),
+    LocationRule(L.C13_OPEN_ITEM_BEHIND_ROCK_IN_FIRST_ROOM, SPMRules.can_flip),
     EntranceRule(fr=R.HE302, to=R.HE301, name=f"{R.HE302} - Left Door"),
-    # TODO=Double-check rules
+    LocationRule(L.C13_OPEN_ITEM_BEHIND_ROCK_IN_SECOND_ROOM, SPMRules.can_flip),
+    LocationRule(L.FLEEP_MAP_REVEAL_09, CanFleepTreasureSpot(I.MAP_9)),
+    # TODO: Double-check rules
     EntranceRule(
         fr=R.HE303,
         to=R.HE305,
@@ -893,7 +1272,9 @@ ENTRANCE_RULES = [
     EntranceRule(fr=R.HE306, to=R.HE307, name=f"{R.HE306} - Left door on floating bricks"),
     EntranceRule(fr=R.HE306, to=R.HE304, name=f"{R.HE306} - Door on ground"),
     EntranceRule(fr=R.HE306, to=R.HE308, name=f"{R.HE306} - Right door on floating bricks"),
+    LocationRule(L.C13_OPEN_ITEM_BEHIND_ROCK_IN_SIXTH_ROOM, SPMRules.can_flip),
     EntranceRule(fr=R.HE307, to=R.HE306, name=f"{R.HE307} - Door"),
+    LocationRule(L.FLEEP_MAP_REVEAL_10, CanFleepTreasureSpot(I.MAP_10)),
     EntranceRule(fr=R.HE308, to=R.HE306, name=f"{R.HE308} - Door"),
     # endregion
     # Chapter 1-4
@@ -901,12 +1282,17 @@ ENTRANCE_RULES = [
     EntranceRule(fr=R.HE402, to=R.HE401, name=f"{R.HE402} - Left Door"),
     EntranceRule(fr=R.HE402, to=R.HE403, name=f"{R.HE402} - Right Door"),
     EntranceRule(fr=R.HE403, to=R.HE402, name=f"{R.HE403} - Left Door"),
-    # MOD=Will ruins keys be split into 3 separate ids for each door? If so we don't need full key logic here for ER.
+    # MOD: Will ruins keys be split into 3 separate ids for each door? If so we don't need full key logic here for ER.
     EntranceRule(
         fr=R.HE403,
         to=R.HE405,
         name=f"{R.HE403} - Middle Door",
-        rule=Has(I.RUINS_KEY, count=3, options=[OptionFilter(EntranceRando, Toggle.option_true)]) | Has(I.RUINS_KEY),
+        rule=Has(
+            I.RUINS_KEY,
+            count=3,
+            options=[OptionFilter(EntranceRando, Toggle.option_true)],
+        )
+        | Has(I.RUINS_KEY),
     ),
     EntranceRule(fr=R.HE403, to=R.HE404, name=f"{R.HE403} - Right Door", rule=SPMRules.can_flip),
     EntranceRule(fr=R.HE404, to=R.HE403, name=f"{R.HE404} - Door"),
@@ -916,18 +1302,37 @@ ENTRANCE_RULES = [
         fr=R.HE405,
         to=R.HE412,
         name=f"{R.HE405} - Right Lower Door",
-        rule=Has(I.RUINS_KEY, count=3, options=[OptionFilter(EntranceRando, Toggle.option_true)])
+        rule=Has(
+            I.RUINS_KEY,
+            count=3,
+            options=[OptionFilter(EntranceRando, Toggle.option_true)],
+        )
         | Has(I.RUINS_KEY, count=2),
     ),
+    # MOD: THOREAU has to be patched to always be thrown at *Mario's* height!
+    # Otherwise this has to be updated to always require mario.
+    LocationRule(
+        L.C14_OPEN_KEY_BEHIND_BLOCKS,
+        HasAll(I.PIXL_THOREAU, E.SWITCH_YOLD_RUINS_SQUIG_ROOM),
+    ),
+    LocationRule(L.C14_OPEN_KEY_BEHIND_BLOCKS, SPMRules.can_flip),
     EntranceRule(fr=R.HE406, to=R.HE405, name=f"{R.HE406} - Door"),
+    LocationRule(E.SWITCH_YOLD_RUINS_SQUIG_ROOM, SPMRules.can_luigi_jump | Has(I.PIXL_THOREAU)),
     EntranceRule(fr=R.HE407, to=R.HE412, name=f"{R.HE407} - Left Door"),
-    EntranceRule(fr=R.HE407, to=R.HE408, name=f"{R.HE407} - Right Door", rule=Has(I.RUINS_KEY, count=3)),
+    EntranceRule(
+        fr=R.HE407,
+        to=R.HE408,
+        name=f"{R.HE407} - Right Door",
+        rule=Has(I.RUINS_KEY, count=3),
+    ),
+    LocationRule(L.C14_HIDDEN_CHEST_AFTER_3D_PATH, SPMRules.can_flip),
     EntranceRule(fr=R.HE408, to=R.HE407, name=f"{R.HE408} - Lower Door"),
     EntranceRule(fr=R.HE408, to=R.HE409, name=f"{R.HE408} - Upper Door", rule=SPMRules.can_flip),
     EntranceRule(fr=R.HE409, to=R.HE410, name=f"{R.HE409} - Pipe"),
     EntranceRule(fr=R.HE409, to=R.HE408, name=f"{R.HE409} - Door"),
     EntranceRule(fr=R.HE410, to=R.HE411, name=f"{R.HE410} - Door"),
     EntranceRule(fr=R.HE411, to=R.HE410, name=f"{R.HE411} - Door"),
+    LocationRule(L.FLEEP_MAP_REVEAL_11, CanFleepTreasureSpot(I.MAP_11)),
     EntranceRule(fr=R.HE412, to=R.HE405, name=f"{R.HE412} - Left Door"),
     EntranceRule(fr=R.HE412, to=R.HE407, name=f"{R.HE412} - Right Door", rule=Has(I.PIXL_TIPPI)),
     # endregion
@@ -939,57 +1344,108 @@ ENTRANCE_RULES = [
         rule=Or(SPMRules.can_float, HasAny(I.PIXL_DASHELL, I.PIXL_CARRIE)),
     ),
     EntranceRule(
-        fr=R.MI101_BOTTOM_RIGHT, to=R.MI108, name=f"{R.MI101_BOTTOM_RIGHT} - Locked Door", rule=Has(I.DOOR_KEY_21)
+        fr=R.MI101_BOTTOM_RIGHT,
+        to=R.MI108,
+        name=f"{R.MI101_BOTTOM_RIGHT} - Locked Door",
+        rule=Has(I.DOOR_KEY_21),
     ),
     EntranceRule(
-        fr=R.MI101_BOTTOM_RIGHT, to=R.MI101_BOTTOM_LEFT, name=f"{R.MI101_BOTTOM_RIGHT} - Fall to the Bottom Left"
+        fr=R.MI101_BOTTOM_RIGHT,
+        to=R.MI101_BOTTOM_LEFT,
+        name=f"{R.MI101_BOTTOM_RIGHT} - Fall to the Bottom Left",
     ),
     # Luigi doesn't need super jump
     EntranceRule(
         fr=R.MI101_BOTTOM_RIGHT,
         to=R.MI101_TOP_RIGHT,
         name=f"{R.MI101_BOTTOM_RIGHT} - Jump to Upper Platforms",
-        rule=Or(SPMRules.can_flip | Has(I.CHARACTER_LUIGI) | SPMRules.multiple_bowser_bumps),
+        rule=Or(SPMRules.can_flip | SPMRules.can_luigi_jump | SPMRules.multiple_bowser_bumps),
     ),
     EntranceRule(fr=R.MI101_TOP_RIGHT, to=R.MI105, name=f"{R.MI101_TOP_RIGHT} - Pipe"),
-    EntranceRule(fr=R.MI101_TOP_RIGHT, to=R.MI101_BOTTOM_RIGHT, name=f"{R.MI101_TOP_RIGHT} - Fall"),
+    EntranceRule(
+        fr=R.MI101_TOP_RIGHT,
+        to=R.MI101_BOTTOM_RIGHT,
+        name=f"{R.MI101_TOP_RIGHT} - Fall",
+    ),
     EntranceRule(fr=R.MI102, to=R.MI110, name=f"{R.MI102} - Bottom Door"),
     EntranceRule(
         fr=R.MI102,
-        to=R.MI110,  # TODO=split out this and the connection above for ER
+        to=R.MI110,  # TODO: split out this and the connection above for ER
         name=f"{R.MI102} - Top Door",
     ),
+    LocationRule(E.SWITCH_GLOAM_VALLEY_UNDERGROUND, SPMRules.can_flip & Has(I.PIXL_BOOMER)),
     EntranceRule(fr=R.MI103, to=R.MI110, name=f"{R.MI103} - Bottom Door"),
     EntranceRule(fr=R.MI103, to=R.MI110, name=f"{R.MI103} - Top Door"),
     EntranceRule(fr=R.MI104, to=R.MI110, name=f"{R.MI104} - Door"),
+    LocationRule(L.C21_LEFT_CHEST_BEFORE_STAR_BLOCK, SPMRules.can_flip),
+    LocationRule(L.C21_RIGHT_CHEST_BEFORE_STAR_BLOCK, SPMRules.can_flip),
+    LocationRule(L.FLEEP_MAP_REVEAL_12, CanFleepTreasureSpot(I.MAP_12)),
     EntranceRule(fr=R.MI105, to=R.MI101_TOP_RIGHT, name=f"{R.MI105} - Pipe"),
     EntranceRule(fr=R.MI106, to=R.MI110, name=f"{R.MI106} - Right Pipe"),
     EntranceRule(fr=R.MI106, to=R.MI107, name=f"{R.MI106} - Left Pipe"),
     EntranceRule(fr=R.MI107, to=R.MI106, name=f"{R.MI107} - Pipe"),
+    LocationRule(L.C21_CHEST_BEHIND_BOOMER_CHEST, SPMRules.can_flip & Has(I.PIXL_BOOMER)),
     EntranceRule(fr=R.MI108, to=R.MI101_BOTTOM_RIGHT, name=f"{R.MI108} - Left Door"),
     EntranceRule(fr=R.MI108, to=R.MI109, name=f"{R.MI108} - Middle Door"),
-    EntranceRule(fr=R.MI108, to=R.MI111, name=f"{R.MI108} - Right Door", rule=Has(E.SWITCH_GLOAM_VALLEY_BACKGROUND)),
+    EntranceRule(
+        fr=R.MI108,
+        to=R.MI111,
+        name=f"{R.MI108} - Right Door",
+        rule=Has(E.SWITCH_GLOAM_VALLEY_BACKGROUND),
+    ),
+    LocationRule(E.SWITCH_GLOAM_VALLEY_BACKGROUND, SPMRules.can_float | Has(I.PIXL_DASHELL)),
     EntranceRule(fr=R.MI109, to=R.MI108, name=f"{R.MI109} - Door"),
     EntranceRule(fr=R.MI110, to=R.MI106, name=f"{R.MI110} - Pipe", rule=SPMRules.mi110_door_group),
-    EntranceRule(fr=R.MI110, to=R.MI111, name=f"{R.MI110} - Ground Door", rule=SPMRules.mi110_door_group),
     EntranceRule(
-        fr=R.MI110, to=R.MI104, name=f"{R.MI110} - Left Elevated Door (Switch)", rule=SPMRules.mi110_door_group
+        fr=R.MI110,
+        to=R.MI111,
+        name=f"{R.MI110} - Ground Door",
+        rule=SPMRules.mi110_door_group,
     ),
-    EntranceRule(fr=R.MI110, to=R.MI102, name=f"{R.MI110} - Middle Left Elevated Door", rule=SPMRules.mi110_door_group),
-    EntranceRule(fr=R.MI110, to=R.MI103, name=f"{R.MI110} - Middle Elevated Door", rule=SPMRules.mi110_door_group),
+    EntranceRule(
+        fr=R.MI110,
+        to=R.MI104,
+        name=f"{R.MI110} - Left Elevated Door (Switch)",
+        rule=SPMRules.mi110_door_group,
+    ),
+    EntranceRule(
+        fr=R.MI110,
+        to=R.MI102,
+        name=f"{R.MI110} - Middle Left Elevated Door",
+        rule=SPMRules.mi110_door_group,
+    ),
+    EntranceRule(
+        fr=R.MI110,
+        to=R.MI103,
+        name=f"{R.MI110} - Middle Elevated Door",
+        rule=SPMRules.mi110_door_group,
+    ),
     EntranceRule(fr=R.MI111, to=R.MI108, name=f"{R.MI111} - Left Door"),
     EntranceRule(fr=R.MI111, to=R.MI110, name=f"{R.MI111} - Right Door"),
     # endregion
     # region Chapter 2-2
     EntranceRule(fr=R.MI201, to=R.MI202, name=f"{R.MI201} - Mansion Front Door"),
+    LocationRule(L.C22_CHEST_ON_ROOF, SPMRules.can_flip),
+    LocationRule(L.FLEEP_MAP_REVEAL_13, CanFleepTreasureSpot(I.MAP_13)),
     EntranceRule(fr=R.MI202, to=R.MI201, name=f"{R.MI202} - Mansion Front Door"),
-    EntranceRule(fr=R.MI202, to=R.MI203, name=f"{R.MI202} - Door Behind Curtains", rule=SPMRules.can_flip),
+    EntranceRule(
+        fr=R.MI202,
+        to=R.MI203,
+        name=f"{R.MI202} - Door Behind Curtains",
+        rule=SPMRules.can_flip,
+    ),
     EntranceRule(fr=R.MI203, to=R.MI202, name=f"{R.MI203} - Far Left Door"),
     EntranceRule(fr=R.MI203, to=R.MI207, name=f"{R.MI203} - Bottom Right, Left Door"),
     EntranceRule(fr=R.MI203, to=R.MI204, name=f"{R.MI203} - Top Right, Left Door"),
     EntranceRule(fr=R.MI203, to=R.MI205, name=f"{R.MI203} - Top Right, Middle Door"),
     EntranceRule(fr=R.MI203, to=R.MI206, name=f"{R.MI203} - Top Right, Right Door"),
-    EntranceRule(fr=R.MI203, to=R.MI208, name=f"{R.MI203} - Bottom Right, Right Door", rule=Has(I.HOUSE_KEY)),
+    EntranceRule(
+        fr=R.MI203,
+        to=R.MI208,
+        name=f"{R.MI203} - Bottom Right, Right Door",
+        rule=Has(I.HOUSE_KEY),
+    ),
+    LocationRule(L.FLEEP_MAP_REVEAL_14, CanFleepTreasureSpot(I.MAP_14)),
     EntranceRule(fr=R.MI204, to=R.MI203, name=f"{R.MI204} - Door"),
     # , etype=EntranceType.ONE_WAY
     EntranceRule(fr=R.MI204, to=R.MI209, name=f"{R.MI204} - Pit Trap"),
@@ -997,13 +1453,17 @@ ENTRANCE_RULES = [
     # , etype=EntranceType.ONE_WAY
     EntranceRule(fr=R.MI205, to=R.MI210, name=f"{R.MI205} - Pit Trap"),
     EntranceRule(fr=R.MI206, to=R.MI203, name=f"{R.MI206} - Door"),
+    LocationRule(
+        L.C22_CHEST_ABOVE_SPIKE_ROOF,
+        SPMRules.can_flip & (HasAny(I.PIXL_BOOMER, I.PIXL_CUDGE) | SPMRules.can_fire),
+    ),
     EntranceRule(fr=R.MI207, to=R.MI203, name=f"{R.MI207} - Door"),
     # , etype=EntranceType.ONE_WAY
     EntranceRule(fr=R.MI207, to=R.MI211, name=f"{R.MI207} - Pit Trap"),
     EntranceRule(fr=R.MI208, to=R.MI203, name=f"{R.MI208} - Door"),
     # Need boomer to defeat the shlurp
     EntranceRule(fr=R.MI209, to=R.MI204, name=f"{R.MI209} - Pipe", rule=Has(I.PIXL_BOOMER)),
-    # Bowser can hit the switcEntranceRule(from a distance while carrie zooms him out just barely fast enough
+    # Bowser can hit the switch from a distance while carrie zooms him out just barely fast enough
     # Anyone can hit the switch and zoom out with dashell in time
     EntranceRule(
         fr=R.MI210,
@@ -1030,16 +1490,20 @@ ENTRANCE_RULES = [
         rule=SPMRules.can_float | HasAny(I.PIXL_CARRIE, I.PIXL_DASHELL),
     ),
     EntranceRule(fr=R.MI301, to=R.MI306, name=f"{R.MI301} - Lower Right Door"),
+    LocationRule(E.OPEN_THE_RUBEE_VAULT, SPMRules.can_flip & Has(I.PIXL_SLIM)),
     EntranceRule(fr=R.MI302, to=R.MI301, name=f"{R.MI302} - Door"),
     EntranceRule(fr=R.MI303, to=R.MI301, name=f"{R.MI303} - Door"),
     EntranceRule(fr=R.MI304, to=R.MI301, name=f"{R.MI304} - Door"),
     EntranceRule(fr=R.MI305, to=R.MI301, name=f"{R.MI305} - Door"),
     EntranceRule(fr=R.MI306, to=R.MI301, name=f"{R.MI306} - Door"),
+    LocationRule(L.C23_STAR_BLOCK, Has(E.OPEN_THE_RUBEE_VAULT)),
+    LocationRule(L.FLEEP_MAP_REVEAL_15, CanFleepTreasureSpot(I.MAP_15)),
     # endregion
     # region Chapter 2-4
     # this chapter has to have the most connections of all time
     EntranceRule(fr=R.MI401, to=R.MI402, name=f"{R.MI401} - Left Door"),
     EntranceRule(fr=R.MI401, to=R.MI403, name=f"{R.MI401} - Right Door"),
+    LocationRule(L.FLEEP_MAP_REVEAL_16, CanFleepTreasureSpot(I.MAP_16)),
     EntranceRule(fr=R.MI402, to=R.MI401, name=f"{R.MI402} - Left Door"),
     EntranceRule(fr=R.MI402, to=R.MI404, name=f"{R.MI402} - Right Door"),
     EntranceRule(fr=R.MI403, to=R.MI401, name=f"{R.MI403} - Bottom Left Door"),
@@ -1067,8 +1531,9 @@ ENTRANCE_RULES = [
     EntranceRule(fr=R.MI410, to=R.MI411, name=f"{R.MI410} - Top Right Door"),
     EntranceRule(fr=R.MI410, to=R.MI408, name=f"{R.MI410} - Bottom Left Door"),
     EntranceRule(fr=R.MI410, to=R.MI407, name=f"{R.MI410} - Bottom Right Door"),
+    LocationRule(L.C24_OPEN_ITEM_BEHIND_ROOM_08_SIGN, SPMRules.can_flip & Has(I.PIXL_BOOMER)),
     EntranceRule(fr=R.MI411, to=R.MI415, name=f"{R.MI411} - Top Left Door"),
-    # TODO=double-check, i don't think this door can be entered
+    # TODO: double-check, i don't think this door can be entered
     # EntranceRule(fr=R.MI411
     # , to=R.MI411
     # , name=f"{R.MI411} - Top Right Door"
@@ -1080,144 +1545,380 @@ ENTRANCE_RULES = [
     EntranceRule(fr=R.MI412, to=R.MI414, name=f"{R.MI412} - Women's Bathroom Door"),
     EntranceRule(fr=R.MI413, to=R.MI412, name=f"{R.MI413} - Door"),
     EntranceRule(fr=R.MI414, to=R.MI412, name=f"{R.MI414} - Door"),
+    # TODO: Add more ways to defeat mimi
+    LocationRule(L.C24_YELLOW_PURE_HEART, Has(I.PIXL_THOREAU)),
+    LocationRule(L.FLEEP_MAP_REVEAL_17, CanFleepTreasureSpot(I.MAP_17)),
     EntranceRule(fr=R.MI415, to=R.MI411, name=f"{R.MI415} - Bottom Door"),
     EntranceRule(fr=R.MI415, to=R.MI412, name=f"{R.MI415} - Top Door"),
     # endregion
     # region Chapter 3-1
     # doa1_l
-    # EntranceRule(fr=R.TA101
-    # , to=R.TA102
-    # , name=f"{R.TA101} - Door in the sky"
-    # ),
-    # Entrance has an empty name
-    # EntranceRule(fr=R.TA101
-    # , to=R.TA103
-    # , name=f"{R.TA101} - Fall between Red Pipes"
-    # , etype=EntranceType.ONE_WAY
-    # ),
-    # dokan_m
-    # EntranceRule(fr=R.TA101
-    # , to=R.MAC02_L_TOWER
-    # , name=f"{R.TA101} - Left Red Pipe"
-    # , etype=EntranceType.ONE_WAY
-    # ),
-    # dokan_m2
-    # EntranceRule(fr=R.TA101
-    # , to=R.MAC02_L_TOWER
-    # , name=f"{R.TA101} - Right Red Pipe"
-    # , etype=EntranceType.ONE_WAY
-    # ),
-    # hai_dokan_03
-    # EntranceRule(fr=R.TA101
-    # , to=R.MAC02_L_TOWER
-    # , name=f"{R.TA101} - Right Background Pipe"
-    # , etype=EntranceType.ONE_WAY
-    # ),
+    EntranceRule(
+        fr=R.TA101_L_FOREGROUND,
+        to=R.TA102_L_FOREGROUND,
+        name=f"{R.TA101_L_FOREGROUND} - Door in the sky",
+        rule=SPMRules.can_super_jump | SPMRules.can_flip,
+        group=EGroup.CHAP_3,
+    ),
+    # Entrance has an empty name?
+    EntranceRule(
+        fr=R.TA101_L_FOREGROUND,
+        to=R.TA103,
+        name=f"{R.TA101_L_FOREGROUND} - Fall between Red Pipes",
+        etype=EntranceType.ONE_WAY,
+        group=EGroup.CHAP_3,
+    ),
+    EntranceRule(
+        fr=R.TA101_L_FOREGROUND,
+        to=R.MAC02_L_TOWER,
+        name=f"{R.TA101_L_FOREGROUND} - Left Red Pipe",
+        etype=EntranceType.ONE_WAY,
+        group=EGroup.CHAP_3,
+    ),
+    EntranceRule(
+        fr=R.TA101_L_FOREGROUND,
+        to=R.MAC02_L_TOWER,
+        name=f"{R.TA101_L_FOREGROUND} - Right Red Pipe",
+        etype=EntranceType.ONE_WAY,
+        group=EGroup.CHAP_3,
+    ),
+    EntranceRule(
+        fr=R.TA101_L_FOREGROUND,
+        to=R.TA103_L_WARP_ZONE,
+        name=f"{R.TA101_L_FOREGROUND} - Pipe in the Sky",
+        group=EGroup.CHAP_3,
+    ),
+    EntranceRule(fr=R.TA101_L_FOREGROUND, to=R.TA101_L_BACKGROUND, name=f"{R.TA101_L_FOREGROUND} - Right Pipe"),
+    EntranceRule(fr=R.TA101_L_BACKGROUND, to=R.TA101_L_FOREGROUND, name=f"{R.TA101_L_BACKGROUND} - Right Pipe"),
+    EntranceRule(
+        fr=R.TA101_L_BACKGROUND,
+        to=R.TA105,
+        name=f"{R.TA101_L_FOREGROUND} - Middle Pipe",
+        group=EGroup.CHAP_3,
+    ),
+    # MOD: Will the barry check still require defeating francis?
+    # LocationRule(L.C31_TALK_TO_BARRY_AFTER_DEFEATING_FRANCIS, True_()),
+    # EntranceRule(fr=R.TA101_L_BACKGROUND, name=f"{R.TA101_L_BACKGROUND} - Left Pipe")  # Doesn't go anywhere
+    EntranceRule(
+        fr=R.TA102_L_FOREGROUND,
+        to=R.TA102_L_BACKGROUND,
+        name=f"{R.TA102_L_FOREGROUND} - Left Pipe",
+        rule=SPMRules.can_float,
+    ),
+    EntranceRule(
+        fr=R.TA102_L_FOREGROUND,
+        to=R.TA101_L_FOREGROUND,
+        name=f"{R.TA102_L_FOREGROUND} - Left Door",
+        group=EGroup.CHAP_3,
+    ),
+    EntranceRule(
+        fr=R.TA102_L_FOREGROUND,
+        to=R.TA109,
+        name=f"{R.TA102_L_FOREGROUND} - Right Door",
+        group=EGroup.CHAP_3,
+    ),
+    EntranceRule(
+        fr=R.TA102_L_BACKGROUND,
+        to=R.TA102_L_FOREGROUND,
+        name=f"{R.TA102_L_BACKGROUND} - Pipe",
+    ),
+    # EntranceRule(fr=R.TA103, name=f"{R.TA103} - Pipe before falling platforms"),
+    EntranceRule(
+        fr=R.TA103,
+        to=R.TA106,
+        name=f"{R.TA103} - First pipe after floating coin section",
+        group=EGroup.CHAP_3,
+    ),
+    EntranceRule(
+        fr=R.TA103,
+        to=R.TA108,
+        name=f"{R.TA103} - Pipe between the staircase before falling platforms",
+        group=EGroup.CHAP_3,
+    ),
+    EntranceRule(
+        fr=R.TA103,
+        to=R.TA104,
+        name=f"{R.TA103} - Pipe before the warp zone",
+        group=EGroup.CHAP_3,
+    ),
+    EntranceRule(
+        fr=R.TA103,
+        to=R.TA103_L_WARP_ZONE,
+        name=f"{R.TA103} - Jump above level",
+    ),
+    EntranceRule(
+        fr=R.TA103_L_WARP_ZONE,
+        to=R.TA103,
+        name=f"{R.TA103_L_WARP_ZONE} - Jump above level",
+        rule=SPMRules.can_super_jump,
+    ),
+    EntranceRule(
+        fr=R.TA103_L_WARP_ZONE,
+        to=R.TA101_L_FOREGROUND,
+        name=f"{R.TA103_L_WARP_ZONE} - Left Pipe",
+        group=EGroup.CHAP_3,
+    ),
+    EntranceRule(
+        fr=R.TA103_L_WARP_ZONE,
+        to=R.TA104,
+        name=f"{R.TA103_L_WARP_ZONE} - Middle Pipe",
+        group=EGroup.CHAP_3,
+    ),
+    EntranceRule(
+        fr=R.TA103_L_WARP_ZONE,
+        to=R.TA107,
+        name=f"{R.TA103_L_WARP_ZONE} - Right Pipe",
+        group=EGroup.CHAP_3,
+    ),
+    # ta104
+    EntranceRule(
+        fr=R.TA104,
+        to=R.TA103,
+        name=f"{R.TA104} - Left Pipe",
+        group=EGroup.CHAP_3,
+    ),
+    EntranceRule(
+        fr=R.TA104,
+        to=R.TA103_L_WARP_ZONE,
+        name=f"{R.TA104} - Right Pipe",
+        group=EGroup.CHAP_3,
+    ),
+    LocationRule(L.C31_BOWSER, Has(I.PIXL_BOOMER) | SPMRules.can_super_jump),  # TODO: more ways to defeat bowser?
+    LocationRule(L.C31_STAR_BLOCK, Has(I.PIXL_BOOMER) | SPMRules.can_super_jump),  # TODO: more ways to defeat bowser?
+    # ta105
+    EntranceRule(
+        fr=R.TA105,
+        to=R.TA101_L_BACKGROUND,
+        name=f"{R.TA105} - Top Right Pipe",
+        group=EGroup.CHAP_3,
+    ),
+    EntranceRule(
+        fr=R.TA105,
+        to=R.TA101_L_BACKGROUND,
+        name=f"{R.TA105} - Bottom Left Pipe",
+        etype=EntranceType.ONE_WAY,
+        group=EGroup.CHAP_3,
+        # Goes to the TA101_L_BACKGROUND_PIPE - Left Pipe
+    ),
+    # ta106
+    # EntranceRule(fr=R.TA106, to=R.TA103, name=f"{R.TA106} - Fall"),
+    EntranceRule(
+        fr=R.TA106,
+        to=R.TA103,
+        name=f"{R.TA106} - Pipe",
+        group=EGroup.CHAP_3,
+    ),
+    # ta107
+    EntranceRule(
+        fr=R.TA107,
+        to=R.TA103_L_WARP_ZONE,
+        name=f"{R.TA107} - Pipe",
+        group=EGroup.CHAP_3,
+    ),
+    LocationRule(L.C31_CHEST_IN_WARP_ZONE_RIGHT_PIPE, SPMRules.can_flip),
+    # ta108
+    EntranceRule(
+        fr=R.TA108,
+        to=R.TA103,
+        name=f"{R.TA108} - Pipe",
+        group=EGroup.CHAP_3,
+    ),
+    # ta109
+    EntranceRule(
+        fr=R.TA109,
+        to=R.TA102_L_FOREGROUND,
+        name=f"{R.TA109} - Door",
+        group=EGroup.CHAP_3,
+    ),
+    # endregion
+    # region Chapter 3-2
+    # ta201
+    EntranceRule(
+        fr=R.TA201,
+        to=R.TA202,
+        name=f"{R.TA201} - Caged Pipe",
+        rule=SPMRules.can_flip,
+        group=EGroup.CHAP_3,
+    ),
+    EntranceRule(fr=R.TA201, to=R.TA205, name=f"{R.TA201} - Door", rule=Has(I.PIXL_THUDLEY), group=EGroup.CHAP_3),
+    # ta202
+    EntranceRule(
+        fr=R.TA202,
+        to=R.TA201,
+        name=f"{R.TA202} - Left Pipe",
+        group=EGroup.CHAP_3,
+    ),
+    EntranceRule(fr=R.TA202, to=R.TA203, name=f"{R.TA202} - Middle Pipe", group=EGroup.CHAP_3),
+    LocationRule(L.C32_HIDDEN_CHEST_NEAR_PIPE, SPMRules.can_flip),
+    # ta203
+    EntranceRule(fr=R.TA203, to=R.TA202, name=f"{R.TA203} - Pipe", group=EGroup.CHAP_3),
+    EntranceRule(fr=R.TA203, to=R.TA204, name=f"{R.TA203} - Door", group=EGroup.CHAP_3),
+    # ta204
+    EntranceRule(fr=R.TA204, to=R.TA203, name=f"{R.TA204} - Door", group=EGroup.CHAP_3),
+    # ta205
+    EntranceRule(fr=R.TA205, to=R.TA201, name=f"{R.TA205} - Door", group=EGroup.CHAP_3),
+    EntranceRule(
+        fr=R.TA205,
+        to=R.TA206,
+        name=f"{R.TA205} - Pipe",
+        rule=SPMRules.can_fire | Has(I.PIXL_THUDLEY),
+        group=EGroup.CHAP_3,
+    ),  # TODO: other ways to beat big blooper
+    # ta206
+    EntranceRule(fr=R.TA206, to=R.TA205, name=f"{R.TA206} - Pipe", group=EGroup.CHAP_3),
+    # endregion
+    # region Chapter 3-3
+    # ta301
+    EntranceRule(
+        fr=R.TA301_GROUND,
+        to=R.TA301_DOTWOOD_SHOP,
+        name=f"{R.TA301_GROUND} - Shrink to Itty Bits",
+        rule=Has(I.PIXL_DOTTIE),
+    ),
+    EntranceRule(
+        fr=R.TA301_GROUND,
+        to=R.TA301_MIDDLE_TREE,
+        name=f"{R.TA301_GROUND} - Climb Dotwood tree",
+        rule=((SPMRules.can_flip & SPMRules.can_float) | SPMRules.can_super_jump) & Has(I.PIXL_THUDLEY),
+    ),
+    EntranceRule(fr=R.TA301_MIDDLE_TREE, to=R.TA301_GROUND, name=f"{R.TA301_MIDDLE_TREE} - Fall to the ground"),
+    EntranceRule(fr=R.TA301_MIDDLE_TREE, to=R.TA305, name=f"{R.TA301_MIDDLE_TREE} - Yellow Pipe", group=EGroup.CHAP_3),
+    EntranceRule(
+        fr=R.TA301_MIDDLE_TREE,
+        to=R.TA302_BOTTOM,
+        name=f"{R.TA301_MIDDLE_TREE} - Overgrown Door",
+        rule=SPMRules.can_fire,
+        group=EGroup.CHAP_3,
+    ),
+    # ta302
+    EntranceRule(fr=R.TA302_BOTTOM, to=R.TA301_MIDDLE_TREE, name=f"{R.TA302_BOTTOM} - Door", group=EGroup.CHAP_3),
+    # MOD: I'm not dealing with the logic implications of having the warp pipes here be entrance rando'd *yet*
+    # The below rule is written with the intention that all this room's warp pipe switches can be hit
+    EntranceRule(
+        fr=R.TA302_BOTTOM,
+        to=R.TA302_TOP,
+        name=f"{R.TA302_BOTTOM} - Lowest Pipe",
+        rule=HasAll(I.PIXL_SLIM, I.PIXL_BOOMER) & SPMRules.can_flip,
+    ),
+    EntranceRule(fr=R.TA302_BOTTOM, to=R.TA306, name=f"{R.TA302_BOTTOM} - Middle Flip Pipe", rule=SPMRules.can_flip),
+    EntranceRule(fr=R.TA302_BOTTOM, to=R.TA307, name=f"{R.TA302_BOTTOM} - Middle L Pipe"),
+    EntranceRule(fr=R.TA302_BOTTOM, to=R.TA308, name=f"{R.TA302_BOTTOM} - Top Pipe"),
+    EntranceRule(fr=R.TA302_TOP, to=R.TA303, name=f"{R.TA302_TOP} - Door", group=EGroup.CHAP_3),
+    # ta303
+    EntranceRule(fr=R.TA303, to=R.TA302_TOP, name=f"{R.TA303} - Door", group=EGroup.CHAP_3),
+    EntranceRule(fr=R.TA303, to=R.TA304, name=f"{R.TA303} - Pipe after Red Wind", group=EGroup.CHAP_3),
+    # ta304
+    EntranceRule(fr=R.TA304, to=R.TA303, name=f"{R.TA304} - Pipe", group=EGroup.CHAP_3),
+    # ta305
+    EntranceRule(fr=R.TA305, to=R.TA301_MIDDLE_TREE, name=f"{R.TA305} - Pipe", group=EGroup.CHAP_3),
+    # ta306
+    EntranceRule(fr=R.TA306, to=R.TA302_BOTTOM, name=f"{R.TA306} - Pipe"),
+    # ta307
+    EntranceRule(fr=R.TA307, to=R.TA302_BOTTOM, name=f"{R.TA307} - Pipe"),
+    # ta308
+    EntranceRule(fr=R.TA308, to=R.TA302_BOTTOM, name=f"{R.TA308} - Pipe"),
+    # endregion
+    # region Chapter 3-4
+    EntranceRule(
+        fr=R.TA401,
+        to=R.TA402,
+        name=f"{R.TA401} - 3D Pipe behind hidden wall",
+        rule=SPMRules.can_flip,
+        group=EGroup.CHAP_3,
+    ),
+    EntranceRule(fr=R.TA401, to=R.TA403, name=f"{R.TA401} - Door", rule=Has(I.FORT_KEY, 1), group=EGroup.CHAP_3),
+    # ta402
+    EntranceRule(fr=R.TA402, to=R.TA401, name=f"{R.TA402} - Pipe", group=EGroup.CHAP_3),
+    LocationRule(L.C34_CHEST_IN_PIPE_OUTSIDE_OF_CASTLE, rule=Has(I.PIXL_THOREAU) | SPMRules.can_luigi_jump),
+    # ta403
+    EntranceRule(fr=R.TA403, to=R.TA401, name=f"{R.TA403} - Left Door", group=EGroup.CHAP_3),
+    EntranceRule(fr=R.TA403, to=R.TA404, name=f"{R.TA403} - Right Door", group=EGroup.CHAP_3),
+    EntranceRule(
+        fr=R.TA403,
+        to=R.TA412,
+        name=f"{R.TA403} - 3D Pipe behind Right Door",
+        rule=SPMRules.can_flip,
+        group=EGroup.CHAP_3,
+    ),
+    # ta404
+    EntranceRule(fr=R.TA404, to=R.TA403, name=f"{R.TA404} - Left Door", group=EGroup.CHAP_3),
+    EntranceRule(
+        fr=R.TA404,
+        to=R.TA413,
+        name=f"{R.TA404} - Middle Door",
+        rule=Has(I.FORT_KEY, 3) & Has(I.CHARACTER_PEACH),
+        group=EGroup.CHAP_3,
+    ),
+    EntranceRule(fr=R.TA404, to=R.TA405_BOTTOM, name=f"{R.TA404} - Right Door", group=EGroup.CHAP_3),
+    # ta405
+    EntranceRule(fr=R.TA405_BOTTOM, to=R.TA404, name=f"{R.TA405_BOTTOM} - Bottom Door", group=EGroup.CHAP_3),
+    EntranceRule(fr=R.TA405_BOTTOM, to=R.TA405_TOP, name=f"{R.TA405_BOTTOM} - Climb Staircase", rule=SPMRules.can_flip),
+    EntranceRule(fr=R.TA405_TOP, to=R.TA405_BOTTOM, name=f"{R.TA405_BOTTOM} - Descend Staircase"),
+    EntranceRule(fr=R.TA405_TOP, to=R.TA406, name=f"{R.TA405_TOP} - Top Door", group=EGroup.CHAP_3),
+    # ta406
+    EntranceRule(fr=R.TA406, to=R.TA405_TOP, name=f"{R.TA406} - Right Door", group=EGroup.CHAP_3),
+    EntranceRule(
+        fr=R.TA406, to=R.TA414, name=f"{R.TA406} - Middle Door", rule=Has(I.PIXL_THUDLEY), group=EGroup.CHAP_3
+    ),
+    EntranceRule(
+        fr=R.TA406, to=R.TA407_BOTTOM, name=f"{R.TA406} - Left Door", rule=Has(I.PIXL_THUDLEY), group=EGroup.CHAP_3
+    ),
+    # ta407
+    EntranceRule(
+        fr=R.TA407_BOTTOM,
+        to=R.TA406,
+        name=f"{R.TA407_BOTTOM} - Bottom Door",
+        rule=SPMRules.can_flip,
+        group=EGroup.CHAP_3,
+    ),
+    EntranceRule(
+        fr=R.TA407_BOTTOM,
+        to=R.TA407_TOP,
+        name=f"{R.TA407_BOTTOM} - Climb Staircase",
+        rule=SPMRules.can_flip & (SPMRules.can_float | Has(I.PIXL_DASHELL)),
+    ),
+    EntranceRule(
+        fr=R.TA407_TOP,
+        to=R.TA407_BOTTOM,
+        name=f"{R.TA407_BOTTOM} - Descend Staircase",
+        rule=SPMRules.can_flip,
+    ),
+    EntranceRule(fr=R.TA407_TOP, to=R.TA408, name=f"{R.TA407_TOP} - Top Door", group=EGroup.CHAP_3),
+    # ta408
+    EntranceRule(fr=R.TA408, to=R.TA407_TOP, name=f"{R.TA408} - Left Door", group=EGroup.CHAP_3),
+    EntranceRule(
+        fr=R.TA408, to=R.TA409, name=f"{R.TA408} - Right Door", rule=SPMRules.can_luigi_jump | Has(I.PIXL_THOREAU)
+    ),
+    # ta409
+    # MOD: the game crashes if you exit the right door before activating the bridge
+    # EntranceRule(fr=R.TA409, to=R.TA408, name=f"{R.TA409} - Left Door"),
+    EntranceRule(fr=R.TA409, to=R.TA410, name=f"{R.TA409} - Right Door", group=EGroup.CHAP_3),
+    # This is the west pitfall for entering the code 2828 wrong. It needs to be OoL or disabled since it's missable.
+    # EntranceRule(fr=R.TA409, to=R.TA415, name=f"{R.TA409} - Pit Trap"),
+    # ta410
+    EntranceRule(fr=R.TA410, to=R.TA409, name=f"{R.TA410} - Door", group=EGroup.CHAP_3),
+    # ta411
+    # This is the west pitfall for entering the code 2323 wrong. It needs to be OoL or disabled since it's missable.
+    # EntranceRule(fr=R.TA411, to=R.TA415, name=f"{R.TA411} - Pit Trap"),
+    EntranceRule(fr=R.TA411, to=R.TA414, name=f"{R.TA411} - Left Door", group=EGroup.CHAP_3),
+    # EntranceRule(fr=R.TA411, to=R.TA411, name=f"{R.TA411} - Right Door"),  This is the elevator that goes to the same room
+    # ta412
+    EntranceRule(fr=R.TA412, to=R.TA403, name=f"{R.TA412} - Left 3D Pipe", rule=SPMRules.can_flip, group=EGroup.CHAP_3),
+    EntranceRule(fr=R.TA412, to=R.TA415, name=f"{R.TA412} - Right Pipe", group=EGroup.CHAP_3),
+    LocationRule(
+        L.C34_FREE_CARRIE, Has(I.PIXL_THUDLEY) & (SPMRules.can_flip | SPMRules.can_luigi_jump | Has(I.PIXL_CARRIE))
+    ),
+    # ta413
+    EntranceRule(fr=R.TA413, to=R.TA404, name=f"{R.TA413} - Door", group=EGroup.CHAP_3),
+    # LocationRule(L.C34_GREEN_PURE_HEART),
+    # ta414
+    EntranceRule(fr=R.TA414, to=R.TA406, name=f"{R.TA414} - Left Door", rule=Has(I.PIXL_CARRIE), group=EGroup.CHAP_3),
+    EntranceRule(fr=R.TA414, to=R.TA411, name=f"{R.TA414} - Right Door", rule=Has(I.PIXL_CARRIE), group=EGroup.CHAP_3),
+    # ta415
+    EntranceRule(fr=R.TA415, to=R.TA412, name=f"{R.TA415} - Pipe", rule=Has(I.PIXL_THOREAU), group=EGroup.CHAP_3),
     # endregion
 ]
+"""ALL_RULES keeps a list of both Entrance & Location rules manually sorted by Region."""
 
-
-LOCATION_RULES = [
-    # region Flipside
-    LocationRule(L.FLIPSIDE_HEART_PILLAR_RED, Has(I.RED_PURE_HEART)),
-    # MOD: will this require spicy soup in the itempool?
-    LocationRule(L.FLIPSIDE_3F_EAT_A_SPICY_SOUP, True_()),
-    LocationRule(L.FLEEP_MAP_REVEAL_01, CanFleepTreasureSpot(I.MAP_1)),
-    LocationRule(L.FLIPSIDE_3F_CHEST_AFTER_INVISIBLE_BLOCKS, Has(I.PIXL_TIPPI)),
-    LocationRule(L.FLIPSIDE_3F_CHEST_IN_PICCOLO_BLOCK, Has(I.PIXL_PICCOLO)),
-    LocationRule(L.PICCOLO_FETCH_MERLUVLEE, Has(I.TRAINING_MACHINE)),
-    LocationRule(L.FLEEP_MAP_REVEAL_02, CanFleepTreasureSpot(I.MAP_2)),
-    LocationRule(L.FLIPSIDE_HEART_PILLAR_GREEN, HasAll(I.PIXL_THUDLEY, I.GREEN_PURE_HEART)),
-    LocationRule(L.FLIPSIDE_B1_3D_CHEST, SPMRules.can_flip),
-    LocationRule(L.FLEEP_MAP_REVEAL_03, CanFleepTreasureSpot(I.MAP_3)),
-    LocationRule(L.FLEEP_MAP_REVEAL_04, CanFleepTreasureSpot(I.MAP_4)),
-    LocationRule(L.FLIPSIDE_B2_CHEST_AFTER_PIPE, Has(E.SMASH_FLOPSIDE_B2_OUTSKIRTS_BLOCK)),
-    # Throeau places a squig below the pillars to jump off of
-    LocationRule(
-        L.FLIPSIDE_HEART_PILLAR_ORANGE,
-        (SPMRules.can_float | SPMRules.throeau_jump) & Has(I.ORANGE_PURE_HEART),
-    ),
-    LocationRule(L.FLIPSIDE_HEART_PILLAR_YELLOW, SPMRules.can_flip & HasAll(I.YELLOW_PURE_HEART, I.PIXL_SLIM)),
-    # endregion
-    # region Flopside
-    LocationRule(L.FLOPSIDE_HEART_PILLAR_CYAN, Has(I.CYAN_PURE_HEART)),
-    LocationRule(L.FLEEP_MAP_REVEAL_05, CanFleepTreasureSpot(I.MAP_5)),
-    LocationRule(L.FLOPSIDE_3F_CHEST_IN_PICCOLO_BLOCK, Has(I.PIXL_PICCOLO)),
-    LocationRule(L.FLOPSIDE_3F_CHEST_AFTER_INVISIBLE_BLOCKS, Has(I.PIXL_TIPPI)),
-    LocationRule(L.PICCOLO_FETCH_MERLEE, Has(I.CRYSTAL_BALL)),
-    LocationRule(L.FLOPSIDE_HEART_PILLAR_WHITE, Has(I.WHITE_PURE_HEART)),
-    LocationRule(E.SMASH_FLOPSIDE_B2_OUTSKIRTS_BLOCK, SPMRules.can_flip & Has(I.PIXL_CUDGE)),
-    LocationRule(E.FLEEP_FLOPSIDE_PIT_CAGE, Has(I.PIXL_FLEEP)),
-    LocationRule(L.FLOPSIDE_B2_CHEST_AFTER_PIPE, Has(E.SMASH_FLOPSIDE_B2_OUTSKIRTS_BLOCK)),
-    LocationRule(L.FLOPSIDE_HEART_PILLAR_BLUE, Has(I.BLUE_PURE_HEART)),
-    # Luigi can make the jump w/o super jump
-    LocationRule(L.FLOPSIDE_HEART_PILLAR_PURPLE, HasAll(I.PURPLE_PURE_HEART, I.CHARACTER_LUIGI)),
-    LocationRule(E.SMASH_FLOPSIDE_B1_OUTSKIRTS_BLOCK, Has(I.PIXL_CUDGE)),
-    # endregion
-    # region Chapter 1-1
-    LocationRule(L.C11_OPEN_ITEM_INSIDE_BESTOVIUS_HOUSE_HALLWAY, SPMRules.can_flip),
-    LocationRule(L.C11_OPEN_ITEM_BEHIND_PIPE, SPMRules.can_flip),
-    LocationRule(L.C11_CHEST_AFTER_STAR_BLOCK, SPMRules.can_flip),
-    LocationRule(L.C11_FIRST_OPEN_ITEM_INSIDE_BESTOVIUS_ROOM, SPMRules.can_flip),
-    LocationRule(L.C11_SECOND_OPEN_ITEM_INSIDE_BESTOVIUS_ROOM, SPMRules.can_flip),
-    LocationRule(L.FLEEP_MAP_REVEAL_06, CanFleepTreasureSpot(I.MAP_6)),
-    # endregion
-    # region Chapter 1-2
-    LocationRule(L.C12_CHEST_IN_SHORTCUT, SPMRules.can_flip),
-    LocationRule(
-        L.C12_OPEN_ITEM_ON_TOP_OF_WATCHITTS_HOUSE, SPMRules.can_flip | SPMRules.can_float | Has(I.PIXL_DASHELL)
-    ),
-    # MOD: Will Watchitt still require having Thoreau to tell Green to build the bridge?
-    LocationRule(
-        L.C12_STAR_BLOCK, (SPMRules.can_flip & Has(I.PIXL_THOREAU)) | SPMRules.can_float | Has(I.PIXL_DASHELL)
-    ),
-    LocationRule(L.C12_OPEN_ITEM_BEHIND_GREENS_BED, SPMRules.can_flip),
-    LocationRule(L.FLEEP_MAP_REVEAL_07, CanFleepTreasureSpot(I.MAP_7)),
-    LocationRule(L.FLEEP_MAP_REVEAL_08, CanFleepTreasureSpot(I.MAP_8)),
-    # endregion
-    # region Chapter 1-3
-    LocationRule(L.C13_OPEN_ITEM_BEHIND_ROCK_IN_FIRST_ROOM, SPMRules.can_flip),
-    LocationRule(L.C13_OPEN_ITEM_BEHIND_ROCK_IN_SECOND_ROOM, SPMRules.can_flip),
-    LocationRule(L.C13_OPEN_ITEM_BEHIND_ROCK_IN_SIXTH_ROOM, SPMRules.can_flip),
-    LocationRule(L.FLEEP_MAP_REVEAL_09, CanFleepTreasureSpot(I.MAP_9)),
-    LocationRule(L.FLEEP_MAP_REVEAL_10, CanFleepTreasureSpot(I.MAP_10)),
-    # endregion
-    # region Chapter 1-4
-    # MOD: THOREAU has to be patched to always be thrown at *Mario's* height!
-    # Otherwise this has to be updated to always require mario.
-    LocationRule(L.C14_OPEN_KEY_BEHIND_BLOCKS, HasAll(I.PIXL_THOREAU, E.SWITCH_YOLD_RUINS_SQUIG_ROOM)),
-    LocationRule(E.SWITCH_YOLD_RUINS_SQUIG_ROOM, SPMRules.can_super_jump | Has(I.PIXL_THOREAU)),
-    LocationRule(L.C14_HIDDEN_CHEST_AFTER_3D_PATH, SPMRules.can_flip),
-    LocationRule(L.C14_OPEN_KEY_BEHIND_BLOCKS, SPMRules.can_flip),
-    LocationRule(L.FLEEP_MAP_REVEAL_11, CanFleepTreasureSpot(I.MAP_11)),
-    # endregion
-    # region Chapter 2-1
-    LocationRule(E.SWITCH_GLOAM_VALLEY_UNDERGROUND, SPMRules.can_flip & Has(I.PIXL_BOOMER)),
-    LocationRule(L.C21_LEFT_CHEST_BEFORE_STAR_BLOCK, SPMRules.can_flip),
-    LocationRule(L.C21_RIGHT_CHEST_BEFORE_STAR_BLOCK, SPMRules.can_flip),
-    LocationRule(L.C21_CHEST_BEHIND_BOOMER_CHEST, SPMRules.can_flip & Has(I.PIXL_BOOMER)),
-    LocationRule(E.SWITCH_GLOAM_VALLEY_BACKGROUND, SPMRules.can_float | Has(I.PIXL_DASHELL)),
-    LocationRule(L.FLEEP_MAP_REVEAL_12, CanFleepTreasureSpot(I.MAP_12)),
-    # endregion
-    # region Chapter 2-2
-    LocationRule(L.C22_CHEST_ON_ROOF, SPMRules.can_flip),
-    LocationRule(
-        L.C22_CHEST_ABOVE_SPIKE_ROOF, SPMRules.can_flip & (HasAny(I.PIXL_BOOMER, I.PIXL_CUDGE) | SPMRules.can_fire)
-    ),
-    LocationRule(L.FLEEP_MAP_REVEAL_13, CanFleepTreasureSpot(I.MAP_13)),
-    LocationRule(L.FLEEP_MAP_REVEAL_14, CanFleepTreasureSpot(I.MAP_14)),
-    # endregion
-    # region Chapter 2-3
-    LocationRule(E.OPEN_THE_RUBEE_VAULT, SPMRules.can_flip & Has(I.PIXL_SLIM)),
-    LocationRule(L.FLEEP_MAP_REVEAL_15, CanFleepTreasureSpot(I.MAP_15)),
-    LocationRule(L.C23_STAR_BLOCK, Has(E.OPEN_THE_RUBEE_VAULT)),
-    LocationRule(L.FLEEP_MAP_REVEAL_15, CanFleepTreasureSpot(I.MAP_15)),
-    # endregion
-    # region Chapter 2-4
-    LocationRule(L.FLEEP_MAP_REVEAL_16, CanFleepTreasureSpot(I.MAP_16)),
-    LocationRule(L.C24_OPEN_ITEM_BEHIND_ROOM_08_SIGN, SPMRules.can_flip & Has(I.PIXL_BOOMER)),
-    LocationRule(L.FLEEP_MAP_REVEAL_17, CanFleepTreasureSpot(I.MAP_17)),
-    # TODO: Add more ways to defeat mimi
-    LocationRule(L.C24_YELLOW_PURE_HEART, Has(I.PIXL_THOREAU)),
-    # endregion
-]
+ENTRANCE_RULES = [rule for rule in ALL_RULES if isinstance(rule, EntranceRule)]
+LOCATION_RULES = [rule for rule in ALL_RULES if isinstance(rule, LocationRule)]

@@ -59,7 +59,7 @@ CONFIG_OVERRIDES: dict[str, tuple[Callable[[SuperPaperMarioOptions], bool], Loca
 
 
 def prepare_location_data(world: SPMWorldBase) -> list[LocationSetup]:
-    # Construct a dictionary of tag to count/classification to override ItemData defaults
+    # Construct a dictionary of tag to count/classification to override LocationData defaults
     overrides: dict[str, LocationConfigOverride] = {
         tag: override for tag, (func, override) in CONFIG_OVERRIDES.items() if func(world.options)
     }
@@ -690,43 +690,43 @@ LOCATION_SETUP: list[LocationSetup] = [
         ),
         CFG_RANDOM,
     ),
+    (
+        LocationData(
+            name=L.DOTWOOD_TREE_ITTY_BITS_1,
+            code=45,
+            rom=0,
+            var=None,
+            item=I.PEACHY_PEACH,
+            region=R.TA301_DOTWOOD_SHOP,
+            groups={GROUP_SHOP},
+        ),
+        CFG_RANDOM,
+    ),
+    (
+        LocationData(
+            name=L.DOTWOOD_TREE_ITTY_BITS_2,
+            code=46,
+            rom=0,
+            var=None,
+            item=I.FRESH_VEGGIE,
+            region=R.TA301_DOTWOOD_SHOP,
+            groups={GROUP_SHOP},
+        ),
+        CFG_RANDOM,
+    ),
+    (
+        LocationData(
+            name=L.DOTWOOD_TREE_ITTY_BITS_3,
+            code=47,
+            rom=0,
+            var=None,
+            item=I.HORSETAIL,
+            region=R.TA301_DOTWOOD_SHOP,
+            groups={GROUP_SHOP},
+        ),
+        CFG_RANDOM,
+    ),
     # TODO: Need regions on these
-    # (
-    #     LocationData(
-    #         name=L.DOTWOOD_TREE_ITTY_BITS_1,
-    #         code=45,
-    #         rom=0,
-    #         var=None,
-    #         item=I.FRESH_VEGGIE,
-    #         region=None,
-    #         groups={GROUP_SHOP},
-    #     ),
-    #     CFG_RANDOM,
-    # ),
-    # (
-    #     LocationData(
-    #         name=L.DOTWOOD_TREE_ITTY_BITS_2,
-    #         code=46,
-    #         rom=0,
-    #         var=None,
-    #         item=I.HORSETAIL,
-    #         region=None,
-    #         groups={GROUP_SHOP},
-    #     ),
-    #     CFG_RANDOM,
-    # ),
-    # (
-    #     LocationData(
-    #         name=L.DOTWOOD_TREE_ITTY_BITS_3,
-    #         code=47,
-    #         rom=0,
-    #         var=None,
-    #         item=I.PEACHY_PEACH,
-    #         region=None,
-    #         groups={GROUP_SHOP},
-    #     ),
-    #     CFG_RANDOM,
-    # ),
     # (
     #     LocationData(
     #         name=L.OUTER_LIMITS_HOWZITS_TWINKLE_MART_1,
@@ -1826,8 +1826,19 @@ LOCATION_SETUP: list[LocationSetup] = [
     ),
     (
         LocationData(
-            name=L.C14_HIDDEN_CHEST_AFTER_3D_PATH,
+            name=E.SWITCH_YOLD_RUINS_SQUIG_ROOM,
             code=146,
+            rom=0,
+            var=GSW(0, 42),
+            item=E.SWITCH_YOLD_RUINS_SQUIG_ROOM,
+            region=R.HE406,
+        ),
+        CFG_EVENT,
+    ),
+    (
+        LocationData(
+            name=L.C14_HIDDEN_CHEST_AFTER_3D_PATH,
+            code=147,
             rom=0,
             var=GSWF(613),
             item=I.CATCH_CARD_BUZZY_BEETLE,
@@ -1837,14 +1848,14 @@ LOCATION_SETUP: list[LocationSetup] = [
     ),
     (
         LocationData(
-            name=L.C14_OPEN_KEY_BETWEEN_FIRE_BARS, code=147, rom=0, var=GSW(0, 46), item=I.RUINS_KEY, region=R.HE407
+            name=L.C14_OPEN_KEY_BETWEEN_FIRE_BARS, code=148, rom=0, var=GSW(0, 46), item=I.RUINS_KEY, region=R.HE407
         ),
         CFG_RANDOM,
     ),
     (
         LocationData(
             name=L.C14_ORANGE_PURE_HEART,
-            code=148,
+            code=149,
             rom=0,
             var=GSW(0, 53),
             item=I.ORANGE_PURE_HEART,
@@ -1858,7 +1869,7 @@ LOCATION_SETUP: list[LocationSetup] = [
     (
         LocationData(
             name=E.SWITCH_GLOAM_VALLEY_UNDERGROUND,
-            code=149,
+            code=150,
             rom=None,
             var=None,
             item=E.SWITCH_GLOAM_VALLEY_UNDERGROUND,
@@ -1869,7 +1880,7 @@ LOCATION_SETUP: list[LocationSetup] = [
     (
         LocationData(
             name=E.SWITCH_GLOAM_VALLEY_BACKGROUND,
-            code=150,
+            code=151,
             rom=None,
             var=None,
             item=E.SWITCH_GLOAM_VALLEY_BACKGROUND,
@@ -1878,17 +1889,17 @@ LOCATION_SETUP: list[LocationSetup] = [
         CFG_EVENT,
     ),
     (
-        LocationData(name=L.C21_CHEST_AFTER_SQUIGS, code=151, rom=0, var=GSWF(735), item=I.DOOR_KEY_21, region=R.MI105),
+        LocationData(name=L.C21_CHEST_AFTER_SQUIGS, code=152, rom=0, var=GSWF(735), item=I.DOOR_KEY_21, region=R.MI105),
         CFG_RANDOM,
     ),
     (
-        LocationData(name=L.C21_BOOMER_CHEST, code=152, rom=0, var=GSW(0, 73), item=I.PIXL_BOOMER, region=R.MI107),
+        LocationData(name=L.C21_BOOMER_CHEST, code=153, rom=0, var=GSW(0, 73), item=I.PIXL_BOOMER, region=R.MI107),
         CFG_RANDOM,
     ),
     (
         LocationData(
             name=L.C21_CHEST_BEHIND_BOOMER_CHEST,
-            code=153,
+            code=154,
             rom=0,
             var=GSWF(738),
             item=I.CATCH_CARD_OLD_MAN_WATCHITT,
@@ -1899,7 +1910,7 @@ LOCATION_SETUP: list[LocationSetup] = [
     (
         LocationData(
             name=L.C21_LEFT_CHEST_BEFORE_STAR_BLOCK,
-            code=154,
+            code=155,
             rom=0,
             var=GSWF(732),
             item=I.CATCH_CARD_SHLURP,
@@ -1910,7 +1921,7 @@ LOCATION_SETUP: list[LocationSetup] = [
     (
         LocationData(
             name=L.C21_RIGHT_CHEST_BEFORE_STAR_BLOCK,
-            code=155,
+            code=156,
             rom=0,
             var=GSWF(733),
             item=I.CATCH_CARD_SWOOPER,
@@ -1921,7 +1932,7 @@ LOCATION_SETUP: list[LocationSetup] = [
     (
         LocationData(
             name=L.C21_STAR_BLOCK,
-            code=156,
+            code=157,
             rom=0,
             var=GSW(0, 76),
             item=I.CHAPTER_2_2_KEY,
@@ -1934,35 +1945,35 @@ LOCATION_SETUP: list[LocationSetup] = [
     # TODO=verify remaining script variables & items
     # region 2-2
     (
-        LocationData(name=L.C22_CHEST_ON_ROOF, code=157, rom=0, var=GSWF(729), item=I.STOP_WATCH, region=R.MI201),
+        LocationData(name=L.C22_CHEST_ON_ROOF, code=158, rom=0, var=GSWF(729), item=I.STOP_WATCH, region=R.MI201),
         CFG_RANDOM,
     ),
     (
         LocationData(
-            name=L.C22_CHEST_ABOVE_ENTRANCE, code=158, rom=0, var=GSWF(730), item=I.CATCH_CARD_CURSYA, region=R.MI201
+            name=L.C22_CHEST_ABOVE_ENTRANCE, code=159, rom=0, var=GSWF(730), item=I.CATCH_CARD_CURSYA, region=R.MI201
         ),
         CFG_RANDOM,
     ),
     (
         LocationData(
-            name=L.C22_OPEN_ITEM_DRAGGED_BY_ROPE, code=159, rom=None, var=None, item=I.MUSHROOM, region=R.MI207
+            name=L.C22_OPEN_ITEM_DRAGGED_BY_ROPE, code=160, rom=None, var=None, item=I.MUSHROOM, region=R.MI207
         ),
         CFG_RANDOM,
     ),
     (
-        LocationData(name=L.C22_OPEN_ITEM_HUNG_BY_ROPE, code=160, rom=None, var=None, item=I.MUSHROOM, region=R.MI204),
+        LocationData(name=L.C22_OPEN_ITEM_HUNG_BY_ROPE, code=161, rom=None, var=None, item=I.MUSHROOM, region=R.MI204),
         CFG_RANDOM,
     ),
     (
         LocationData(
-            name=L.C22_CHEST_ABOVE_SPIKE_ROOF, code=161, rom=0, var=GSW(0, 79), item=I.HOUSE_KEY, region=R.MI206
+            name=L.C22_CHEST_ABOVE_SPIKE_ROOF, code=162, rom=0, var=GSW(0, 79), item=I.HOUSE_KEY, region=R.MI206
         ),
         CFG_RANDOM,
     ),
     (
         LocationData(
             name=L.C22_STAR_BLOCK,
-            code=162,
+            code=163,
             rom=0,
             var=GSW(0, 82),
             item=I.CHAPTER_2_3_KEY,
@@ -1975,21 +1986,21 @@ LOCATION_SETUP: list[LocationSetup] = [
     # region 2-3
     (
         LocationData(
-            name=E.OPEN_THE_RUBEE_VAULT, code=163, rom=None, var=None, item=E.OPEN_THE_RUBEE_VAULT, region=R.MI301
+            name=E.OPEN_THE_RUBEE_VAULT, code=164, rom=None, var=None, item=E.OPEN_THE_RUBEE_VAULT, region=R.MI301
         ),
         CFG_EVENT,
     ),
     (
         LocationData(
-            name=L.C23_CHEST_BEHIND_BLOCKS, code=164, rom=None, var=None, item=I.CATCH_CARD_BOO, region=R.MI301
+            name=L.C23_CHEST_BEHIND_BLOCKS, code=165, rom=None, var=None, item=I.CATCH_CARD_BOO, region=R.MI301
         ),
         CFG_RANDOM,
     ),
-    (LocationData(name=L.C23_SLIM_CHEST, code=165, rom=None, var=None, item=I.PIXL_SLIM, region=R.MI301), CFG_RANDOM),
+    (LocationData(name=L.C23_SLIM_CHEST, code=166, rom=None, var=None, item=I.PIXL_SLIM, region=R.MI301), CFG_RANDOM),
     (
         LocationData(
             name=L.C23_STAR_BLOCK,
-            code=166,
+            code=167,
             rom=None,
             var=None,
             item=I.CHAPTER_2_4_KEY,
@@ -2002,14 +2013,14 @@ LOCATION_SETUP: list[LocationSetup] = [
     # region 2-4
     (
         LocationData(
-            name=L.C24_OPEN_ITEM_BEHIND_ROOM_08_SIGN, code=167, rom=None, var=None, item=I.SHROOM_SHAKE, region=R.MI410
+            name=L.C24_OPEN_ITEM_BEHIND_ROOM_08_SIGN, code=168, rom=None, var=None, item=I.SHROOM_SHAKE, region=R.MI410
         ),
         CFG_RANDOM,
     ),
     (
         LocationData(
             name=L.C24_YELLOW_PURE_HEART,
-            code=168,
+            code=169,
             rom=None,
             var=None,
             item=I.YELLOW_PURE_HEART,
@@ -2020,167 +2031,203 @@ LOCATION_SETUP: list[LocationSetup] = [
     ),
     # endregion
     # region 3-1
-    # (LocationData(name=L.C31_TALK_TO_BARRY_AFTER_DEFEATING_FRANCIS
-    # , code=169
-    # , rom=None
-    # , var=None
-    # , item=None
-    # , region=None
-    # ), CFG_RANDOM),
-    # (LocationData(name=L.C31_CHEST_IN_WARP_ZONE_RIGHT_PIPE
-    # , code=170
-    # , rom=None
-    # , var=None
-    # , item=None
-    # , region=None
-    # ), CFG_RANDOM),
-    # (LocationData(name=L.C31_OPEN_ITEM_IN_BACKGROUND
-    # , code=171
-    # , rom=None
-    # , var=None
-    # , item=None
-    # , region=None
-    # ), CFG_RANDOM),
-    # (LocationData(name=L.C31_CHEST_IN_BACKGROUND_PIPE
-    # , code=172
-    # , rom=None
-    # , var=None
-    # , item=None
-    # , region=None
-    # ), CFG_RANDOM),
-    # (LocationData(name=L.C31_CHEST_ABOVE_COLORFUL_PERSONS
-    # , code=173
-    # , rom=None
-    # , var=None
-    # , item=None
-    # , region=None
-    # ), CFG_RANDOM),
-    # (LocationData(name=L.C31_OPEN_ITEM_IN_BACKGROUND_2
-    # , code=174
-    # , rom=None
-    # , var=None
-    # , item=None
-    # , region=None
-    # ), CFG_RANDOM),
-    # (LocationData(name=L.C31_BOWSER
-    # , code=175
-    # , rom=None
-    # , var=None
-    # , item=None
-    # , region=None
-    # ), CFG_RANDOM),
-    # (LocationData(name=L.C31_STAR_BLOCK
-    # , code=176
-    # , rom=None
-    # , var=None
-    # , item=None
-    # , region=None
-    # , tag=TAG_STAR_BLOCK
-    # ), CFG_DISABLED),
+    # TODO: Double check all locations, I couldn't find some of them initially.
+    (
+        LocationData(
+            name=L.C31_TALK_TO_BARRY_AFTER_DEFEATING_FRANCIS,
+            code=170,
+            rom=None,
+            var=GSWF(818),
+            item=I.PIXL_BARRY,
+            region=R.TA101_L_FOREGROUND,
+        ),
+        CFG_RANDOM,
+    ),
+    (
+        LocationData(
+            name=L.C31_CHEST_IN_WARP_ZONE_RIGHT_PIPE,
+            code=171,
+            rom=None,
+            var=GSWF(826),
+            item=I.CATCH_CARD_MAGIKOOPA,
+            region=R.TA107,
+        ),
+        CFG_RANDOM,
+    ),
+    (
+        LocationData(
+            name=L.C31_OPEN_ITEM_IN_BACKGROUND,
+            code=172,
+            rom=None,
+            var=GSWF(821),
+            item=I.CATCH_CARD_SP,
+            region=R.TA102_L_BACKGROUND,
+        ),
+        CFG_RANDOM,
+    ),
+    (
+        LocationData(
+            name=L.C31_CHEST_IN_BACKGROUND_PIPE, code=173, rom=None, var=GSWF(832), item=I.THUNDER_RAGE, region=R.TA105
+        ),
+        CFG_RANDOM,
+    ),
+    (
+        LocationData(
+            name=L.C31_CHEST_ABOVE_COLORFUL_PERSONS,
+            code=174,
+            rom=None,
+            var=GSWF(820),
+            item=I.CATCH_CARD_PIRANHA_PLANT,
+            region=R.TA101_L_FOREGROUND,
+        ),
+        CFG_RANDOM,
+    ),
+    (
+        LocationData(
+            name=L.C31_OPEN_ITEM_IN_BACKGROUND_2,
+            code=175,
+            rom=None,
+            var=GSWF(822),
+            item=I.CATCH_CARD_SP,
+            region=R.TA106,
+        ),
+        CFG_RANDOM,
+    ),
+    (
+        LocationData(
+            name=L.C31_BOWSER,
+            code=176,
+            rom=None,
+            var=GSW(0, 104),
+            item=I.CHARACTER_BOWSER,
+            region=R.TA104,
+        ),
+        CFG_RANDOM,
+    ),
+    (
+        LocationData(
+            name=L.C31_STAR_BLOCK,
+            code=177,
+            rom=None,
+            var=GSW(0, 105),
+            item=I.CHAPTER_3_2_KEY,
+            region=R.TA104,
+            tag=TAG_STAR_BLOCK,
+        ),
+        CFG_DISABLED,
+    ),
     # endregion
     # region 3-2
-    # (LocationData(name=L.C32_HIDDEN_CHEST_NEAR_PIPE
-    # , code=177
-    # , rom=None
-    # , var=None
-    # , item=None
-    # , region=None
-    # ), CFG_RANDOM),
-    # (LocationData(name=L.C32_THUDLEY_CHEST
-    # , code=178
-    # , rom=None
-    # , var=None
-    # , item=None
-    # , region=None
-    # ), CFG_RANDOM),
-    # (LocationData(name=L.C32_STAR_BLOCK
-    # , code=179
-    # , rom=None
-    # , var=None
-    # , item=None
-    # , region=None
-    # , tag=TAG_STAR_BLOCK
-    # ), CFG_DISABLED),
+    (
+        LocationData(
+            name=L.C32_HIDDEN_CHEST_NEAR_PIPE, code=178, rom=None, var=GSWF(823), item=I.GOLD_BAR, region=R.TA202
+        ),
+        CFG_RANDOM,
+    ),
+    (
+        LocationData(
+            name=L.C32_THUDLEY_CHEST, code=179, rom=None, var=None, item=I.PIXL_THUDLEY, region=R.TA204
+        ),  # MOD: TODO: This doesn't have an associated script var? closest is GSW(108) unlocking the cage *with* thudley
+        CFG_RANDOM,
+    ),
+    (
+        LocationData(
+            name=L.C32_STAR_BLOCK,
+            code=180,
+            rom=None,
+            var=GSW(0, 112),
+            item=I.CHAPTER_3_3_KEY,
+            region=R.TA206,
+            tag=TAG_STAR_BLOCK,
+        ),
+        CFG_DISABLED,
+    ),
     # endregion
     # region 3-3
-    # (LocationData(name=L.C33_CHOMPS_CHEST
-    # , code=180
-    # , rom=None
-    # , var=None
-    # , item=None
-    # , region=None
-    # ), CFG_RANDOM),
-    # (LocationData(name=L.C33_STAR_BLOCK
-    # , code=181
-    # , rom=None
-    # , var=None
-    # , item=None
-    # , region=None
-    # , tag=TAG_STAR_BLOCK
-    # ), CFG_DISABLED),
+    (
+        LocationData(
+            name=L.C33_CHOMPS_CHEST, code=181, rom=None, var=GSWF(828), item=I.CATCH_CARD_PEACH_2, region=R.TA307
+        ),
+        CFG_RANDOM,
+    ),
+    (
+        LocationData(
+            name=L.C33_STAR_BLOCK,
+            code=182,
+            rom=None,
+            var=GSW(0, 117),
+            item=I.CHAPTER_3_4_KEY,
+            region=R.TA304,
+            tag=TAG_STAR_BLOCK,
+        ),
+        CFG_DISABLED,
+    ),
     # endregion
     # region 3-4
-    # (LocationData(name=L.C34_CHEST_IN_PIPE_OUTSIDE_OF_CASTLE
-    # , code=182
-    # , rom=None
-    # , var=None
-    # , item=None
-    # , region=None
-    # ), CFG_RANDOM),
-    # (LocationData(name=L.C34_FREE_CARRIE
-    # , code=183
-    # , rom=None
-    # , var=None
-    # , item=None
-    # , region=None
-    # ), CFG_RANDOM),
-    # (LocationData(name=L.C34_RIGHT_FRANCIS_CHAMBER_CHEST
-    # , code=184
-    # , rom=None
-    # , var=None
-    # , item=None
-    # , region=None
-    # ), CFG_RANDOM),
-    # (LocationData(name=L.C34_LEFT_FRANCIS_CHAMBER_CHEST
-    # , code=185
-    # , rom=None
-    # , var=None
-    # , item=None
-    # , region=None
-    # ), CFG_RANDOM),
-    # (LocationData(name=L.C34_GREEN_PURE_HEART
-    # , code=186
-    # , rom=None
-    # , var=None
-    # , item=I.GREEN_PURE_HEART
-    # , region=None
-    # , tag="ph"
-    # ), CFG_RANDOM),
+    (
+        LocationData(
+            name=L.C34_CHEST_IN_PIPE_OUTSIDE_OF_CASTLE,
+            code=183,
+            rom=None,
+            var=GSW(0, 121),
+            item=I.FORT_KEY,
+            region=R.TA402,
+        ),
+        CFG_RANDOM,
+    ),
+    (
+        LocationData(name=L.C34_FREE_CARRIE, code=184, rom=None, var=GSW(0, 123), item=I.PIXL_CARRIE, region=R.TA412),
+        CFG_RANDOM,
+    ),
+    (
+        LocationData(
+            name=L.C34_RIGHT_FRANCIS_CHAMBER_CHEST, code=185, rom=None, var=GSWF(812), item=I.FORT_KEY, region=R.TA411
+        ),
+        CFG_RANDOM,
+    ),
+    (
+        LocationData(
+            name=L.C34_LEFT_FRANCIS_CHAMBER_CHEST, code=186, rom=None, var=GSWF(811), item=I.FORT_KEY, region=R.TA410
+        ),
+        CFG_RANDOM,
+    ),
+    (
+        LocationData(
+            name=L.C34_GREEN_PURE_HEART,
+            code=187,
+            rom=None,
+            var=GSW(0, 125),
+            item=I.GREEN_PURE_HEART,
+            region=R.TA413,
+            tag="ph",
+        ),
+        CFG_LOCKED,
+    ),
     # endregion
     # region 4-1
     # (LocationData(name=L.C41_SQUIRPS
-    # , code=187
-    # , rom=None
-    # , var=None
-    # , item=None
-    # , region=None
-    # ), CFG_RANDOM),
-    # (LocationData(name=L.C41_OPEN_ITEM_BEHIND_ASTEROID_1
     # , code=188
     # , rom=None
     # , var=None
     # , item=None
     # , region=None
     # ), CFG_RANDOM),
-    # (LocationData(name=L.C41_OPEN_ITEM_BEHIND_ASTEROID_2
+    # (LocationData(name=L.C41_OPEN_ITEM_BEHIND_ASTEROID_1
     # , code=189
     # , rom=None
     # , var=None
     # , item=None
     # , region=None
     # ), CFG_RANDOM),
-    # (LocationData(name=L.C41_STAR_BLOCK
+    # (LocationData(name=L.C41_OPEN_ITEM_BEHIND_ASTEROID_2
     # , code=190
+    # , rom=None
+    # , var=None
+    # , item=None
+    # , region=None
+    # ), CFG_RANDOM),
+    # (LocationData(name=L.C41_STAR_BLOCK
+    # , code=191
     # , rom=None
     # , var=None
     # , item=None
@@ -2190,42 +2237,42 @@ LOCATION_SETUP: list[LocationSetup] = [
     # endregion
     # region 4-2
     # (LocationData(name=L.C42_FLIP_THE_DIMENSIONAL_RIFT
-    # , code=191
-    # , rom=None
-    # , var=None
-    # , item=None
-    # , region=None
-    # ), CFG_RANDOM),
-    # (LocationData(name=L.C42_OPEN_ITEM_IN_CHASM_3_D
     # , code=192
     # , rom=None
     # , var=None
     # , item=None
     # , region=None
     # ), CFG_RANDOM),
-    # (LocationData(name=L.C42_OPEN_ITEM_BEHIND_PIPE_NEAR_BLAPPYS_HOUSE
+    # (LocationData(name=L.C42_OPEN_ITEM_IN_CHASM_3_D
     # , code=193
     # , rom=None
     # , var=None
     # , item=None
     # , region=None
     # ), CFG_RANDOM),
-    # (LocationData(name=L.C42_TALK_TO_BLAPPY
+    # (LocationData(name=L.C42_OPEN_ITEM_BEHIND_PIPE_NEAR_BLAPPYS_HOUSE
     # , code=194
     # , rom=None
     # , var=None
     # , item=None
     # , region=None
     # ), CFG_RANDOM),
-    # (LocationData(name=L.C42_FLEEP
+    # (LocationData(name=L.C42_TALK_TO_BLAPPY
     # , code=195
     # , rom=None
     # , var=None
     # , item=None
     # , region=None
     # ), CFG_RANDOM),
-    # (LocationData(name=L.C42_STAR_BLOCK
+    # (LocationData(name=L.C42_FLEEP
     # , code=196
+    # , rom=None
+    # , var=None
+    # , item=None
+    # , region=None
+    # ), CFG_RANDOM),
+    # (LocationData(name=L.C42_STAR_BLOCK
+    # , code=197
     # , rom=None
     # , var=None
     # , item=None
@@ -2235,28 +2282,28 @@ LOCATION_SETUP: list[LocationSetup] = [
     # endregion
     # region 4-3
     # (LocationData(name=L.C43_OPEN_ITEM_BEHIND_FIRST_BLOCKS
-    # , code=197
-    # , rom=None
-    # , var=None
-    # , item=None
-    # , region=None
-    # ), CFG_RANDOM),
-    # (LocationData(name=L.C43_OPEN_ITEM_BEHIND_BLOCKS_IN_MANY_WORMHOLE_ROOM
     # , code=198
     # , rom=None
     # , var=None
     # , item=None
     # , region=None
     # ), CFG_RANDOM),
-    # (LocationData(name=L.C43_VISIBLE_OPEN_ITEM_IN_BLOCKS
+    # (LocationData(name=L.C43_OPEN_ITEM_BEHIND_BLOCKS_IN_MANY_WORMHOLE_ROOM
     # , code=199
     # , rom=None
     # , var=None
     # , item=None
     # , region=None
     # ), CFG_RANDOM),
-    # (LocationData(name=L.C43_STAR_BLOCK
+    # (LocationData(name=L.C43_VISIBLE_OPEN_ITEM_IN_BLOCKS
     # , code=200
+    # , rom=None
+    # , var=None
+    # , item=None
+    # , region=None
+    # ), CFG_RANDOM),
+    # (LocationData(name=L.C43_STAR_BLOCK
+    # , code=201
     # , rom=None
     # , var=None
     # , item=None
@@ -2266,28 +2313,28 @@ LOCATION_SETUP: list[LocationSetup] = [
     # endregion
     # region 4-4
     # (LocationData(name=L.C44_CHEST_NEAR_BARRIBAD
-    # , code=201
-    # , rom=None
-    # , var=None
-    # , item=None
-    # , region=None
-    # ), CFG_RANDOM),
-    # (LocationData(name=L.C44_CHEST_ABOVE_LOCKED_DOOR
     # , code=202
     # , rom=None
     # , var=None
     # , item=None
     # , region=None
     # ), CFG_RANDOM),
-    # (LocationData(name=L.C44_CHEST_IN_3_BLOCK_ROOM
+    # (LocationData(name=L.C44_CHEST_ABOVE_LOCKED_DOOR
     # , code=203
     # , rom=None
     # , var=None
     # , item=None
     # , region=None
     # ), CFG_RANDOM),
-    # (LocationData(name=L.C44_CYAN_PURE_HEART
+    # (LocationData(name=L.C44_CHEST_IN_3_BLOCK_ROOM
     # , code=204
+    # , rom=None
+    # , var=None
+    # , item=None
+    # , region=None
+    # ), CFG_RANDOM),
+    # (LocationData(name=L.C44_CYAN_PURE_HEART
+    # , code=205
     # , rom=None
     # , var=None
     # , item=I.CYAN_PURE_HEART
@@ -2297,28 +2344,28 @@ LOCATION_SETUP: list[LocationSetup] = [
     # endregion
     # region 5-1
     # (LocationData(name=L.C51_CHEST_NEAR_WHACKA
-    # , code=205
-    # , rom=None
-    # , var=None
-    # , item=None
-    # , region=None
-    # ), CFG_RANDOM),
-    # (LocationData(name=L.C51_CHEST_AFTER_SHLORPS
     # , code=206
     # , rom=None
     # , var=None
     # , item=None
     # , region=None
     # ), CFG_RANDOM),
-    # (LocationData(name=L.C51_CHEST_IN_CHASM_3_D
+    # (LocationData(name=L.C51_CHEST_AFTER_SHLORPS
     # , code=207
     # , rom=None
     # , var=None
     # , item=None
     # , region=None
     # ), CFG_RANDOM),
-    # (LocationData(name=L.C51_STAR_BLOCK
+    # (LocationData(name=L.C51_CHEST_IN_CHASM_3_D
     # , code=208
+    # , rom=None
+    # , var=None
+    # , item=None
+    # , region=None
+    # ), CFG_RANDOM),
+    # (LocationData(name=L.C51_STAR_BLOCK
+    # , code=209
     # , rom=None
     # , var=None
     # , item=None
@@ -2328,49 +2375,49 @@ LOCATION_SETUP: list[LocationSetup] = [
     # endregion
     # region 5-2
     # (LocationData(name=L.C52_FIRE_TABLET
-    # , code=209
-    # , rom=None
-    # , var=None
-    # , item=None
-    # , region=None
-    # ), CFG_RANDOM),
-    # (LocationData(name=L.C52_OPEN_ITEM_IN_BACKGROUND
     # , code=210
     # , rom=None
     # , var=None
     # , item=None
     # , region=None
     # ), CFG_RANDOM),
-    # (LocationData(name=L.C52_OPEN_ITEM_IN_FRONT_OF_PIPE
+    # (LocationData(name=L.C52_OPEN_ITEM_IN_BACKGROUND
     # , code=211
     # , rom=None
     # , var=None
     # , item=None
     # , region=None
     # ), CFG_RANDOM),
-    # (LocationData(name=L.C52_STONE_TABLET
+    # (LocationData(name=L.C52_OPEN_ITEM_IN_FRONT_OF_PIPE
     # , code=212
     # , rom=None
     # , var=None
     # , item=None
     # , region=None
     # ), CFG_RANDOM),
-    # (LocationData(name=L.C52_WATER_TABLET
+    # (LocationData(name=L.C52_STONE_TABLET
     # , code=213
     # , rom=None
     # , var=None
     # , item=None
     # , region=None
     # ), CFG_RANDOM),
-    # (LocationData(name=L.C52_CUDGE
+    # (LocationData(name=L.C52_WATER_TABLET
     # , code=214
     # , rom=None
     # , var=None
     # , item=None
     # , region=None
     # ), CFG_RANDOM),
-    # (LocationData(name=L.C52_CHEST_NEAR_STAR_BLOCK
+    # (LocationData(name=L.C52_CUDGE
     # , code=215
+    # , rom=None
+    # , var=None
+    # , item=None
+    # , region=None
+    # ), CFG_RANDOM),
+    # (LocationData(name=L.C52_CHEST_NEAR_STAR_BLOCK
+    # , code=216
     # , rom=None
     # , var=None
     # , item=None
@@ -2378,7 +2425,7 @@ LOCATION_SETUP: list[LocationSetup] = [
     # , tag=TAG_STAR_BLOCK
     # ), CFG_DISABLED),
     # (LocationData(name=L.C52_STAR_BLOCK
-    # , code=216
+    # , code=217
     # , rom=None
     # , var=None
     # , item=None
@@ -2388,21 +2435,21 @@ LOCATION_SETUP: list[LocationSetup] = [
     # endregion
     # region 5-3
     # (LocationData(name=L.C53_OPEN_ITEM_IN_CAVE
-    # , code=217
-    # , rom=None
-    # , var=None
-    # , item=None
-    # , region=None
-    # ), CFG_RANDOM),
-    # (LocationData(name=L.C53_SAVE_CRAGLEY_S_CREW
     # , code=218
     # , rom=None
     # , var=None
     # , item=None
     # , region=None
     # ), CFG_RANDOM),
-    # (LocationData(name=L.C53_STAR_BLOCK
+    # (LocationData(name=L.C53_SAVE_CRAGLEY_S_CREW
     # , code=219
+    # , rom=None
+    # , var=None
+    # , item=None
+    # , region=None
+    # ), CFG_RANDOM),
+    # (LocationData(name=L.C53_STAR_BLOCK
+    # , code=220
     # , rom=None
     # , var=None
     # , item=None
@@ -2412,42 +2459,42 @@ LOCATION_SETUP: list[LocationSetup] = [
     # endregion
     # region 5-4
     # (LocationData(name=L.C54_DOTTIE
-    # , code=220
-    # , rom=None
-    # , var=None
-    # , item=None
-    # , region=None
-    # ), CFG_RANDOM),
-    # (LocationData(name=L.C54_OPEN_ITEM_NEAR_PROCESSING_CENTER
     # , code=221
     # , rom=None
     # , var=None
     # , item=None
     # , region=None
     # ), CFG_RANDOM),
-    # (LocationData(name=L.C54_OPEN_ITEM_BEHIND_PIPE
+    # (LocationData(name=L.C54_OPEN_ITEM_NEAR_PROCESSING_CENTER
     # , code=222
     # , rom=None
     # , var=None
     # , item=None
     # , region=None
     # ), CFG_RANDOM),
-    # (LocationData(name=L.C54_FLIP_THE_SKULL
+    # (LocationData(name=L.C54_OPEN_ITEM_BEHIND_PIPE
     # , code=223
     # , rom=None
     # , var=None
     # , item=None
     # , region=None
     # ), CFG_RANDOM),
-    # (LocationData(name=L.C54_DEFEAT_FLORO_CHUNKS
+    # (LocationData(name=L.C54_FLIP_THE_SKULL
     # , code=224
     # , rom=None
     # , var=None
     # , item=None
     # , region=None
     # ), CFG_RANDOM),
-    # (LocationData(name=L.C54_BLUE_PURE_HEART
+    # (LocationData(name=L.C54_DEFEAT_FLORO_CHUNKS
     # , code=225
+    # , rom=None
+    # , var=None
+    # , item=None
+    # , region=None
+    # ), CFG_RANDOM),
+    # (LocationData(name=L.C54_BLUE_PURE_HEART
+    # , code=226
     # , rom=None
     # , var=None
     # , item=I.PURPLE_PURE_HEART
@@ -2457,14 +2504,14 @@ LOCATION_SETUP: list[LocationSetup] = [
     # endregion
     # region 6-1
     # (LocationData(name=L.C61_PETRIFIED_PURE_HEART
-    # , code=226
+    # , code=227
     # , rom=None
     # , var=None
     # , item=None
     # , region=None
     # ), CFG_RANDOM),
     # (LocationData(name=L.C61_STAR_BLOCK
-    # , code=227
+    # , code=228
     # , rom=None
     # , var=None
     # , item=None
@@ -2474,7 +2521,7 @@ LOCATION_SETUP: list[LocationSetup] = [
     # endregion
     # region 6-2
     # (LocationData(name=L.C62_STAR_BLOCK
-    # , code=228
+    # , code=229
     # , rom=None
     # , var=None
     # , item=None
@@ -2484,7 +2531,7 @@ LOCATION_SETUP: list[LocationSetup] = [
     # endregion
     # region 6-3
     # (LocationData(name=L.C63_STAR_BLOCK
-    # , code=229
+    # , code=230
     # , rom=None
     # , var=None
     # , item=None
@@ -2494,56 +2541,56 @@ LOCATION_SETUP: list[LocationSetup] = [
     # endregion
     # region 6-4
     # (LocationData(name=L.C64_SAMMER_KING_REWARD_1
-    # , code=230
-    # , rom=None
-    # , var=None
-    # , item=None
-    # , region=None
-    # ), CFG_RANDOM),
-    # (LocationData(name=L.C64_SAMMER_KING_REWARD_2
     # , code=231
     # , rom=None
     # , var=None
     # , item=None
     # , region=None
     # ), CFG_RANDOM),
-    # (LocationData(name=L.C64_SAMMER_KING_REWARD_3
+    # (LocationData(name=L.C64_SAMMER_KING_REWARD_2
     # , code=232
     # , rom=None
     # , var=None
     # , item=None
     # , region=None
     # ), CFG_RANDOM),
-    # (LocationData(name=L.C64_SAMMER_KING_REWARD_4
+    # (LocationData(name=L.C64_SAMMER_KING_REWARD_3
     # , code=233
     # , rom=None
     # , var=None
     # , item=None
     # , region=None
     # ), CFG_RANDOM),
-    # (LocationData(name=L.C64_SAMMER_KING_REWARD_5
+    # (LocationData(name=L.C64_SAMMER_KING_REWARD_4
     # , code=234
     # , rom=None
     # , var=None
     # , item=None
     # , region=None
     # ), CFG_RANDOM),
-    # (LocationData(name=L.C64_SAMMER_KING_REWARD_6
+    # (LocationData(name=L.C64_SAMMER_KING_REWARD_5
     # , code=235
     # , rom=None
     # , var=None
     # , item=None
     # , region=None
     # ), CFG_RANDOM),
-    # (LocationData(name=L.C64_SAMMER_KING_REWARD_7
+    # (LocationData(name=L.C64_SAMMER_KING_REWARD_6
     # , code=236
     # , rom=None
     # , var=None
     # , item=None
     # , region=None
     # ), CFG_RANDOM),
-    # (LocationData(name=L.C64_STAR_BLOCK
+    # (LocationData(name=L.C64_SAMMER_KING_REWARD_7
     # , code=237
+    # , rom=None
+    # , var=None
+    # , item=None
+    # , region=None
+    # ), CFG_RANDOM),
+    # (LocationData(name=L.C64_STAR_BLOCK
+    # , code=238
     # , rom=None
     # , var=None
     # , item=None
@@ -2553,21 +2600,21 @@ LOCATION_SETUP: list[LocationSetup] = [
     # endregion
     # region 7-1
     # (LocationData(name=L.C71_CHEST_AFTER_GIGABYTE
-    # , code=238
-    # , rom=None
-    # , var=None
-    # , item=None
-    # , region=None
-    # ), CFG_RANDOM),
-    # (LocationData(name=L.C71_OPEN_ITEM_ABOVE_PIPE
     # , code=239
     # , rom=None
     # , var=None
     # , item=None
     # , region=None
     # ), CFG_RANDOM),
-    # (LocationData(name=L.C71_GIVE_THE_PETRIFIED_PURE_HEART_TO_JAYDES
+    # (LocationData(name=L.C71_OPEN_ITEM_ABOVE_PIPE
     # , code=240
+    # , rom=None
+    # , var=None
+    # , item=None
+    # , region=None
+    # ), CFG_RANDOM),
+    # (LocationData(name=L.C71_GIVE_THE_PETRIFIED_PURE_HEART_TO_JAYDES
+    # , code=241
     # , rom=None
     # , var=None
     # , item=I.PURPLE_PURE_HEART
@@ -2575,28 +2622,28 @@ LOCATION_SETUP: list[LocationSetup] = [
     # , tag="ph"
     # ), CFG_RANDOM),
     # (LocationData(name=L.C71_LUIGI
-    # , code=241
-    # , rom=None
-    # , var=None
-    # , item=None
-    # , region=None
-    # ), CFG_RANDOM),
-    # (LocationData(name=L.C71_HIDDEN_OPEN_ITEM_NEAR_LUIGI
     # , code=242
     # , rom=None
     # , var=None
     # , item=None
     # , region=None
     # ), CFG_RANDOM),
-    # (LocationData(name=L.C71_HIDDEN_CHEST_IN_LUIGI_S_ROOM
+    # (LocationData(name=L.C71_HIDDEN_OPEN_ITEM_NEAR_LUIGI
     # , code=243
     # , rom=None
     # , var=None
     # , item=None
     # , region=None
     # ), CFG_RANDOM),
-    # (LocationData(name=L.C71_STAR_BLOCK
+    # (LocationData(name=L.C71_HIDDEN_CHEST_IN_LUIGI_S_ROOM
     # , code=244
+    # , rom=None
+    # , var=None
+    # , item=None
+    # , region=None
+    # ), CFG_RANDOM),
+    # (LocationData(name=L.C71_STAR_BLOCK
+    # , code=245
     # , rom=None
     # , var=None
     # , item=None
@@ -2606,35 +2653,35 @@ LOCATION_SETUP: list[LocationSetup] = [
     # endregion
     # region 7-2
     # (LocationData(name=L.C72_CHEST_IN_FIRST_DARK_ROOM
-    # , code=245
-    # , rom=None
-    # , var=None
-    # , item=None
-    # , region=None
-    # ), CFG_RANDOM),
-    # (LocationData(name=L.C72_DEFEAT_BOWSER
     # , code=246
     # , rom=None
     # , var=None
     # , item=None
     # , region=None
     # ), CFG_RANDOM),
-    # (LocationData(name=L.C72_TALK_TO_HAGRA_AND_GET_THE_BOOK_FROM_THE_D_MAN
+    # (LocationData(name=L.C72_DEFEAT_BOWSER
     # , code=247
     # , rom=None
     # , var=None
     # , item=None
     # , region=None
     # ), CFG_RANDOM),
-    # (LocationData(name=L.C72_BRING_THE_DIET_BOOK_TO_HAGRA
+    # (LocationData(name=L.C72_TALK_TO_HAGRA_AND_GET_THE_BOOK_FROM_THE_D_MAN
     # , code=248
     # , rom=None
     # , var=None
     # , item=None
     # , region=None
     # ), CFG_RANDOM),
-    # (LocationData(name=L.C72_STAR_BLOCK
+    # (LocationData(name=L.C72_BRING_THE_DIET_BOOK_TO_HAGRA
     # , code=249
+    # , rom=None
+    # , var=None
+    # , item=None
+    # , region=None
+    # ), CFG_RANDOM),
+    # (LocationData(name=L.C72_STAR_BLOCK
+    # , code=250
     # , rom=None
     # , var=None
     # , item=None
@@ -2644,63 +2691,63 @@ LOCATION_SETUP: list[LocationSetup] = [
     # endregion
     # region 7-3
     # (LocationData(name=L.C73_CHEST_RIGHT_OF_25
-    # , code=250
-    # , rom=None
-    # , var=None
-    # , item=None
-    # , region=None
-    # ), CFG_RANDOM),
-    # (LocationData(name=L.C73_CHEST_AT_34
     # , code=251
     # , rom=None
     # , var=None
     # , item=None
     # , region=None
     # ), CFG_RANDOM),
-    # (LocationData(name=L.C73_CHEST_LEFT_OF_47
+    # (LocationData(name=L.C73_CHEST_AT_34
     # , code=252
     # , rom=None
     # , var=None
     # , item=None
     # , region=None
     # ), CFG_RANDOM),
-    # (LocationData(name=L.C73_WAKE_PEACH_UP
+    # (LocationData(name=L.C73_CHEST_LEFT_OF_47
     # , code=253
     # , rom=None
     # , var=None
     # , item=None
     # , region=None
     # ), CFG_RANDOM),
-    # (LocationData(name=L.C73_CHEST_AT_68
+    # (LocationData(name=L.C73_WAKE_PEACH_UP
     # , code=254
     # , rom=None
     # , var=None
     # , item=None
     # , region=None
     # ), CFG_RANDOM),
-    # (LocationData(name=L.C73_CHEST_RIGHT_OF_69
+    # (LocationData(name=L.C73_CHEST_AT_68
     # , code=255
     # , rom=None
     # , var=None
     # , item=None
     # , region=None
     # ), CFG_RANDOM),
-    # (LocationData(name=L.C73_CHEST_RIGHT_OF_CYRRUS
+    # (LocationData(name=L.C73_CHEST_RIGHT_OF_69
     # , code=256
     # , rom=None
     # , var=None
     # , item=None
     # , region=None
     # ), CFG_RANDOM),
-    # (LocationData(name=L.C73_CHEST_ATOP_BUILDING_AT_80
+    # (LocationData(name=L.C73_CHEST_RIGHT_OF_CYRRUS
     # , code=257
     # , rom=None
     # , var=None
     # , item=None
     # , region=None
     # ), CFG_RANDOM),
-    # (LocationData(name=L.C73_CHEST_BEHIND_STAR_BLOCK
+    # (LocationData(name=L.C73_CHEST_ATOP_BUILDING_AT_80
     # , code=258
+    # , rom=None
+    # , var=None
+    # , item=None
+    # , region=None
+    # ), CFG_RANDOM),
+    # (LocationData(name=L.C73_CHEST_BEHIND_STAR_BLOCK
+    # , code=259
     # , rom=None
     # , var=None
     # , item=None
@@ -2708,7 +2755,7 @@ LOCATION_SETUP: list[LocationSetup] = [
     # , tag=TAG_STAR_BLOCK
     # ), CFG_DISABLED),
     # (LocationData(name=L.C73_STAR_BLOCK
-    # , code=259
+    # , code=260
     # , rom=None
     # , var=None
     # , item=None
@@ -2718,77 +2765,77 @@ LOCATION_SETUP: list[LocationSetup] = [
     # endregion
     # region 7-4
     # (LocationData(name=L.C74_SAVE_SUNBI
-    # , code=260
-    # , rom=None
-    # , var=None
-    # , item=None
-    # , region=None
-    # ), CFG_RANDOM),
-    # (LocationData(name=L.C74_CHEST_AFTER_GIGABYTE
     # , code=261
     # , rom=None
     # , var=None
     # , item=None
     # , region=None
     # ), CFG_RANDOM),
-    # (LocationData(name=L.C74_FREE_WHIBBI
+    # (LocationData(name=L.C74_CHEST_AFTER_GIGABYTE
     # , code=262
     # , rom=None
     # , var=None
     # , item=None
     # , region=None
     # ), CFG_RANDOM),
-    # (LocationData(name=L.C74_TALK_TO_YEBBI
+    # (LocationData(name=L.C74_FREE_WHIBBI
     # , code=263
     # , rom=None
     # , var=None
     # , item=None
     # , region=None
     # ), CFG_RANDOM),
-    # (LocationData(name=L.C74_OPEN_ITEM_ABOVE_TWO_DOORS
+    # (LocationData(name=L.C74_TALK_TO_YEBBI
     # , code=264
     # , rom=None
     # , var=None
     # , item=None
     # , region=None
     # ), CFG_RANDOM),
-    # (LocationData(name=L.C74_TALK_TO_REBBI
+    # (LocationData(name=L.C74_OPEN_ITEM_ABOVE_TWO_DOORS
     # , code=265
     # , rom=None
     # , var=None
     # , item=None
     # , region=None
     # ), CFG_RANDOM),
-    # (LocationData(name=L.C74_BIG_CHEST_BELOW_REBBI
+    # (LocationData(name=L.C74_TALK_TO_REBBI
     # , code=266
     # , rom=None
     # , var=None
     # , item=None
     # , region=None
     # ), CFG_RANDOM),
-    # (LocationData(name=L.C74_TALK_TO_BLUBI_AFTER_WHIBBI
+    # (LocationData(name=L.C74_BIG_CHEST_BELOW_REBBI
     # , code=267
     # , rom=None
     # , var=None
     # , item=None
     # , region=None
     # ), CFG_RANDOM),
-    # (LocationData(name=L.C74_CHEST_BEHIND_STAIRS
+    # (LocationData(name=L.C74_TALK_TO_BLUBI_AFTER_WHIBBI
     # , code=268
     # , rom=None
     # , var=None
     # , item=None
     # , region=None
     # ), CFG_RANDOM),
-    # (LocationData(name=L.C74_CHEST_FAR_RIGHT_OF_MELEE
+    # (LocationData(name=L.C74_CHEST_BEHIND_STAIRS
     # , code=269
     # , rom=None
     # , var=None
     # , item=None
     # , region=None
     # ), CFG_RANDOM),
-    # (LocationData(name=L.C74_WHITE_PURE_HEART
+    # (LocationData(name=L.C74_CHEST_FAR_RIGHT_OF_MELEE
     # , code=270
+    # , rom=None
+    # , var=None
+    # , item=None
+    # , region=None
+    # ), CFG_RANDOM),
+    # (LocationData(name=L.C74_WHITE_PURE_HEART
+    # , code=271
     # , rom=None
     # , var=None
     # , item=I.WHITE_PURE_HEART
@@ -2798,21 +2845,21 @@ LOCATION_SETUP: list[LocationSetup] = [
     # endregion
     # region 8-1
     # (LocationData(name=L.C81_RIGHT_CHEST_ABOVE_PEACH_CUTSCENE_START
-    # , code=271
-    # , rom=None
-    # , var=None
-    # , item=None
-    # , region=None
-    # ), CFG_RANDOM),
-    # (LocationData(name=L.C81_LEFT_CHEST_ABOVE_PEACH_CUTSCENE_START
     # , code=272
     # , rom=None
     # , var=None
     # , item=None
     # , region=None
     # ), CFG_RANDOM),
-    # (LocationData(name=L.C81_CHEST_IN_SOOPA_STRIKER_HALLWAY
+    # (LocationData(name=L.C81_LEFT_CHEST_ABOVE_PEACH_CUTSCENE_START
     # , code=273
+    # , rom=None
+    # , var=None
+    # , item=None
+    # , region=None
+    # ), CFG_RANDOM),
+    # (LocationData(name=L.C81_CHEST_IN_SOOPA_STRIKER_HALLWAY
+    # , code=274
     # , rom=None
     # , var=None
     # , item=None
@@ -2821,7 +2868,7 @@ LOCATION_SETUP: list[LocationSetup] = [
     (
         LocationData(
             name=L.CHAPTER_8_1_END,
-            code=274,
+            code=275,
             rom=None,
             var=None,
             item=I.CHAPTER_8_2_KEY,
@@ -2833,70 +2880,70 @@ LOCATION_SETUP: list[LocationSetup] = [
     # endregion
     # region 8-2
     # (LocationData(name=L.C82_LEFT_CHEST_ABOVE_MERLON_ROOM
-    # , code=275
-    # , rom=None
-    # , var=None
-    # , item=None
-    # , region=None
-    # ), CFG_RANDOM),
-    # (LocationData(name=L.C82_MIDDLE_CHEST_ABOVE_MERLON_ROOM
     # , code=276
     # , rom=None
     # , var=None
     # , item=None
     # , region=None
     # ), CFG_RANDOM),
-    # (LocationData(name=L.C82_RIGHT_CHEST_ABOVE_MERLON_ROOM
+    # (LocationData(name=L.C82_MIDDLE_CHEST_ABOVE_MERLON_ROOM
     # , code=277
     # , rom=None
     # , var=None
     # , item=None
     # , region=None
     # ), CFG_RANDOM),
-    # (LocationData(name=L.C82_OPEN_ITEM_BEHIND_5TH_PIPE
+    # (LocationData(name=L.C82_RIGHT_CHEST_ABOVE_MERLON_ROOM
     # , code=278
     # , rom=None
     # , var=None
     # , item=None
     # , region=None
     # ), CFG_RANDOM),
-    # (LocationData(name=L.C82_CHEST_IN_CURSYA_ROOM
+    # (LocationData(name=L.C82_OPEN_ITEM_BEHIND_5TH_PIPE
     # , code=279
     # , rom=None
     # , var=None
     # , item=None
     # , region=None
     # ), CFG_RANDOM),
-    # (LocationData(name=L.C82_FIRST_HUNG_ITEM
+    # (LocationData(name=L.C82_CHEST_IN_CURSYA_ROOM
     # , code=280
     # , rom=None
     # , var=None
     # , item=None
     # , region=None
     # ), CFG_RANDOM),
-    # (LocationData(name=L.C82_SECOND_HUNG_ITEM
+    # (LocationData(name=L.C82_FIRST_HUNG_ITEM
     # , code=281
     # , rom=None
     # , var=None
     # , item=None
     # , region=None
     # ), CFG_RANDOM),
-    # (LocationData(name=L.C82_THIRD_HUNG_ITEM
+    # (LocationData(name=L.C82_SECOND_HUNG_ITEM
     # , code=282
     # , rom=None
     # , var=None
     # , item=None
     # , region=None
     # ), CFG_RANDOM),
-    # (LocationData(name=L.C82_DEFEAT_THE_CHROMEBA
+    # (LocationData(name=L.C82_THIRD_HUNG_ITEM
     # , code=283
     # , rom=None
     # , var=None
     # , item=None
     # , region=None
     # ), CFG_RANDOM),
-    # (LocationData(name=L.C82_MERLEES_THUNDER_RAGE
+    # (LocationData(name=L.C82_DEFEAT_THE_CHROMEBA
     # , code=284
+    # , rom=None
+    # , var=None
+    # , item=None
+    # , region=None
+    # ), CFG_RANDOM),
+    # (LocationData(name=L.C82_MERLEES_THUNDER_RAGE
+    # , code=285
     # , rom=None
     # , var=None
     # , item=None
@@ -2905,7 +2952,7 @@ LOCATION_SETUP: list[LocationSetup] = [
     (
         LocationData(
             name=L.CHAPTER_8_2_END,
-            code=285,
+            code=286,
             rom=None,
             var=None,
             item=I.CHAPTER_8_3_KEY,
@@ -2917,35 +2964,35 @@ LOCATION_SETUP: list[LocationSetup] = [
     # endregion
     # region 8-3
     # (LocationData(name=L.C83_RIGHT_CHEST_BEHIND_FIRST_HALL_OF_MIRRORS
-    # , code=286
-    # , rom=None
-    # , var=None
-    # , item=None
-    # , region=None
-    # ), CFG_RANDOM),
-    # (LocationData(name=L.C83_LEFT_CHEST_BEHIND_FIRST_HALL_OF_MIRRORS
     # , code=287
     # , rom=None
     # , var=None
     # , item=None
     # , region=None
     # ), CFG_RANDOM),
-    # (LocationData(name=L.C83_CHEST_AFTER_BLOCK_PUZZLE
+    # (LocationData(name=L.C83_LEFT_CHEST_BEHIND_FIRST_HALL_OF_MIRRORS
     # , code=288
     # , rom=None
     # , var=None
     # , item=None
     # , region=None
     # ), CFG_RANDOM),
-    # (LocationData(name=L.C83_RIGHT_CHEST_BEHIND_SECOND_HALL_OF_MIRRORS
+    # (LocationData(name=L.C83_CHEST_AFTER_BLOCK_PUZZLE
     # , code=289
     # , rom=None
     # , var=None
     # , item=None
     # , region=None
     # ), CFG_RANDOM),
-    # (LocationData(name=L.C83_LEFT_CHEST_BEHIND_SECOND_HALL_OF_MIRRORS
+    # (LocationData(name=L.C83_RIGHT_CHEST_BEHIND_SECOND_HALL_OF_MIRRORS
     # , code=290
+    # , rom=None
+    # , var=None
+    # , item=None
+    # , region=None
+    # ), CFG_RANDOM),
+    # (LocationData(name=L.C83_LEFT_CHEST_BEHIND_SECOND_HALL_OF_MIRRORS
+    # , code=291
     # , rom=None
     # , var=None
     # , item=None
@@ -2954,7 +3001,7 @@ LOCATION_SETUP: list[LocationSetup] = [
     (
         LocationData(
             name=L.CHAPTER_8_3_END,
-            code=291,
+            code=292,
             rom=None,
             var=None,
             item=I.CHAPTER_8_4_KEY,
@@ -2966,35 +3013,35 @@ LOCATION_SETUP: list[LocationSetup] = [
     # endregion
     # region 8-4
     # (LocationData(name=L.C84_CHEST_AFTER_TINY_PASSAGE
-    # , code=292
-    # , rom=None
-    # , var=None
-    # , item=None
-    # , region=None
-    # ), CFG_RANDOM),
-    # (LocationData(name=L.C84_CHEST_IN_FIRST_3_D_HALLWAYS
     # , code=293
     # , rom=None
     # , var=None
     # , item=None
     # , region=None
     # ), CFG_RANDOM),
-    # (LocationData(name=L.C84_CHEST_IN_SECOND_3_D_HALLWAYS
+    # (LocationData(name=L.C84_CHEST_IN_FIRST_3_D_HALLWAYS
     # , code=294
     # , rom=None
     # , var=None
     # , item=None
     # , region=None
     # ), CFG_RANDOM),
-    # (LocationData(name=L.C84_CHEST_IN_THIRD_3_D_HALLWAYS
+    # (LocationData(name=L.C84_CHEST_IN_SECOND_3_D_HALLWAYS
     # , code=295
     # , rom=None
     # , var=None
     # , item=None
     # , region=None
     # ), CFG_RANDOM),
+    # (LocationData(name=L.C84_CHEST_IN_THIRD_3_D_HALLWAYS
+    # , code=296
+    # , rom=None
+    # , var=None
+    # , item=None
+    # , region=None
+    # ), CFG_RANDOM),
     (
-        LocationData(name=L.CHAPTER_8_4_END, code=296, rom=None, var=GSW(0, 416), item=E.VICTORY, region=R.LS401),
+        LocationData(name=L.CHAPTER_8_4_END, code=297, rom=None, var=GSW(0, 416), item=E.VICTORY, region=R.LS401),
         CFG_EVENT,
     ),
     # endregion
@@ -3002,108 +3049,108 @@ LOCATION_SETUP: list[LocationSetup] = [
     # MOD=Consider changing Flamm's shop to sell all items for x number of coins, 20?
     (
         LocationData(
-            name=L.FLAMM_ITEM_1, code=297, rom=None, var=None, item=I.MAP_1, region=R.MAC14_LEFT, tag=TAG_FLAMM
+            name=L.FLAMM_ITEM_1, code=298, rom=None, var=None, item=I.MAP_1, region=R.MAC14_LEFT, tag=TAG_FLAMM
         ),
         CFG_DISABLED,
     ),
     (
         LocationData(
-            name=L.FLAMM_ITEM_2, code=298, rom=None, var=None, item=I.MAP_2, region=R.MAC14_LEFT, tag=TAG_FLAMM
+            name=L.FLAMM_ITEM_2, code=299, rom=None, var=None, item=I.MAP_2, region=R.MAC14_LEFT, tag=TAG_FLAMM
         ),
         CFG_DISABLED,
     ),
     (
         LocationData(
-            name=L.FLAMM_ITEM_3, code=299, rom=None, var=None, item=I.MAP_3, region=R.MAC14_LEFT, tag=TAG_FLAMM
+            name=L.FLAMM_ITEM_3, code=300, rom=None, var=None, item=I.MAP_3, region=R.MAC14_LEFT, tag=TAG_FLAMM
         ),
         CFG_DISABLED,
     ),
     (
         LocationData(
-            name=L.FLAMM_ITEM_4, code=300, rom=None, var=None, item=I.MAP_4, region=R.MAC14_LEFT, tag=TAG_FLAMM
+            name=L.FLAMM_ITEM_4, code=301, rom=None, var=None, item=I.MAP_4, region=R.MAC14_LEFT, tag=TAG_FLAMM
         ),
         CFG_DISABLED,
     ),
     (
         LocationData(
-            name=L.FLAMM_ITEM_5, code=301, rom=None, var=None, item=I.MAP_5, region=R.MAC14_LEFT, tag=TAG_FLAMM
+            name=L.FLAMM_ITEM_5, code=302, rom=None, var=None, item=I.MAP_5, region=R.MAC14_LEFT, tag=TAG_FLAMM
         ),
         CFG_DISABLED,
     ),
     (
         LocationData(
-            name=L.FLAMM_ITEM_6, code=302, rom=None, var=None, item=I.MAP_6, region=R.MAC14_LEFT, tag=TAG_FLAMM
+            name=L.FLAMM_ITEM_6, code=303, rom=None, var=None, item=I.MAP_6, region=R.MAC14_LEFT, tag=TAG_FLAMM
         ),
         CFG_DISABLED,
     ),
     (
         LocationData(
-            name=L.FLAMM_ITEM_7, code=303, rom=None, var=None, item=I.MAP_7, region=R.MAC14_LEFT, tag=TAG_FLAMM
+            name=L.FLAMM_ITEM_7, code=304, rom=None, var=None, item=I.MAP_7, region=R.MAC14_LEFT, tag=TAG_FLAMM
         ),
         CFG_DISABLED,
     ),
     (
         LocationData(
-            name=L.FLAMM_ITEM_8, code=304, rom=None, var=None, item=I.MAP_8, region=R.MAC14_LEFT, tag=TAG_FLAMM
+            name=L.FLAMM_ITEM_8, code=305, rom=None, var=None, item=I.MAP_8, region=R.MAC14_LEFT, tag=TAG_FLAMM
         ),
         CFG_DISABLED,
     ),
     (
         LocationData(
-            name=L.FLAMM_ITEM_9, code=305, rom=None, var=None, item=I.MAP_9, region=R.MAC14_LEFT, tag=TAG_FLAMM
+            name=L.FLAMM_ITEM_9, code=306, rom=None, var=None, item=I.MAP_9, region=R.MAC14_LEFT, tag=TAG_FLAMM
         ),
         CFG_DISABLED,
     ),
     (
         LocationData(
-            name=L.FLAMM_ITEM_10, code=306, rom=None, var=None, item=I.MAP_10, region=R.MAC14_LEFT, tag=TAG_FLAMM
+            name=L.FLAMM_ITEM_10, code=307, rom=None, var=None, item=I.MAP_10, region=R.MAC14_LEFT, tag=TAG_FLAMM
         ),
         CFG_DISABLED,
     ),
     (
         LocationData(
-            name=L.FLAMM_ITEM_11, code=307, rom=None, var=None, item=I.MAP_11, region=R.MAC14_LEFT, tag=TAG_FLAMM
+            name=L.FLAMM_ITEM_11, code=308, rom=None, var=None, item=I.MAP_11, region=R.MAC14_LEFT, tag=TAG_FLAMM
         ),
         CFG_DISABLED,
     ),
     (
         LocationData(
-            name=L.FLAMM_ITEM_12, code=308, rom=None, var=None, item=I.MAP_12, region=R.MAC14_LEFT, tag=TAG_FLAMM
+            name=L.FLAMM_ITEM_12, code=309, rom=None, var=None, item=I.MAP_12, region=R.MAC14_LEFT, tag=TAG_FLAMM
         ),
         CFG_DISABLED,
     ),
     (
         LocationData(
-            name=L.FLAMM_ITEM_13, code=309, rom=None, var=None, item=I.MAP_13, region=R.MAC14_LEFT, tag=TAG_FLAMM
+            name=L.FLAMM_ITEM_13, code=310, rom=None, var=None, item=I.MAP_13, region=R.MAC14_LEFT, tag=TAG_FLAMM
         ),
         CFG_DISABLED,
     ),
     (
         LocationData(
-            name=L.FLAMM_ITEM_14, code=310, rom=None, var=None, item=I.MAP_14, region=R.MAC14_LEFT, tag=TAG_FLAMM
+            name=L.FLAMM_ITEM_14, code=311, rom=None, var=None, item=I.MAP_14, region=R.MAC14_LEFT, tag=TAG_FLAMM
         ),
         CFG_DISABLED,
     ),
     (
         LocationData(
-            name=L.FLAMM_ITEM_15, code=311, rom=None, var=None, item=I.MAP_15, region=R.MAC14_LEFT, tag=TAG_FLAMM
+            name=L.FLAMM_ITEM_15, code=312, rom=None, var=None, item=I.MAP_15, region=R.MAC14_LEFT, tag=TAG_FLAMM
         ),
         CFG_DISABLED,
     ),
     (
         LocationData(
-            name=L.FLAMM_ITEM_16, code=312, rom=None, var=None, item=I.MAP_16, region=R.MAC14_LEFT, tag=TAG_FLAMM
+            name=L.FLAMM_ITEM_16, code=313, rom=None, var=None, item=I.MAP_16, region=R.MAC14_LEFT, tag=TAG_FLAMM
         ),
         CFG_DISABLED,
     ),
     (
         LocationData(
-            name=L.FLAMM_ITEM_17, code=313, rom=None, var=None, item=I.MAP_17, region=R.MAC14_LEFT, tag=TAG_FLAMM
+            name=L.FLAMM_ITEM_17, code=314, rom=None, var=None, item=I.MAP_17, region=R.MAC14_LEFT, tag=TAG_FLAMM
         ),
         CFG_DISABLED,
     ),
     # (LocationData(name=L.FLAMM_ITEM_18
-    # , code=314
+    # , code=315
     # , rom=None
     # , var=None
     # , item=I.MAP_18
@@ -3111,7 +3158,7 @@ LOCATION_SETUP: list[LocationSetup] = [
     # , tag=TAG_FLAMM
     # ), CFG_DISABLED),
     # (LocationData(name=L.FLAMM_ITEM_19
-    # , code=315
+    # , code=316
     # , rom=None
     # , var=None
     # , item=I.MAP_19
@@ -3119,7 +3166,7 @@ LOCATION_SETUP: list[LocationSetup] = [
     # , tag=TAG_FLAMM
     # ), CFG_DISABLED),
     # (LocationData(name=L.FLAMM_ITEM_20
-    # , code=316
+    # , code=317
     # , rom=None
     # , var=None
     # , item=I.MAP_20
@@ -3127,7 +3174,7 @@ LOCATION_SETUP: list[LocationSetup] = [
     # , tag=TAG_FLAMM
     # ), CFG_DISABLED),
     # (LocationData(name=L.FLAMM_ITEM_21
-    # , code=317
+    # , code=318
     # , rom=None
     # , var=None
     # , item=I.MAP_21
@@ -3135,7 +3182,7 @@ LOCATION_SETUP: list[LocationSetup] = [
     # , tag=TAG_FLAMM
     # ), CFG_DISABLED),
     # (LocationData(name=L.FLAMM_ITEM_22
-    # , code=318
+    # , code=319
     # , rom=None
     # , var=None
     # , item=I.MAP_22
@@ -3143,7 +3190,7 @@ LOCATION_SETUP: list[LocationSetup] = [
     # , tag=TAG_FLAMM
     # ), CFG_DISABLED),
     # (LocationData(name=L.FLAMM_ITEM_23
-    # , code=319
+    # , code=320
     # , rom=None
     # , var=None
     # , item=I.MAP_23
@@ -3151,7 +3198,7 @@ LOCATION_SETUP: list[LocationSetup] = [
     # , tag=TAG_FLAMM
     # ), CFG_DISABLED),
     # (LocationData(name=L.FLAMM_ITEM_24
-    # , code=320
+    # , code=321
     # , rom=None
     # , var=None
     # , item=I.MAP_24
@@ -3159,7 +3206,7 @@ LOCATION_SETUP: list[LocationSetup] = [
     # , tag=TAG_FLAMM
     # ), CFG_DISABLED),
     # (LocationData(name=L.FLAMM_ITEM_25
-    # , code=321
+    # , code=322
     # , rom=None
     # , var=None
     # , item=I.MAP_25
@@ -3167,7 +3214,7 @@ LOCATION_SETUP: list[LocationSetup] = [
     # , tag=TAG_FLAMM
     # ), CFG_DISABLED),
     # (LocationData(name=L.FLAMM_ITEM_26
-    # , code=322
+    # , code=323
     # , rom=None
     # , var=None
     # , item=I.MAP_26
@@ -3175,7 +3222,7 @@ LOCATION_SETUP: list[LocationSetup] = [
     # , tag=TAG_FLAMM
     # ), CFG_DISABLED),
     # (LocationData(name=L.FLAMM_ITEM_27
-    # , code=323
+    # , code=324
     # , rom=None
     # , var=None
     # , item=I.MAP_27
@@ -3183,7 +3230,7 @@ LOCATION_SETUP: list[LocationSetup] = [
     # , tag=TAG_FLAMM
     # ), CFG_DISABLED),
     # (LocationData(name=L.FLAMM_ITEM_28
-    # , code=324
+    # , code=325
     # , rom=None
     # , var=None
     # , item=I.MAP_28
@@ -3191,7 +3238,7 @@ LOCATION_SETUP: list[LocationSetup] = [
     # , tag=TAG_FLAMM
     # ), CFG_DISABLED),
     # (LocationData(name=L.FLAMM_ITEM_29
-    # , code=325
+    # , code=326
     # , rom=None
     # , var=None
     # , item=I.MAP_29
@@ -3199,7 +3246,7 @@ LOCATION_SETUP: list[LocationSetup] = [
     # , tag=TAG_FLAMM
     # ), CFG_DISABLED),
     # (LocationData(name=L.FLAMM_ITEM_30
-    # , code=326
+    # , code=327
     # , rom=None
     # , var=None
     # , item=I.MAP_30
@@ -3207,7 +3254,7 @@ LOCATION_SETUP: list[LocationSetup] = [
     # , tag=TAG_FLAMM
     # ), CFG_DISABLED),
     # (LocationData(name=L.FLAMM_ITEM_31
-    # , code=327
+    # , code=328
     # , rom=None
     # , var=None
     # , item=I.MAP_31
@@ -3215,7 +3262,7 @@ LOCATION_SETUP: list[LocationSetup] = [
     # , tag=TAG_FLAMM
     # ), CFG_DISABLED),
     # (LocationData(name=L.FLAMM_ITEM_32
-    # , code=328
+    # , code=329
     # , rom=None
     # , var=None
     # , item=I.MAP_32
@@ -3223,7 +3270,7 @@ LOCATION_SETUP: list[LocationSetup] = [
     # , tag=TAG_FLAMM
     # ), CFG_DISABLED),
     # (LocationData(name=L.FLAMM_ITEM_33
-    # , code=329
+    # , code=330
     # , rom=None
     # , var=None
     # , item=I.MAP_33
@@ -3231,7 +3278,7 @@ LOCATION_SETUP: list[LocationSetup] = [
     # , tag=TAG_FLAMM
     # ), CFG_DISABLED),
     # (LocationData(name=L.FLAMM_ITEM_34
-    # , code=330
+    # , code=331
     # , rom=None
     # , var=None
     # , item=I.MAP_34
@@ -3239,7 +3286,7 @@ LOCATION_SETUP: list[LocationSetup] = [
     # , tag=TAG_FLAMM
     # ), CFG_DISABLED),
     # (LocationData(name=L.FLAMM_ITEM_35
-    # , code=331
+    # , code=332
     # , rom=None
     # , var=None
     # , item=I.MAP_35
@@ -3247,7 +3294,7 @@ LOCATION_SETUP: list[LocationSetup] = [
     # , tag=TAG_FLAMM
     # ), CFG_DISABLED),
     # (LocationData(name=L.FLAMM_ITEM_36
-    # , code=332
+    # , code=333
     # , rom=None
     # , var=None
     # , item=I.MAP_36
@@ -3255,7 +3302,7 @@ LOCATION_SETUP: list[LocationSetup] = [
     # , tag=TAG_FLAMM
     # ), CFG_DISABLED),
     # (LocationData(name=L.FLAMM_ITEM_37
-    # , code=333
+    # , code=334
     # , rom=None
     # , var=None
     # , item=I.MAP_37
@@ -3263,7 +3310,7 @@ LOCATION_SETUP: list[LocationSetup] = [
     # , tag=TAG_FLAMM
     # ), CFG_DISABLED),
     # (LocationData(name=L.FLAMM_ITEM_38
-    # , code=334
+    # , code=335
     # , rom=None
     # , var=None
     # , item=I.MAP_38
@@ -3271,7 +3318,7 @@ LOCATION_SETUP: list[LocationSetup] = [
     # , tag=TAG_FLAMM
     # ), CFG_DISABLED),
     # (LocationData(name=L.FLAMM_ITEM_39
-    # , code=335
+    # , code=336
     # , rom=None
     # , var=None
     # , item=I.MAP_39
@@ -3279,7 +3326,7 @@ LOCATION_SETUP: list[LocationSetup] = [
     # , tag=TAG_FLAMM
     # ), CFG_DISABLED),
     # (LocationData(name=L.FLAMM_ITEM_40
-    # , code=336
+    # , code=337
     # , rom=None
     # , var=None
     # , item=I.MAP_40
@@ -3287,7 +3334,7 @@ LOCATION_SETUP: list[LocationSetup] = [
     # , tag=TAG_FLAMM
     # ), CFG_DISABLED),
     # (LocationData(name=L.FLAMM_ITEM_41
-    # , code=337
+    # , code=338
     # , rom=None
     # , var=None
     # , item=I.MAP_41
@@ -3295,7 +3342,7 @@ LOCATION_SETUP: list[LocationSetup] = [
     # , tag=TAG_FLAMM
     # ), CFG_DISABLED),
     # (LocationData(name=L.FLAMM_ITEM_42
-    # , code=338
+    # , code=339
     # , rom=None
     # , var=None
     # , item=I.MAP_42
@@ -3303,7 +3350,7 @@ LOCATION_SETUP: list[LocationSetup] = [
     # , tag=TAG_FLAMM
     # ), CFG_DISABLED),
     # (LocationData(name=L.FLAMM_ITEM_43
-    # , code=339
+    # , code=340
     # , rom=None
     # , var=None
     # , item=I.MAP_43
@@ -3311,7 +3358,7 @@ LOCATION_SETUP: list[LocationSetup] = [
     # , tag=TAG_FLAMM
     # ), CFG_DISABLED),
     # (LocationData(name=L.FLAMM_ITEM_44
-    # , code=340
+    # , code=341
     # , rom=None
     # , var=None
     # , item=I.MAP_44
@@ -3319,7 +3366,7 @@ LOCATION_SETUP: list[LocationSetup] = [
     # , tag=TAG_FLAMM
     # ), CFG_DISABLED),
     # (LocationData(name=L.FLAMM_ITEM_45
-    # , code=341
+    # , code=342
     # , rom=None
     # , var=None
     # , item=I.MAP_45
@@ -3327,7 +3374,7 @@ LOCATION_SETUP: list[LocationSetup] = [
     # , tag=TAG_FLAMM
     # ), CFG_DISABLED),
     # (LocationData(name=L.FLAMM_ITEM_46
-    # , code=342
+    # , code=343
     # , rom=None
     # , var=None
     # , item=I.MAP_46
@@ -3335,7 +3382,7 @@ LOCATION_SETUP: list[LocationSetup] = [
     # , tag=TAG_FLAMM
     # ), CFG_DISABLED),
     # (LocationData(name=L.FLAMM_ITEM_47
-    # , code=343
+    # , code=344
     # , rom=None
     # , var=None
     # , item=I.MAP_47
@@ -3343,7 +3390,7 @@ LOCATION_SETUP: list[LocationSetup] = [
     # , tag=TAG_FLAMM
     # ), CFG_DISABLED),
     # (LocationData(name=L.FLAMM_ITEM_48
-    # , code=344
+    # , code=345
     # , rom=None
     # , var=None
     # , item=I.MAP_48
@@ -3353,7 +3400,7 @@ LOCATION_SETUP: list[LocationSetup] = [
     (
         LocationData(
             name=L.FLEEP_MAP_REVEAL_01,
-            code=345,
+            code=346,
             rom=None,
             var=None,
             item=I.GOLD_BAR,
@@ -3365,7 +3412,7 @@ LOCATION_SETUP: list[LocationSetup] = [
     (
         LocationData(
             name=L.FLEEP_MAP_REVEAL_02,
-            code=346,
+            code=347,
             rom=None,
             var=None,
             item=I.CATCH_CARD_WELDERBERG,
@@ -3377,7 +3424,7 @@ LOCATION_SETUP: list[LocationSetup] = [
     (
         LocationData(
             name=L.FLEEP_MAP_REVEAL_03,
-            code=347,
+            code=348,
             rom=None,
             var=None,
             item=I.ULTRA_SHROOM_SHAKE,
@@ -3389,7 +3436,7 @@ LOCATION_SETUP: list[LocationSetup] = [
     (
         LocationData(
             name=L.FLEEP_MAP_REVEAL_04,
-            code=348,
+            code=349,
             rom=None,
             var=None,
             item=I.CATCH_CARD_KING_SAMMER,
@@ -3401,7 +3448,7 @@ LOCATION_SETUP: list[LocationSetup] = [
     (
         LocationData(
             name=L.FLEEP_MAP_REVEAL_05,
-            code=349,
+            code=350,
             rom=None,
             var=None,
             item=I.CATCH_CARD_O_CHUNKS,
@@ -3413,7 +3460,7 @@ LOCATION_SETUP: list[LocationSetup] = [
     (
         LocationData(
             name=L.FLEEP_MAP_REVEAL_06,
-            code=350,
+            code=351,
             rom=None,
             var=None,
             item=I.CATCH_CARD_BESTOVIUS,
@@ -3425,7 +3472,7 @@ LOCATION_SETUP: list[LocationSetup] = [
     (
         LocationData(
             name=L.FLEEP_MAP_REVEAL_07,
-            code=351,
+            code=352,
             rom=None,
             var=None,
             item=I.GOLDEN_LEAF,
@@ -3437,7 +3484,7 @@ LOCATION_SETUP: list[LocationSetup] = [
     (
         LocationData(
             name=L.FLEEP_MAP_REVEAL_08,
-            code=352,
+            code=353,
             rom=None,
             var=None,
             item=I.CATCH_CARD_BROBOT_L_TYPE,
@@ -3449,7 +3496,7 @@ LOCATION_SETUP: list[LocationSetup] = [
     (
         LocationData(
             name=L.FLEEP_MAP_REVEAL_09,
-            code=353,
+            code=354,
             rom=None,
             var=None,
             item=I.GOLD_BAR_X3,
@@ -3461,7 +3508,7 @@ LOCATION_SETUP: list[LocationSetup] = [
     (
         LocationData(
             name=L.FLEEP_MAP_REVEAL_10,
-            code=354,
+            code=355,
             rom=None,
             var=None,
             item=I.CATCH_CARD_FRACKTAIL,
@@ -3473,7 +3520,7 @@ LOCATION_SETUP: list[LocationSetup] = [
     (
         LocationData(
             name=L.FLEEP_MAP_REVEAL_11,
-            code=355,
+            code=356,
             rom=None,
             var=None,
             item=I.CATCH_CARD_MERLUMINA,
@@ -3485,7 +3532,7 @@ LOCATION_SETUP: list[LocationSetup] = [
     (
         LocationData(
             name=L.FLEEP_MAP_REVEAL_12,
-            code=356,
+            code=357,
             rom=None,
             var=None,
             item=I.SHOOTING_STAR,
@@ -3497,7 +3544,7 @@ LOCATION_SETUP: list[LocationSetup] = [
     (
         LocationData(
             name=L.FLEEP_MAP_REVEAL_13,
-            code=357,
+            code=358,
             rom=None,
             var=None,
             item=I.CATCH_CARD_SP,
@@ -3509,7 +3556,7 @@ LOCATION_SETUP: list[LocationSetup] = [
     (
         LocationData(
             name=L.FLEEP_MAP_REVEAL_14,
-            code=358,
+            code=359,
             rom=None,
             var=None,
             item=I.CATCH_CARD_GNIP,
@@ -3521,7 +3568,7 @@ LOCATION_SETUP: list[LocationSetup] = [
     (
         LocationData(
             name=L.FLEEP_MAP_REVEAL_15,
-            code=359,
+            code=360,
             rom=None,
             var=None,
             item=I.CATCH_CARD_MIMI,
@@ -3533,7 +3580,7 @@ LOCATION_SETUP: list[LocationSetup] = [
     (
         LocationData(
             name=L.FLEEP_MAP_REVEAL_16,
-            code=360,
+            code=361,
             rom=None,
             var=None,
             item=I.GOLD_BAR_X3,
@@ -3545,7 +3592,7 @@ LOCATION_SETUP: list[LocationSetup] = [
     (
         LocationData(
             name=L.FLEEP_MAP_REVEAL_17,
-            code=361,
+            code=362,
             rom=None,
             var=None,
             item=I.DRIED_SHROOM,
@@ -3555,7 +3602,7 @@ LOCATION_SETUP: list[LocationSetup] = [
         CFG_DISABLED,
     ),
     # (LocationData(name=L.FLEEP_MAP_REVEAL_18
-    # , code=362
+    # , code=363
     # , rom=None
     # , var=None
     # , item=I.CATCH_CARD_BACK_CURSYA
@@ -3563,7 +3610,7 @@ LOCATION_SETUP: list[LocationSetup] = [
     # , tag=TAG_TREASURE
     # ), CFG_DISABLED),
     # (LocationData(name=L.FLEEP_MAP_REVEAL_19
-    # , code=363
+    # , code=364
     # , rom=None
     # , var=None
     # , item=I.ULTRA_SHROOM_SHAKE
@@ -3571,7 +3618,7 @@ LOCATION_SETUP: list[LocationSetup] = [
     # , tag=TAG_TREASURE
     # ), CFG_DISABLED),
     # (LocationData(name=L.FLEEP_MAP_REVEAL_20
-    # , code=364
+    # , code=365
     # , rom=None
     # , var=None
     # , item=I.CATCH_CARD_BIG_BLOOPER
@@ -3579,7 +3626,7 @@ LOCATION_SETUP: list[LocationSetup] = [
     # , tag=TAG_TREASURE
     # ), CFG_DISABLED),
     # (LocationData(name=L.FLEEP_MAP_REVEAL_21
-    # , code=365
+    # , code=366
     # , rom=None
     # , var=None
     # , item=I.POWER_PLUS
@@ -3587,7 +3634,7 @@ LOCATION_SETUP: list[LocationSetup] = [
     # , tag=TAG_TREASURE
     # ), CFG_DISABLED),
     # (LocationData(name=L.FLEEP_MAP_REVEAL_22
-    # , code=366
+    # , code=367
     # , rom=None
     # , var=None
     # , item=I.CATCH_CARD_DIMENTIO
@@ -3595,7 +3642,7 @@ LOCATION_SETUP: list[LocationSetup] = [
     # , tag=TAG_TREASURE
     # ), CFG_DISABLED),
     # (LocationData(name=L.FLEEP_MAP_REVEAL_23
-    # , code=367
+    # , code=368
     # , rom=None
     # , var=None
     # , item=I.CATCH_CARD_TIPTRON
@@ -3603,7 +3650,7 @@ LOCATION_SETUP: list[LocationSetup] = [
     # , tag=TAG_TREASURE
     # ), CFG_DISABLED),
     # (LocationData(name=L.FLEEP_MAP_REVEAL_24
-    # , code=368
+    # , code=369
     # , rom=None
     # , var=None
     # , item=I.CATCH_CARD_FRANCIS
@@ -3611,7 +3658,7 @@ LOCATION_SETUP: list[LocationSetup] = [
     # , tag=TAG_TREASURE
     # ), CFG_DISABLED),
     # (LocationData(name=L.FLEEP_MAP_REVEAL_25
-    # , code=369
+    # , code=370
     # , rom=None
     # , var=None
     # , item=I.CATCH_CARD_SQUIRPS
@@ -3619,7 +3666,7 @@ LOCATION_SETUP: list[LocationSetup] = [
     # , tag=TAG_TREASURE
     # ), CFG_DISABLED),
     # (LocationData(name=L.FLEEP_MAP_REVEAL_26
-    # , code=370
+    # , code=371
     # , rom=None
     # , var=None
     # , item=I.CATCH_CARD_HOOLIGON
@@ -3627,7 +3674,7 @@ LOCATION_SETUP: list[LocationSetup] = [
     # , tag=TAG_TREASURE
     # ), CFG_DISABLED),
     # (LocationData(name=L.FLEEP_MAP_REVEAL_27
-    # , code=371
+    # , code=372
     # , rom=None
     # , var=None
     # , item=I.CATCH_CARD_MR_L
@@ -3635,7 +3682,7 @@ LOCATION_SETUP: list[LocationSetup] = [
     # , tag=TAG_TREASURE
     # ), CFG_DISABLED),
     # (LocationData(name=L.FLEEP_MAP_REVEAL_28
-    # , code=372
+    # , code=373
     # , rom=None
     # , var=None
     # , item=I.CATCH_CARD_BROBOT
@@ -3643,7 +3690,7 @@ LOCATION_SETUP: list[LocationSetup] = [
     # , tag=TAG_TREASURE
     # ), CFG_DISABLED),
     # (LocationData(name=L.FLEEP_MAP_REVEAL_29
-    # , code=373
+    # , code=374
     # , rom=None
     # , var=None
     # , item=I.CATCH_CARD_MUTH
@@ -3651,7 +3698,7 @@ LOCATION_SETUP: list[LocationSetup] = [
     # , tag=TAG_TREASURE
     # ), CFG_DISABLED),
     # (LocationData(name=L.FLEEP_MAP_REVEAL_30
-    # , code=374
+    # , code=375
     # , rom=None
     # , var=None
     # , item=I.CATCH_CARD_FLINT_CRAGLEY
@@ -3659,14 +3706,6 @@ LOCATION_SETUP: list[LocationSetup] = [
     # , tag=TAG_TREASURE
     # ), CFG_DISABLED),
     # (LocationData(name=L.FLEEP_MAP_REVEAL_31
-    # , code=375
-    # , rom=None
-    # , var=None
-    # , item=I.FIRE_BURST
-    # , region=None
-    # , tag=TAG_TREASURE
-    # ), CFG_DISABLED),
-    # (LocationData(name=L.FLEEP_MAP_REVEAL_32
     # , code=376
     # , rom=None
     # , var=None
@@ -3674,8 +3713,16 @@ LOCATION_SETUP: list[LocationSetup] = [
     # , region=None
     # , tag=TAG_TREASURE
     # ), CFG_DISABLED),
-    # (LocationData(name=L.FLEEP_MAP_REVEAL_33
+    # (LocationData(name=L.FLEEP_MAP_REVEAL_32
     # , code=377
+    # , rom=None
+    # , var=None
+    # , item=I.FIRE_BURST
+    # , region=None
+    # , tag=TAG_TREASURE
+    # ), CFG_DISABLED),
+    # (LocationData(name=L.FLEEP_MAP_REVEAL_33
+    # , code=378
     # , rom=None
     # , var=None
     # , item=I.ULTRA_SHROOM_SHAKE
@@ -3683,7 +3730,7 @@ LOCATION_SETUP: list[LocationSetup] = [
     # , tag=TAG_TREASURE
     # ), CFG_DISABLED),
     # (LocationData(name=L.FLEEP_MAP_REVEAL_34
-    # , code=378
+    # , code=379
     # , rom=None
     # , var=None
     # , item=I.SHOOTING_STAR
@@ -3691,7 +3738,7 @@ LOCATION_SETUP: list[LocationSetup] = [
     # , tag=TAG_TREASURE
     # ), CFG_DISABLED),
     # (LocationData(name=L.FLEEP_MAP_REVEAL_35
-    # , code=379
+    # , code=380
     # , rom=None
     # , var=None
     # , item=I.CATCH_CARD_HORNFELS_MONZO
@@ -3699,7 +3746,7 @@ LOCATION_SETUP: list[LocationSetup] = [
     # , tag=TAG_TREASURE
     # ), CFG_DISABLED),
     # (LocationData(name=L.FLEEP_MAP_REVEAL_36
-    # , code=380
+    # , code=381
     # , rom=None
     # , var=None
     # , item=I.POISON_SHROOM
@@ -3707,7 +3754,7 @@ LOCATION_SETUP: list[LocationSetup] = [
     # , tag=TAG_TREASURE
     # ), CFG_DISABLED),
     # (LocationData(name=L.FLEEP_MAP_REVEAL_37
-    # , code=381
+    # , code=382
     # , rom=None
     # , var=None
     # , item=I.CATCH_CARD_KING_CROACUS
@@ -3715,7 +3762,7 @@ LOCATION_SETUP: list[LocationSetup] = [
     # , tag=TAG_TREASURE
     # ), CFG_DISABLED),
     # (LocationData(name=L.FLEEP_MAP_REVEAL_38
-    # , code=382
+    # , code=383
     # , rom=None
     # , var=None
     # , item=I.CATCH_CARD_JAYDES
@@ -3723,7 +3770,7 @@ LOCATION_SETUP: list[LocationSetup] = [
     # , tag=TAG_TREASURE
     # ), CFG_DISABLED),
     # (LocationData(name=L.FLEEP_MAP_REVEAL_39
-    # , code=383
+    # , code=384
     # , rom=None
     # , var=None
     # , item=I.CATCH_CARD_UNDERHAND
@@ -3731,7 +3778,7 @@ LOCATION_SETUP: list[LocationSetup] = [
     # , tag=TAG_TREASURE
     # ), CFG_DISABLED),
     # (LocationData(name=L.FLEEP_MAP_REVEAL_40
-    # , code=384
+    # , code=385
     # , rom=None
     # , var=None
     # , item=I.TRIAL_STEW
@@ -3739,7 +3786,7 @@ LOCATION_SETUP: list[LocationSetup] = [
     # , tag=TAG_TREASURE
     # ), CFG_DISABLED),
     # (LocationData(name=L.FLEEP_MAP_REVEAL_41
-    # , code=385
+    # , code=386
     # , rom=None
     # , var=None
     # , item=I.CATCH_CARD_THE_UNDERCHOMP
@@ -3747,7 +3794,7 @@ LOCATION_SETUP: list[LocationSetup] = [
     # , tag=TAG_TREASURE
     # ), CFG_DISABLED),
     # (LocationData(name=L.FLEEP_MAP_REVEAL_42
-    # , code=386
+    # , code=387
     # , rom=None
     # , var=None
     # , item=I.GOLD_BAR_X3
@@ -3755,7 +3802,7 @@ LOCATION_SETUP: list[LocationSetup] = [
     # , tag=TAG_TREASURE
     # ), CFG_DISABLED),
     # (LocationData(name=L.FLEEP_MAP_REVEAL_43
-    # , code=387
+    # , code=388
     # , rom=None
     # , var=None
     # , item=I.CATCH_CARD_GRAMBI
@@ -3763,7 +3810,7 @@ LOCATION_SETUP: list[LocationSetup] = [
     # , tag=TAG_TREASURE
     # ), CFG_DISABLED),
     # (LocationData(name=L.FLEEP_MAP_REVEAL_44
-    # , code=388
+    # , code=389
     # , rom=None
     # , var=None
     # , item=I.CATCH_CARD_LUVBI
@@ -3771,7 +3818,7 @@ LOCATION_SETUP: list[LocationSetup] = [
     # , tag=TAG_TREASURE
     # ), CFG_DISABLED),
     # (LocationData(name=L.FLEEP_MAP_REVEAL_45
-    # , code=389
+    # , code=390
     # , rom=None
     # , var=None
     # , item=I.CATCH_CARD_BONECHILL
@@ -3779,7 +3826,7 @@ LOCATION_SETUP: list[LocationSetup] = [
     # , tag=TAG_TREASURE
     # ), CFG_DISABLED),
     # (LocationData(name=L.FLEEP_MAP_REVEAL_46
-    # , code=390
+    # , code=391
     # , rom=None
     # , var=None
     # , item=I.CATCH_CARD_NASTASIA
@@ -3787,7 +3834,7 @@ LOCATION_SETUP: list[LocationSetup] = [
     # , tag=TAG_TREASURE
     # ), CFG_DISABLED),
     # (LocationData(name=L.FLEEP_MAP_REVEAL_47
-    # , code=391
+    # , code=392
     # , rom=None
     # , var=None
     # , item=I.CATCH_CARD_SUPER_DIMENTIO
@@ -3795,7 +3842,7 @@ LOCATION_SETUP: list[LocationSetup] = [
     # , tag=TAG_TREASURE
     # ), CFG_DISABLED),
     # (LocationData(name=L.FLEEP_MAP_REVEAL_48
-    # , code=392
+    # , code=393
     # , rom=None
     # , var=None
     # , item=I.CATCH_CARD_COUNT_BLECK
